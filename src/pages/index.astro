@@ -1,0 +1,263 @@
+---
+// The Illuminated Treatise — single page, rendered entirely from claims.yaml
+// and the extracted plate JSON. Visual truth: treatise-reference.html.
+import { claims } from "../lib/claims";
+import HalyardPlate from "../components/HalyardPlate.astro";
+import "../styles/treatise.css";
+
+const { meta, sections, projects, essays, workshop, author } = claims;
+
+// typographic dressing on the confirmed thesis text (words stay claims.yaml's)
+const thesisHtml = meta.thesis
+  .replace("I work", "I&nbsp;work")
+  .replace(/\bsecond\b/, "<em>second</em>");
+
+// global noteref numbering: project claims in order, then workshop planned plates
+const refNums = new Map<string, number>();
+let refCount = 0;
+for (const p of projects) for (const c of p.claims) refNums.set(`${p.id}:${c.id}`, ++refCount);
+const workshopRefs = new Map<string, number>();
+for (const m of workshop.prose.matchAll(/\[\^([\w-]+)\]/g)) workshopRefs.set(m[1]!, ++refCount);
+
+type Seg = { text: string } | { ref: number };
+function segments(prose: string, scope: (id: string) => number | undefined): Seg[] {
+  const out: Seg[] = [];
+  let last = 0;
+  for (const m of prose.matchAll(/\[\^([\w-]+)\]/g)) {
+    out.push({ text: prose.slice(last, m.index) });
+    const num = scope(m[1]!);
+    if (num === undefined) throw new Error(`claims gate: unresolvable noteref ${m[0]} — build fails`);
+    out.push({ ref: num });
+    last = m.index! + m[0].length;
+  }
+  out.push({ text: prose.slice(last) });
+  return out;
+}
+
+const entrySegs = (p: (typeof projects)[number]) => {
+  const prose =
+    p.prose.trimEnd() +
+    (p.not_yet.length > 0
+      ? ` What it does not yet do is also worth saying: ${p.not_yet.join("; ")}.`
+      : "");
+  return segments(prose, (id) => refNums.get(`${p.id}:${id}`));
+};
+const workshopSegs = segments(workshop.prose.trimEnd(), (id) => workshopRefs.get(id));
+
+const roman = (n: number) => ["", "I", "II", "III", "IV", "V", "VI", "VII"][n] ?? String(n);
+const buildDate = new Date().toISOString().slice(0, 10);
+const DRAFT_BADGE = "[DRAFT — AWAITING ALEX'S VOICE]";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alex Barclay — A Treatise on Trustworthy Autonomous Systems</title>
+    <meta name="description" content="Alex Barclay — a treatise on trustworthy autonomous systems." />
+    <link rel="preload" href="/fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/newsreader-latin-opsz-italic.woff2" as="font" type="font/woff2" crossorigin />
+  </head>
+  <body>
+    <div class="page">
+      <nav class="contents smallcaps">
+        Contents
+        <span class="sep">—</span><a href="#thesis">I. Thesis</a>
+        <span class="sep">·</span><a href="#plates">II. Plates</a>
+        <span class="sep">·</span><a href="#essays">III. Essays</a>
+        <span class="sep">·</span><a href="#workshop">IV. The Workshop</a>
+        <span class="sep">·</span><a href="#author">V. The Author</a>
+        <span class="sep">·</span><a href="#colophon">Colophon</a>
+      </nav>
+
+      <header class="front" id="thesis">
+        <p class="epigraph">
+          “{meta.epigraph.text}”
+          <cite>— {meta.epigraph.cite}</cite>
+        </p>
+        <h1 class="thesis" set:html={thesisHtml} />
+        <p class="byline smallcaps">
+          {meta.byline.name}<span class="dot">·</span>{meta.byline.place}<span class="dot">·</span>{meta.byline.role}
+        </p>
+      </header>
+
+      <section id="plates">
+        <p class="section-label smallcaps"><span class="num">II</span>Plates</p>
+
+        <div class="body-grid">
+          <div class="prose">
+            {sections.plates_intro.draft && <p class="draft-badge">{DRAFT_BADGE}</p>}
+            <p>{sections.plates_intro.prose.trimEnd()}</p>
+          </div>
+          <aside class="margin-note">
+            <span class="cite-mark">↳</span> figures derived from<br />repository definitions;<br />see
+            <a href="#colophon">colophon</a> for method
+          </aside>
+        </div>
+
+        <HalyardPlate />
+
+        {projects.map((p, i) => (
+          <article class="entry" id={p.id}>
+            <div class="entry-head">
+              <h3>{p.name}</h3>
+              <span class="entry-meta">{p.meta_line}</span>
+            </div>
+            <div class="body-grid">
+              <div class="prose">
+                {p.draft && <p class="draft-badge">{DRAFT_BADGE}</p>}
+                <p>
+                  {entrySegs(p).map((s) =>
+                    "ref" in s ? <sup class="noteref">{s.ref}</sup> : <Fragment>{s.text}</Fragment>
+                  )}
+                </p>
+              </div>
+              <aside class="margin-note">
+                {p.claims.map((c) => (
+                  <Fragment>
+                    <span class="cite-mark">↳ {refNums.get(`${p.id}:${c.id}`)}</span> {c.text} —<br />
+                    {c.verified && (
+                      <Fragment>
+                        <span class="verified">✓ verified</span> —<br />
+                      </Fragment>
+                    )}
+                    <a href={c.evidence.url}>{c.evidence.label}</a>
+                    <br />
+                    <br />
+                  </Fragment>
+                ))}
+                {p.plate.status !== "derived" && (
+                  <Fragment>
+                    <span class="faint">PLATE {roman(p.plate.number)} · {p.plate.status}</span>
+                    <br />
+                    <br />
+                  </Fragment>
+                )}
+                {i === 0 && (
+                  <span class="faint">[links resolve from<br />claims.yaml at build;<br />an orphan claim<br />fails the build]</span>
+                )}
+              </aside>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <section id="essays">
+        <p class="section-label smallcaps"><span class="num">III</span>Essays</p>
+        <div class="body-grid">
+          <div class="prose">
+            {sections.essays_intro.draft && <p class="draft-badge">{DRAFT_BADGE}</p>}
+            <p>{sections.essays_intro.prose.trimEnd()}</p>
+          </div>
+          {sections.essays_intro.margin && (
+            <aside class="margin-note">
+              <span class="cite-mark">↳</span> {sections.essays_intro.margin}
+            </aside>
+          )}
+        </div>
+
+        {essays.map((e) => (
+          <div class="essay">
+            <div class="body-grid">
+              <div class="prose">
+                <h3>{e.url ? <a href={e.url}>{e.title}</a> : e.title}</h3>
+                <p class="abstract">{e.abstract}</p>
+              </div>
+              <aside class="margin-note">
+                <span class="cite-mark">↳</span> essay {roman(e.series_position)} · {e.status}
+                {e.draft && (
+                  <Fragment>
+                    <br />
+                    <span class="draft-badge">{DRAFT_BADGE}</span>
+                  </Fragment>
+                )}
+              </aside>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      <section id="workshop">
+        <p class="section-label smallcaps"><span class="num">IV</span>The Workshop</p>
+        <div class="body-grid">
+          <div class="prose">
+            {workshop.draft && <p class="draft-badge">{DRAFT_BADGE}</p>}
+            <p>
+              {workshopSegs.map((s) =>
+                "ref" in s ? <sup class="noteref">{s.ref}</sup> : <Fragment>{s.text}</Fragment>
+              )}
+            </p>
+          </div>
+          <aside class="margin-note">
+            {workshop.planned_plates.map((pp) => (
+              <Fragment>
+                <span class="cite-mark">↳ {workshopRefs.get(pp.name.toLowerCase())}</span> {pp.name} —<br />
+                PLATE {roman(pp.number)} · {pp.status}
+                <br />
+                <br />
+              </Fragment>
+            ))}
+            <span class="faint">{workshop.disciplines}</span>
+          </aside>
+        </div>
+      </section>
+
+      <section id="author">
+        <p class="section-label smallcaps"><span class="num">V</span>The Author</p>
+        <div class="body-grid">
+          <div class="prose">
+            {author.draft && <p class="draft-badge">{DRAFT_BADGE}</p>}
+            <p>{author.prose.trimEnd()}</p>
+          </div>
+          <aside class="margin-note">
+            <span class="cite-mark">↳</span> correspondence:<br />
+            <a href={`mailto:${meta.correspondence.email}`}>email</a> ·
+            <a href={meta.correspondence.github}>github</a>
+            {meta.correspondence.calendar && (
+              <Fragment>
+                 · <a href={meta.correspondence.calendar}>calendar</a>
+              </Fragment>
+            )}
+          </aside>
+        </div>
+      </section>
+
+      <footer class="colophon" id="colophon">
+        <div class="device" aria-hidden="true">✳</div>
+        <p class="smallcaps" style="color:var(--bone)">Colophon</p>
+        <p>
+          Set in Newsreader and JetBrains Mono, self-hosted, on a ground of lampblack. The figures are
+          engraved from the repositories they depict — their states and transitions extracted by script,
+          their composition set by hand. Every factual claim in the prose carries a citation in the margin,
+          generated from a single claims file; at build time, a claim without evidence fails the build, as
+          does a figure that no longer matches its repository. Link resolution and embargo checks run in CI
+          and are not yet wired; the site is held to the same ladder as the systems it describes, and its
+          rungs are labeled honestly.
+        </p>
+        <p class="mono" style="font-size:0.7rem">
+          LAST VERIFIED: {buildDate} · SOURCE: PRIVATE UNTIL RELEASE · GATES: CLAIMS ✓ · LINKS & EMBARGO: PENDING CI
+        </p>
+      </footer>
+    </div>
+
+    <script is:inline>
+      (function () {
+        var plates = document.querySelectorAll(".plate-frame.will-draw");
+        if (!("IntersectionObserver" in window)) {
+          plates.forEach(function (p) { p.classList.add("drawn"); });
+          return;
+        }
+        var io = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (e) {
+              if (e.isIntersecting) { e.target.classList.add("drawn"); io.unobserve(e.target); }
+            });
+          },
+          { threshold: 0.35 }
+        );
+        plates.forEach(function (p) { io.observe(p); });
+      })();
+    </script>
+  </body>
+</html>

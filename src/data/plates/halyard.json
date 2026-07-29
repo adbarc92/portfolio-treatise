@@ -1,0 +1,170 @@
+{
+  "plate": "halyard",
+  "source": {
+    "repo": "https://github.com/adbarc92/halyard",
+    "commit": "e3f2b5bcaca70fd238a88507b41d94af76f41cb0",
+    "workingTreeClean": true,
+    "file": "src/halyard/coordinator/state-machine.ts",
+    "extractedAt": "2026-07-29T00:37:02.277Z"
+  },
+  "entry": [
+    "tagged"
+  ],
+  "states": [
+    "tagged",
+    "built",
+    "tested",
+    "uploaded",
+    "in_review",
+    "rejected",
+    "shipped_dark",
+    "live",
+    "rolled_back",
+    "dead"
+  ],
+  "terminal": [
+    "dead"
+  ],
+  "transitions": [
+    {
+      "from": "tagged",
+      "to": "built"
+    },
+    {
+      "from": "tagged",
+      "to": "dead"
+    },
+    {
+      "from": "built",
+      "to": "tested"
+    },
+    {
+      "from": "built",
+      "to": "dead"
+    },
+    {
+      "from": "tested",
+      "to": "uploaded"
+    },
+    {
+      "from": "tested",
+      "to": "dead"
+    },
+    {
+      "from": "uploaded",
+      "to": "in_review"
+    },
+    {
+      "from": "uploaded",
+      "to": "shipped_dark"
+    },
+    {
+      "from": "uploaded",
+      "to": "rejected"
+    },
+    {
+      "from": "uploaded",
+      "to": "live"
+    },
+    {
+      "from": "uploaded",
+      "to": "dead"
+    },
+    {
+      "from": "in_review",
+      "to": "shipped_dark"
+    },
+    {
+      "from": "in_review",
+      "to": "rejected"
+    },
+    {
+      "from": "in_review",
+      "to": "dead"
+    },
+    {
+      "from": "rejected",
+      "to": "in_review"
+    },
+    {
+      "from": "rejected",
+      "to": "shipped_dark"
+    },
+    {
+      "from": "rejected",
+      "to": "dead"
+    },
+    {
+      "from": "shipped_dark",
+      "to": "live"
+    },
+    {
+      "from": "shipped_dark",
+      "to": "dead"
+    },
+    {
+      "from": "live",
+      "to": "rolled_back"
+    },
+    {
+      "from": "rolled_back",
+      "to": "live"
+    },
+    {
+      "from": "rolled_back",
+      "to": "dead"
+    }
+  ],
+  "failsafe": [
+    {
+      "from": "tagged",
+      "to": "dead",
+      "kind": "failure"
+    },
+    {
+      "from": "built",
+      "to": "dead",
+      "kind": "failure"
+    },
+    {
+      "from": "tested",
+      "to": "dead",
+      "kind": "failure"
+    },
+    {
+      "from": "uploaded",
+      "to": "dead",
+      "kind": "failure"
+    },
+    {
+      "from": "in_review",
+      "to": "dead",
+      "kind": "failure"
+    },
+    {
+      "from": "rejected",
+      "to": "in_review",
+      "kind": "recovery"
+    },
+    {
+      "from": "rejected",
+      "to": "dead",
+      "kind": "failure"
+    },
+    {
+      "from": "shipped_dark",
+      "to": "dead",
+      "kind": "failure"
+    },
+    {
+      "from": "rolled_back",
+      "to": "live",
+      "kind": "recovery"
+    },
+    {
+      "from": "rolled_back",
+      "to": "dead",
+      "kind": "failure"
+    }
+  ]
+}

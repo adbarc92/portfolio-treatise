@@ -1,0 +1,104 @@
+# The Illuminated Treatise — Design System
+**Version 1.0 · July 26, 2026 · Confirmed against `treatise-reference.html`**
+
+The reference implementation (`treatise-reference.html`) is the visual source of truth. Where this document and the reference disagree, the reference wins; flag the discrepancy rather than silently choosing.
+
+**Design thesis:** a printed treatise on trustworthy autonomous systems, illustrated with plates engraved from the author's actual machinery. Restraint with gravity. Evidence is the ornament. Nothing is asserted above what the margin can cite.
+
+---
+
+## 1. Tokens
+
+### 1.1 Color
+
+| Token | Value | Role | Rules |
+|---|---|---|---|
+| `--ink-ground` | `#151110` | Page ground | Warm lampblack. Never blue-gray. Never gradients |
+| `--bone` | `#E3D9C6` | Primary text | Contrast vs ground ≥ 10:1 |
+| `--bone-muted` | `#8F8574` | Secondary text, captions, marginalia | Never for body prose |
+| `--oxblood` | `#8C3B32` | Links, active states, section numerals, selection ground | Never fills large areas |
+| `--brass` | `#A9884C` | **Verification only** — via `--verify` | Appears *only* beside proven claims: ✓ marks, citation arrows (`↳`), focus rings. Scarcity is semantic. Never decorative |
+| `--verify` | `var(--brass)` | Alias all verification styling to this | Components reference `--verify`, never `--brass` directly |
+| `--plate-line` | `rgba(227,217,198,0.62)` | Primary engraving stroke | |
+| `--plate-line-faint` | `rgba(227,217,198,0.28)` | Rules, borders, secondary strokes, dashed fail-safe paths | |
+
+Hard rules: no gradients anywhere (the single radial wash inside `.plate-frame` at 2.5% opacity is the only sanctioned exception); no pure white, no pure black; no colors outside this table without a design-system revision.
+
+### 1.2 Typography
+
+| Role | Face | Settings |
+|---|---|---|
+| Display + body serif | **Newsreader** (variable) | `font-optical-sizing:auto`. Thesis: `clamp(2.1rem,5.2vw,3.35rem)`, weight 430, `line-height:1.18`, `letter-spacing:-0.012em`. Body: 18.5px / 1.68, weight 400 |
+| Evidence mono | **JetBrains Mono** (Berkeley Mono if licensed; keep metrics-compatible fallback stack) | Marginalia 0.72rem / 1.75; plate labels 13px with 2.5px letterspacing; captions 0.72rem / 1.8 |
+| Utility labels | Newsreader **real small caps** (`font-variant-caps:all-small-caps`, `letter-spacing:0.12em`, weight 500) | Nav, section labels, entry heads, bylines. No third family, ever |
+
+- Fonts are **self-hosted** in production (woff2, subset, `font-display:swap` is acceptable only for mono; the serif should preload).
+- Measure: `--measure: 68ch`. Body prose never exceeds it.
+- Headers whisper: small caps at ~1x body size do the work of headings. The thesis is the only display-size text on the site.
+
+### 1.3 Spacing & layout
+
+- Page: `max-width: calc(68ch + 17rem + 4rem)`, centered, `padding: 0 1.5rem`.
+- **Body grid:** `grid-template-columns: minmax(0,68ch) 17rem; column-gap: 4rem`. Prose in column 1; marginalia in column 2.
+- **≤960px:** grid collapses to one column; margin notes become inline blocks below their paragraph (`border-left: 2px solid --plate-line-faint`).
+- Front matter: 7.5rem top padding. Sections: 2.5rem vertical. Plates: 4.5rem vertical margins, full page width (they break the measure deliberately).
+
+---
+
+## 2. Components
+
+### 2.1 Contents nav
+A table of contents, not a navbar. Small caps, `--bone-muted`, separators in `--plate-line-faint`. Roman-numeral sections: `I. Thesis · II. Plates · III. Essays · IV. The Workshop · V. The Author · Colophon`. No logo, no CTA button, no sticky behavior.
+
+### 2.2 Front matter
+Epigraph (italic serif, ≤34ch, `--bone-muted`) with a mono `cite` line → thesis (`h1.thesis`) → byline in small caps with oxblood interpuncts. The epigraph quotes the author's own doctrine: *"Rungs are earned by evidence, not asserted." — WORKFLOW.md, on the Readiness Ladder*.
+
+### 2.3 Section labels
+Small caps + mono roman numeral in `--oxblood`: `<span class="num">II</span>Plates`.
+
+### 2.4 Marginalia (the citation system)
+- Every factual claim in prose carries a `sup.noteref` (mono, `--verify`) pointing to a `.margin-note` in the margin column.
+- Margin notes: mono 0.72rem, `--bone-muted`, hairline left border, citation arrow `↳` in `--verify`.
+- Verified claims render `✓ verified` in `--verify` plus a link to the evidence (CI run, test suite section, registry listing, repository).
+- **Notes are generated from `claims.yaml`, never hand-typed.** A claim without an evidence entry does not render — the build fails instead (see agent prompt, gates).
+
+### 2.5 Plates
+Anatomy: `figure.plate` → `.plate-frame` (hairline border + offset outline, corner ticks inside the SVG) → SVG figure → `figcaption.plate-caption` (mono; left: `PLATE N — NAME:` in `--bone` + description; right: status note).
+
+Engraving language (the shared "engraving kit" — one set of SVG defs reused by all plates):
+- Strokes: primary `--plate-line` at 1.4; secondary/fail-safe `--plate-line-faint` at 1.2, dashed `5 5`.
+- Fills: none, except the shared 45° hatch pattern (`rgba(227,217,198,0.14)`, 7px pitch) for terminal/failure states.
+- Labels: mono, uppercase, letterspaced; annotations at 10.5px in `--bone-muted`.
+- Verification marks: mono `✓` in `--verify`, placed on tested transitions only — and only when `claims.yaml` attests them.
+- Terminal/accepting states: double circle. Arrowheads via shared markers.
+- Figures are **derived from repository definitions** (states, transitions, topology extracted by script), then composed by hand. Never invent structure; placeholder figures must say `[PLACEHOLDER — FINAL PLATE DERIVED FROM REPOSITORY DEFINITIONS]` in the caption.
+
+### 2.6 Project entries
+`article.entry`: hairline top rule; head = small-caps name + mono meta line; one paragraph of prose in the body grid with marginalia. Prose formula (essay voice): why the problem matters (concession first) → what the system is → **what is proven** (cited) → **what is not yet** (from `claims.yaml.not_yet`, honestly stated).
+
+### 2.7 Essay entries
+`.essay`: hairline top rule; italic serif title (link, underline appears on hover in oxblood); one-line abstract in `--bone-muted` at 0.95rem; margin note with series position and status. Abstracts are the author's words only — flag any placeholder abstract for replacement before ship.
+
+### 2.8 The Workshop
+Same body-grid prose treatment. Game-development systems (e.g., the MoralEvaluator dialog engine) graduate to plates like any other system; hand-drawn work is referenced, not simulated.
+
+### 2.9 Colophon
+Hand-drawn printer's device (placeholder: ✳ in a hairline circle until the real mark is inked and scanned) → small-caps "Colophon" → prose stating typefaces, the plate-derivation method, and the three build gates → mono status line: `LAST VERIFIED: {build date} · SOURCE: {repo} · GATES: EMBARGO ✓ CLAIMS ✓ LINKS ✓` (values injected at build; never hardcoded).
+
+---
+
+## 3. Motion
+
+One orchestrated moment; nothing else.
+- **Plates draw themselves:** all `[data-draw]` strokes use `pathLength="1"`, `stroke-dasharray:1`, offset 1→0 over 1.15s `cubic-bezier(.4,0,.25,1)` when the frame enters the viewport (IntersectionObserver, threshold 0.35, once). Labels and ✓ marks fade in at 0.85s.
+- Fully disabled under `prefers-reduced-motion: reduce` (plates render complete). No IntersectionObserver support → render complete.
+- Link hover: underline thickness 1px→2.5px. That is the complete motion inventory. No parallax, no fade-on-scroll prose, no hover cards, no page transitions.
+
+## 4. Accessibility & quality floor
+Body contrast ≥ 10:1; muted text ≥ 4.5:1 against ground. Visible focus (`--verify` 2px outline, 3px offset). Plates carry `role="img"` + full `aria-label` describing the figure. Semantic landmarks (`nav`, `header`, `section`, `footer`). Keyboard-only pass and 380px-width pass required before any phase is called done. Zero client JS except the ~20-line plate-draw observer.
+
+## 5. Voice
+Essay register: periodic sentences, concession-before-claim, understatement, prose over lists. Banned vocabulary: *passionate, cutting-edge, blazingly, seamless, journey, delightful, crafting.* Banned components: skill bars, testimonials, logo walls, emoji, stat-counter heroes. Claims state exactly what the evidence supports — including "not yet" lists, which are a feature of the voice.
+
+## 6. Anti-patterns (reject on sight)
+Gradients · animated text · card grids with shadows and radii · blue-gray dark mode · SaaS navbar chrome · stock or AI-generic illustration · a third typeface · brass/`--verify` used decoratively · any claim without a margin citation · any figure not derived from a repository (unless captioned PLACEHOLDER).

@@ -1,0 +1,249 @@
+# Single source of truth for all rendered content (see AGENT-PROMPT.md).
+# Rules enforced at build (src/lib/claims.ts, fail-closed):
+#   - a claim without evidence.url fails the build
+#   - verified: true is the only source of --verify marks
+#   - not_yet must be present (empty only deliberately)
+#   - [^id] markers in prose must resolve to claims / planned plates
+# Evidence URLs are CANDIDATES extracted from the real repo, pinned to commit
+# e3f2b5b. verified stays false until Alex confirms each link. All prose is
+# draft: true (renders with a visible DRAFT badge) until Alex approves it.
+
+meta:
+  thesis: "Autonomous systems are easy to build and hard to trust. I work on the second problem."
+  epigraph:
+    text: "Rungs are earned by evidence, not asserted."
+    cite: "WORKFLOW.md, on the Readiness Ladder"
+  byline: { name: Alex Barclay, place: Denver, role: "Senior Software Engineer, Garmin" }
+  correspondence:
+    email: "adbarclay92@gmail.com" # TODO(alex): confirm this is the address you want public
+    github: "https://github.com/adbarc92"
+    calendar: "" # TODO(alex): supply booking link, or leave empty to omit
+
+sections:
+  plates_intro:
+    draft: true # reference-mock prose, awaiting Alex's voice
+    prose: |
+      The interesting problem was never getting agents to work; it was knowing
+      when they had. The systems below are attempts at that problem — control
+      planes, release machinery, verification gates — and each is presented
+      here the way it would be presented to a reviewer: with its structure
+      drawn from the repository itself, its proven claims cited in the margin,
+      and its unproven ones labeled as such.
+  essays_intro:
+    draft: true
+    prose: |
+      The same conviction, applied to political economy: institutions, like
+      software, should not be trusted on their self-report. A series on
+      insider–outsider dynamics and the design of rules that cannot quietly
+      favor the people who wrote them.
+    margin: "series in progress · mechanism design applied to generational economics"
+
+projects:
+  - id: halyard
+    name: Halyard
+    meta_line: "EVENT-DRIVEN RELEASE PIPELINE · MULTI-PLATFORM LAUNCHES"
+    plate:
+      number: 3
+      source: extractors/halyard.mjs
+      status: derived
+    draft: true # energized register per Alex's request (2026-07-28); still draft until approved
+    prose: |
+      Release day is the highest-stakes hour in software — the moment when a
+      system is least supervised and most consequential — and most teams still
+      walk into it armed with a checklist and hope. Halyard replaces the
+      ritual with a machine: a launch pipeline where every transition is
+      explicit, every failure path lands somewhere known, and re-running a
+      completed step changes nothing at all.[^idempotence] It does not ask to
+      be trusted — its test suite makes the case first, with the state
+      machine, its transitions, and its fail-safe paths all proven before they
+      are claimed.[^failsafe]
+    claims:
+      - id: idempotence
+        text: "idempotent re-entry"
+        evidence:
+          # TODO(alex): confirm; alternative: tests/record-store.test.ts (dedup-key idempotence)
+          url: "https://github.com/adbarc92/halyard/blob/e3f2b5bcaca70fd238a88507b41d94af76f41cb0/tests/reconcile.test.ts"
+          label: "test suite § idempotence"
+        verified: false # flip only on Alex's confirmation
+      - id: failsafe
+        text: "transitions, fail-safe paths, recovery"
+        evidence:
+          # TODO(alex): confirm; alternatives: tests/recovery.test.ts, tests/deploy-failure.test.ts,
+          # or a CI run URL once one is chosen
+          url: "https://github.com/adbarc92/halyard/blob/e3f2b5bcaca70fd238a88507b41d94af76f41cb0/tests/state-machine.test.ts"
+          label: "test suite · state machine & recovery"
+        verified: false
+    not_yet: [] # TODO(alex): author the honest-gaps list (empty must be deliberate)
+
+  - id: reqdrive
+    name: Reqdrive
+    meta_line: "REQUIREMENTS-TO-PR PIPELINE · FAIL-CLOSED DRAFT GATE"
+    plate:
+      number: 4 # TODO(alex): plate numbering beyond III and V is provisional
+      source: null
+      status: planned
+    draft: true # energized register per Alex's request (2026-07-28); still draft until approved
+    prose: |
+      Anyone can wire an agent to open pull requests; the demos are
+      everywhere. Reqdrive is built for the part the demos skip — the handoff,
+      where a machine's confidence becomes a reviewer's problem — and it
+      refuses to bluff. A requirements document runs through planning,
+      story-by-story implementation, and verification, and the pull request at
+      the end fails closed: it arrives as a draft unless every piece of
+      positive evidence is in hand.[^draft_gate] Guarding the guards, a frozen
+      test oracle catches any attempt to weaken or drop a test — and proves in
+      CI, against a planted violation, that it still fires.[^frozen_oracle]
+      Even the requirements file is treated as hostile until screened, escaped
+      and checked before it ever touches a prompt or a shell.[^sanitize]
+    claims:
+      - id: draft_gate
+        text: "fail-closed draft gate"
+        evidence:
+          # tests: "draft gate: no testCommand forces draft" etc. incl. a positive control
+          url: "https://github.com/adbarc92/reqdrive/blob/6ea2c4d3df05165cc39863963b54bf91dfef881d/tests/simple-test.sh"
+          label: "test suite § draft gate"
+        verified: false # flip only on Alex's confirmation
+      - id: frozen_oracle
+        text: "frozen test oracle, self-proving gate"
+        evidence:
+          # oracle-gate.sh rules R0-R7 + gate-selftest.sh trips the gate in CI
+          url: "https://github.com/adbarc92/reqdrive/blob/6ea2c4d3df05165cc39863963b54bf91dfef881d/tests/oracle-gate.sh"
+          label: "freeze gate · self-test"
+        verified: false
+      - id: sanitize
+        text: "requirement text treated as untrusted"
+        evidence:
+          # sanitize_for_prompt / validate_requirement_content / validate_file_path tests
+          url: "https://github.com/adbarc92/reqdrive/blob/6ea2c4d3df05165cc39863963b54bf91dfef881d/tests/simple-test.sh"
+          label: "test suite § sanitization"
+        verified: false
+    not_yet: [] # TODO(alex): author (candidates from repo's own drift-report.md / claims-audit.md)
+
+  - id: command-center
+    name: Command-Center
+    meta_line: "SUPERVISED MULTI-AGENT CONTROL PLANE · EVENT-SOURCED · CRASH-RESUMABLE"
+    plate:
+      number: 1 # TODO(alex): plate numbering beyond III and V is provisional
+      source: null
+      status: planned
+    draft: true # energized register per Alex's request (2026-07-28); still draft until approved
+    prose: |
+      One coding agent is a demo. A fleet is an operations problem — crashes
+      mid-run, leaking budgets, state scattered across processes that die
+      without warning — and Command-Center answers it with a full control
+      plane: a Rust daemon, disposable containers, and every fact about the
+      fleet held authoritatively in SQLite, so a crash costs a restart instead
+      of the truth. The acceptance oracle is content-hashed the moment the
+      spec is set — an agent that touches its own tests is routed straight to
+      a human, and the tripwire re-arms itself after every
+      restart.[^oracle_gate] The reconciler that converges the fleet is tested
+      for restraint as hard as for reach: strays reaped, stranded units
+      halted, healthy live work provably untouched.[^reconcile] And under it
+      all sits an event log that cannot be double-written, no matter how many
+      times a write retries.[^idempotent_log]
+    claims:
+      - id: oracle_gate
+        text: "tamper-proof acceptance oracle"
+        evidence:
+          # tampered_oracle_routes_to_needs_human, rehydrate_reloads_oracle_hash_so_tamper_gate_rearms
+          url: "https://github.com/adbarc92/command-center/blob/705acb519338336cebdca862e2c6d70d5163932a/crates/fleetd/src/driver.rs"
+          label: "test suite · oracle tamper gate"
+        verified: false # flip only on Alex's confirmation
+      - id: reconcile
+        text: "reconciler spares live work"
+        evidence:
+          # steady_state_spares_live_units_but_reaps_strays_and_halts_stranded et al.
+          url: "https://github.com/adbarc92/command-center/blob/705acb519338336cebdca862e2c6d70d5163932a/crates/fleetd/src/reconcile.rs"
+          label: "test suite · reconciliation"
+        verified: false
+      - id: idempotent_log
+        text: "idempotent event append"
+        evidence:
+          # append_is_idempotent_on_seq
+          url: "https://github.com/adbarc92/command-center/blob/705acb519338336cebdca862e2c6d70d5163932a/crates/fleetd/src/store.rs"
+          label: "test suite · event store"
+        verified: false
+    not_yet: [] # TODO(alex): author (README's own Status section separates shipped from roadmap)
+
+  - id: mcp-browser-bridge
+    name: mcp-browser-bridge
+    meta_line: "MCP BROWSER BRIDGE · JSON-RPC OVER WEBSOCKET · CLOSED 11-TOOL SURFACE"
+    plate:
+      number: 2 # TODO(alex): plate numbering beyond III and V is provisional
+      source: null
+      status: planned
+    draft: true # energized register per Alex's request (2026-07-28); still draft until approved
+    prose: |
+      Handing an AI assistant the keys to a real browser is real power, and
+      real power wants a narrow doorway. Mcp-browser-bridge is that doorway:
+      an MCP server joined to a browser extension over a local WebSocket,
+      exposing exactly eleven tools — counted, closed, and defended by a test
+      that fails the moment a twelfth appears.[^roster] The wire protocol
+      holds the same line: every request carries a unique id, resolves at most
+      once, and cannot leak — timeouts sweep it, shutdown rejects
+      it.[^lifecycle] Chrome will suspend the extension's service worker
+      whenever it pleases; the bridge plans on it, and a regression test pins
+      the reconnection.[^keepalive]
+    claims:
+      - id: roster
+        text: "closed, counted tool surface"
+        evidence:
+          # "registers all 11 browser tools" + "registers no extra tools"
+          url: "https://github.com/adbarc92/mcp-browser-bridge/blob/1f5aed7b809a38d79d3d0a4748195b58a0340cb5/src/mcp-server.test.ts"
+          label: "test suite · tool roster"
+        verified: false # flip only on Alex's confirmation
+      - id: lifecycle
+        text: "leak-proof request lifecycle"
+        evidence:
+          # unique ids, at-most-once resolve, timeout cleanup, shutdown rejects pending
+          url: "https://github.com/adbarc92/mcp-browser-bridge/blob/1f5aed7b809a38d79d3d0a4748195b58a0340cb5/src/utils/pending-requests.test.ts"
+          label: "test suite · pending requests"
+        verified: false
+      - id: keepalive
+        text: "survives service-worker suspension"
+        evidence:
+          # alarms-based keepalive + reconnect-on-startup regression tests
+          url: "https://github.com/adbarc92/mcp-browser-bridge/blob/1f5aed7b809a38d79d3d0a4748195b58a0340cb5/src/service-worker-keepalive.test.ts"
+          label: "test suite · MV3 keepalive"
+        verified: false
+    not_yet: [] # TODO(alex): author (no E2E browser tests yet, per scan — a candidate)
+
+essays:
+  - id: price-of-the-ticket
+    title: "The Price of the Ticket"
+    abstract: "On the arithmetic of effort across generations — what an hour of work bought in 1975 and what it buys now, written for the reader most inclined to disagree."
+    draft: true # abstract from reference mock, awaiting Alex's words
+    status: complete
+    series_position: 1
+    url: "" # TODO(alex): where does this essay live?
+  - id: ladder-problem
+    title: "The Ladder Problem"
+    abstract: "The insider–outsider pattern across zoning, licensing, and two-tier contracts — and five mechanisms for rules that bind the rule-makers symmetrically."
+    draft: true
+    status: complete
+    series_position: 2
+    url: "" # TODO(alex): where does this essay live?
+
+workshop:
+  draft: true # prose below is from the reference mock, not yet approved
+  prose: |
+    Not everything here is infrastructure. In the workshop: a story-driven JRPG
+    and a tactical RPG, both in Godot 4, built toward a hand-drawn standard
+    rather than a generated one — and, underneath the story, a dialog engine
+    that models characters' moral foundations and evaluates the player's
+    choices against them.[^moralevaluator] The engine will get its own plate;
+    the drawings are done by hand, which is the point.
+  disciplines: "worldbuilding · figure drawing · asset pipeline"
+  planned_plates:
+    - { number: 5, name: MoralEvaluator, source: null, status: planned }
+
+author:
+  draft: true # my draft of the paragraph the reference specifies; awaiting Alex's voice
+  prose: |
+    I came to software from philosophy, by way of Hack Reactor, and grew up as
+    an engineer at Garmin — SE to SE II to Senior — building mobile platform
+    software. The work above is the conviction that formed along the way:
+    systems that act on their own should be trusted the way engineers trust
+    anything, on evidence. The essays and the workshop are the same argument
+    carried into other materials — institutions and stories, like software,
+    earn trust by what they can show, not by what they say.

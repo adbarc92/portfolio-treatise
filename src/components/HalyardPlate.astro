@@ -1,0 +1,184 @@
+---
+// Plate III — Halyard. Structure comes from src/data/plates/halyard.json
+// (extracted from the repo by extractors/halyard.mjs); composition — the
+// coordinates below — is by hand, per the plan's layout stage. Fail-closed
+// both ways: an extracted transition with no drawn path, or a drawn path
+// with no extracted transition, throws and fails the build.
+// ✓ verify marks are absent deliberately: nothing in claims.yaml is
+// verified: true yet, and only that produces a --verify mark.
+import plate from "../data/plates/halyard.json";
+import { claims } from "../lib/claims";
+
+const halyard = claims.projects.find((p) => p.id === "halyard")!;
+
+const R = 44;
+const NODES: Record<string, { x: number; y: number }> = {
+  tagged: { x: 110, y: 140 },
+  built: { x: 270, y: 140 },
+  tested: { x: 430, y: 140 },
+  uploaded: { x: 590, y: 140 },
+  in_review: { x: 750, y: 140 },
+  shipped_dark: { x: 910, y: 140 },
+  live: { x: 1070, y: 140 },
+  rejected: { x: 670, y: 330 },
+  rolled_back: { x: 1070, y: 330 },
+  dead: { x: 430, y: 505 },
+};
+
+type EdgeStyle = { d: string; kind: "spine" | "skip" | "failsafe"; arrow?: "arrow" | "arrowFaint" };
+const EDGES: Record<string, EdgeStyle> = {
+  "tagged->built": { d: "M 156 140 H 222", kind: "spine", arrow: "arrow" },
+  "built->tested": { d: "M 316 140 H 382", kind: "spine", arrow: "arrow" },
+  "tested->uploaded": { d: "M 476 140 H 542", kind: "spine", arrow: "arrow" },
+  "uploaded->in_review": { d: "M 636 140 H 702", kind: "spine", arrow: "arrow" },
+  "in_review->shipped_dark": { d: "M 796 140 H 862", kind: "spine", arrow: "arrow" },
+  "shipped_dark->live": { d: "M 956 140 H 1022", kind: "spine", arrow: "arrow" },
+  "live->rolled_back": { d: "M 1070 186 V 280", kind: "spine", arrow: "arrow" },
+  // lossy-poll skips: legal forward transitions that jump review states
+  "uploaded->shipped_dark": { d: "M 596 97 C 660 34 840 34 906 97", kind: "skip", arrow: "arrowFaint" },
+  "uploaded->live": { d: "M 575 99 C 660 2 1000 6 1066 96", kind: "skip", arrow: "arrowFaint" },
+  "uploaded->rejected": { d: "M 614 178 C 632 222 640 258 650 291", kind: "skip", arrow: "arrowFaint" },
+  "in_review->rejected": { d: "M 726 178 C 708 222 700 258 690 291", kind: "skip", arrow: "arrowFaint" },
+  "rejected->shipped_dark": { d: "M 703 301 C 780 262 840 220 882 173", kind: "skip", arrow: "arrowFaint" },
+  // recovery loops (dashed): resubmit after rejection, re-flip after rollback
+  "rejected->in_review": { d: "M 670 286 C 672 240 720 210 756 183", kind: "failsafe", arrow: "arrowFaint" },
+  "rolled_back->live": { d: "M 1032 310 C 1000 260 1010 200 1039 171", kind: "failsafe", arrow: "arrowFaint" },
+  // failure paths (dashed): drops into the shared rail that flows to `dead`
+  "tagged->dead": { d: "M 110 184 V 500", kind: "failsafe" },
+  "built->dead": { d: "M 270 184 V 500", kind: "failsafe" },
+  "tested->dead": { d: "M 430 184 V 450", kind: "failsafe", arrow: "arrowFaint" },
+  "uploaded->dead": { d: "M 590 184 V 500", kind: "failsafe" },
+  "in_review->dead": { d: "M 738 182 V 500", kind: "failsafe" },
+  "shipped_dark->dead": { d: "M 910 184 V 500", kind: "failsafe" },
+  "rejected->dead": { d: "M 670 374 V 500", kind: "failsafe" },
+  "rolled_back->dead": { d: "M 1070 374 V 500", kind: "failsafe" },
+};
+// the failure rail itself — visual bus the drops join, not an edge
+const RAIL = ["M 110 500 H 375", "M 1070 500 H 485"];
+
+const key = (t: { from: string; to: string }) => `${t.from}->${t.to}`;
+for (const t of plate.transitions)
+  if (!EDGES[key(t)])
+    throw new Error(`plate drift: extracted transition ${key(t)} has no drawn path — re-layout needed`);
+for (const k of Object.keys(EDGES))
+  if (!plate.transitions.some((t) => key(t) === k))
+    throw new Error(`plate drift: drawn edge ${k} is no longer in the extraction`);
+for (const s of plate.states)
+  if (!NODES[s]) throw new Error(`plate drift: extracted state ${s} has no coordinates`);
+for (const s of Object.keys(NODES))
+  if (!plate.states.includes(s)) throw new Error(`plate drift: drawn state ${s} no longer extracted`);
+
+const spine = Object.entries(EDGES).filter(([, e]) => e.kind === "spine");
+const skips = Object.entries(EDGES).filter(([, e]) => e.kind === "skip");
+const failsafe = Object.entries(EDGES).filter(([, e]) => e.kind === "failsafe");
+
+const label = (s: string) => ({
+  parts: s.length > 10 ? s.toUpperCase().split("_") : [s.toUpperCase()],
+  size: s.length <= 8 ? 13 : 11,
+  spacing: s.length <= 8 ? 2.5 : 1.5,
+});
+const isTerminal = (s: string) => plate.terminal.includes(s);
+const failureCount = plate.failsafe.filter((f) => f.kind === "failure").length;
+
+const roman = (n: number) => ["", "I", "II", "III", "IV", "V", "VI", "VII"][n] ?? String(n);
+const plateRoman = roman(halyard.plate.number);
+const commit7 = plate.source.commit.slice(0, 7);
+const repoShort = plate.source.repo.replace("https://github.com/", "");
+const ariaLabel =
+  `Plate ${plateRoman}: Halyard release state machine, extracted from repository definitions ` +
+  `at commit ${commit7} — ${plate.states.length} states and ${plate.transitions.length} transitions. ` +
+  `Happy path: ${plate.entry[0]} through live. Fail-safe paths (failures to the terminal dead state, ` +
+  `and the resubmit and re-flip recovery loops) are shown dashed.`;
+---
+
+<figure class="plate">
+  <div class="plate-frame will-draw">
+    <svg viewBox="0 0 1180 600" role="img" aria-label={ariaLabel}>
+      <defs>
+        <pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="0" x2="0" y2="7" stroke="rgba(227,217,198,0.14)" stroke-width="1"></line>
+        </pattern>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 1 L 9 5 L 0 9" fill="none" stroke="rgba(227,217,198,0.62)" stroke-width="1.3"></path>
+        </marker>
+        <marker id="arrowFaint" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 1 L 9 5 L 0 9" fill="none" stroke="rgba(227,217,198,0.34)" stroke-width="1.2"></path>
+        </marker>
+      </defs>
+
+      <!-- corner ticks -->
+      <g stroke="rgba(227,217,198,0.4)" stroke-width="1">
+        <path d="M 14 34 v-20 h20 M 1166 34 v-20 h-20 M 14 566 v20 h20 M 1166 566 v20 h-20" fill="none"></path>
+      </g>
+
+      <!-- primary transitions -->
+      <g fill="none" stroke="rgba(227,217,198,0.62)" stroke-width="1.4">
+        {spine.map(([, e]) => (
+          <path data-draw pathLength="1" d={e.d} marker-end={e.arrow ? `url(#${e.arrow})` : undefined}></path>
+        ))}
+      </g>
+
+      <!-- lossy-poll skip transitions -->
+      <g fill="none" stroke="rgba(227,217,198,0.34)" stroke-width="1.2">
+        {skips.map(([, e]) => (
+          <path data-draw pathLength="1" d={e.d} marker-end={e.arrow ? `url(#${e.arrow})` : undefined}></path>
+        ))}
+      </g>
+
+      <!-- fail-safe paths: failures into the rail, recovery loops -->
+      <g fill="none" stroke="rgba(227,217,198,0.34)" stroke-width="1.2" stroke-dasharray="5 5">
+        {failsafe.map(([, e]) => (
+          <path data-draw pathLength="1" d={e.d} marker-end={e.arrow ? `url(#${e.arrow})` : undefined}></path>
+        ))}
+        {RAIL.map((d) => (
+          <path data-draw pathLength="1" d={d} marker-end="url(#arrowFaint)"></path>
+        ))}
+      </g>
+
+      <!-- states -->
+      <g fill="none" stroke="rgba(227,217,198,0.62)" stroke-width="1.4">
+        {plate.states.map((s) => {
+          const n = NODES[s]!;
+          return isTerminal(s) ? (
+            <>
+              <circle data-draw pathLength="1" cx={n.x} cy={n.y} r={R} fill="url(#hatch)"></circle>
+              <circle data-draw pathLength="1" cx={n.x} cy={n.y} r={R + 7}></circle>
+            </>
+          ) : (
+            <circle data-draw pathLength="1" cx={n.x} cy={n.y} r={R}></circle>
+          );
+        })}
+      </g>
+
+      <!-- state labels -->
+      <g class="node-label" font-family="'JetBrains Mono',monospace" text-anchor="middle">
+        {plate.states.map((s) => {
+          const n = NODES[s]!;
+          const l = label(s);
+          const fill = isTerminal(s) ? "#8F8574" : "#E3D9C6";
+          return l.parts.length === 1 ? (
+            <text x={n.x} y={n.y + (l.size === 13 ? 5 : 4)} font-size={l.size} letter-spacing={l.spacing} fill={fill}>{l.parts[0]}</text>
+          ) : (
+            <text x={n.x} y={n.y - 2} font-size={l.size} letter-spacing={l.spacing} fill={fill}>
+              {l.parts[0]}
+              <tspan x={n.x} dy="14">{l.parts[1]}</tspan>
+            </text>
+          );
+        })}
+      </g>
+
+      <!-- annotations (derived counts only) -->
+      <g class="node-label" font-family="'JetBrains Mono',monospace" font-size="10.5" letter-spacing="1" fill="#8F8574">
+        <text x="140" y="527">on error — {failureCount} paths, dashed</text>
+        <text x="750" y="70" text-anchor="middle">lossy poll — review states may be skipped</text>
+      </g>
+    </svg>
+  </div>
+  <figcaption class="plate-caption">
+    <span>
+      <span class="plate-no">PLATE {plateRoman} — HALYARD:</span> RELEASE STATE MACHINE. STATES, TRANSITIONS, AND
+      FAIL-SAFE PATHS (DASHED), EXTRACTED FROM THE REPOSITORY.
+    </span>
+    <span>DERIVED · {repoShort}@{commit7} · {plate.source.file}</span>
+  </figcaption>
+</figure>

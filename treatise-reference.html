@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alex Barclay — A Treatise on Trustworthy Autonomous Systems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS — reference: Newsreader · brass · full IA (confirmed July 26, 2026) ============ */
+:root{
+  --ink-ground:#151110;
+  --bone:#E3D9C6;
+  --bone-muted:#8F8574;
+  --oxblood:#8C3B32;
+  --brass:#A9884C;
+  --verify:var(--brass);    /* verification accent — brass, confirmed */
+  --plate-line:rgba(227,217,198,0.62);
+  --plate-line-faint:rgba(227,217,198,0.28);
+  --serif:'Newsreader',Georgia,'Times New Roman',serif;
+  --mono:'JetBrains Mono','Berkeley Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --measure:68ch;
+  --margin-col:17rem;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  background:var(--ink-ground);
+  color:var(--bone);
+  font-family:var(--serif);
+  font-optical-sizing:auto;
+  font-size:18.5px;
+  line-height:1.68;
+  -webkit-font-smoothing:antialiased;
+  padding:0 1.5rem;
+}
+::selection{background:var(--oxblood);color:var(--bone)}
+a{color:var(--bone);text-decoration:underline;text-decoration-color:var(--oxblood);text-underline-offset:3px;text-decoration-thickness:1px;transition:text-decoration-thickness .12s ease}
+a:hover{text-decoration-thickness:2.5px}
+a:focus-visible{outline:2px solid var(--verify);outline-offset:3px;border-radius:1px}
+
+.smallcaps{font-variant-caps:all-small-caps;letter-spacing:0.12em;font-weight:500}
+.mono{font-family:var(--mono)}
+.page{max-width:calc(var(--measure) + var(--margin-col) + 4rem);margin:0 auto}
+
+nav.contents{padding:3.5rem 0 0;font-size:0.82rem;color:var(--bone-muted)}
+nav.contents a{color:var(--bone-muted);text-decoration-color:transparent}
+nav.contents a:hover{color:var(--bone);text-decoration-color:var(--oxblood)}
+nav.contents .sep{margin:0 .5em;color:var(--plate-line-faint)}
+
+header.front{padding:7.5rem 0 5rem;max-width:var(--measure)}
+.epigraph{font-style:italic;font-size:1.02rem;color:var(--bone-muted);max-width:34ch;margin-bottom:4.5rem}
+.epigraph cite{display:block;font-style:normal;font-family:var(--mono);font-size:0.72rem;margin-top:.7rem;color:var(--bone-muted)}
+h1.thesis{
+  font-size:clamp(2.1rem,5.2vw,3.35rem);
+  font-weight:430;
+  font-optical-sizing:auto;
+  line-height:1.18;
+  letter-spacing:-0.012em;
+  max-width:24ch;
+}
+h1.thesis em{font-style:italic;font-weight:430}
+.byline{margin-top:2.6rem;font-size:0.86rem;color:var(--bone-muted)}
+.byline .dot{margin:0 .6em;color:var(--oxblood)}
+
+section{padding:2.5rem 0}
+.section-label{font-size:0.95rem;color:var(--bone-muted);margin-bottom:2.2rem}
+.section-label .num{font-family:var(--mono);font-size:0.72rem;color:var(--oxblood);margin-right:.9em}
+
+.body-grid{display:grid;grid-template-columns:minmax(0,var(--measure)) var(--margin-col);column-gap:4rem}
+.prose{grid-column:1;max-width:var(--measure)}
+.prose p + p{margin-top:1.35em}
+
+.margin-note{
+  grid-column:2;align-self:start;
+  font-family:var(--mono);font-size:0.72rem;line-height:1.75;color:var(--bone-muted);
+  border-left:1px solid var(--plate-line-faint);padding-left:1rem;margin-top:.35rem;
+}
+.margin-note .cite-mark{color:var(--verify)}
+.margin-note a{color:var(--bone-muted);text-decoration-color:var(--plate-line-faint)}
+.margin-note a:hover{color:var(--bone);text-decoration-color:var(--verify)}
+.verified{color:var(--verify)}
+sup.noteref{font-family:var(--mono);font-size:0.62em;color:var(--verify);margin-left:1px}
+
+@media (max-width:960px){
+  .body-grid{grid-template-columns:1fr}
+  .margin-note{grid-column:1;border-left:2px solid var(--plate-line-faint);margin:1.1rem 0 .4rem;max-width:var(--measure)}
+}
+
+/* ============ PLATES ============ */
+figure.plate{margin:4.5rem 0;max-width:none}
+.plate-frame{
+  border:1px solid var(--plate-line-faint);
+  outline:1px solid var(--plate-line-faint);
+  outline-offset:5px;
+  padding:2.2rem 1.6rem 1.4rem;
+  background:radial-gradient(ellipse at 50% 0%, rgba(227,217,198,0.025), transparent 60%);
+}
+.plate-frame svg{display:block;width:100%;height:auto}
+figcaption.plate-caption{
+  margin-top:1.35rem;font-family:var(--mono);font-size:0.72rem;line-height:1.8;color:var(--bone-muted);
+  display:flex;justify-content:space-between;gap:2rem;flex-wrap:wrap;
+}
+figcaption .plate-no{color:var(--bone);letter-spacing:0.14em}
+
+.plate-frame [data-draw]{stroke-dasharray:1;stroke-dashoffset:0}
+@media (prefers-reduced-motion:no-preference){
+  .plate-frame.will-draw [data-draw]{stroke-dashoffset:1}
+  .plate-frame.drawn [data-draw]{transition:stroke-dashoffset 1.15s cubic-bezier(.4,0,.25,1);stroke-dashoffset:0}
+  .plate-frame.will-draw .node-label,.plate-frame.will-draw .verify-mark{opacity:0}
+  .plate-frame.drawn .node-label,.plate-frame.drawn .verify-mark{opacity:1;transition:opacity .5s ease .85s}
+}
+
+article.entry{padding:1.5rem 0 3rem;border-top:1px solid var(--plate-line-faint)}
+.entry-head{display:flex;align-items:baseline;gap:1.4rem;margin-bottom:1.6rem;flex-wrap:wrap}
+.entry-head h3{font-variant-caps:all-small-caps;letter-spacing:0.16em;font-weight:500;font-size:1.28rem}
+.entry-head .entry-meta{font-family:var(--mono);font-size:0.7rem;color:var(--bone-muted)}
+
+/* Essay entries — set like items in a table of papers */
+.essay{padding:1.6rem 0;border-top:1px solid var(--plate-line-faint)}
+.essay h3{font-weight:500;font-size:1.15rem;font-style:italic;letter-spacing:0}
+.essay h3 a{text-decoration-color:transparent}
+.essay h3 a:hover{text-decoration-color:var(--oxblood)}
+.essay .abstract{margin-top:.5rem;font-size:0.95rem;color:var(--bone-muted)}
+
+footer.colophon{
+  margin:6rem 0 5rem;padding-top:2.5rem;border-top:1px solid var(--plate-line-faint);
+  max-width:var(--measure);font-size:0.86rem;color:var(--bone-muted);
+}
+footer.colophon .device{
+  width:2.4rem;height:2.4rem;margin-bottom:1.6rem;border:1px solid var(--plate-line-faint);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:0.62rem;color:var(--bone-muted);
+}
+footer.colophon p + p{margin-top:.9em}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <nav class="contents smallcaps">
+    Contents
+    <span class="sep">—</span><a href="#thesis">I. Thesis</a>
+    <span class="sep">·</span><a href="#plates">II. Plates</a>
+    <span class="sep">·</span><a href="#essays">III. Essays</a>
+    <span class="sep">·</span><a href="#workshop">IV. The Workshop</a>
+    <span class="sep">·</span><a href="#author">V. The Author</a>
+    <span class="sep">·</span><a href="#colophon">Colophon</a>
+  </nav>
+
+  <header class="front" id="thesis">
+    <p class="epigraph">“Rungs are earned by evidence, not asserted.”
+      <cite>— WORKFLOW.md, on the Readiness Ladder</cite>
+    </p>
+    <h1 class="thesis">Autonomous systems are easy to build and hard to trust. I&nbsp;work on the <em>second</em> problem.</h1>
+    <p class="byline smallcaps">Alex Barclay<span class="dot">·</span>Denver<span class="dot">·</span>Senior Software Engineer, Garmin</p>
+  </header>
+
+  <section id="plates">
+    <p class="section-label smallcaps"><span class="num">II</span>Plates</p>
+
+    <div class="body-grid">
+      <div class="prose">
+        <p>The interesting problem was never getting agents to work; it was knowing when they had. The systems below are attempts at that problem — control planes, release machinery, verification gates — and each is presented here the way it would be presented to a reviewer: with its structure drawn from the repository itself, its proven claims cited in the margin, and its unproven ones labeled as such.</p>
+      </div>
+      <aside class="margin-note">
+        <span class="cite-mark">↳</span> figures derived from<br>repository definitions;<br>see <a href="#colophon">colophon</a> for method
+      </aside>
+    </div>
+
+    <figure class="plate">
+      <div class="plate-frame will-draw" id="plate3">
+        <svg viewBox="0 0 1180 470" role="img" aria-label="Plate III: Halyard release state machine — states and verified transitions, with fail-safe paths shown dashed">
+          <defs>
+            <pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+              <line x1="0" y1="0" x2="0" y2="7" stroke="rgba(227,217,198,0.14)" stroke-width="1"/>
+            </pattern>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 1 L 9 5 L 0 9" fill="none" stroke="rgba(227,217,198,0.62)" stroke-width="1.3"/>
+            </marker>
+            <marker id="arrowFaint" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 1 L 9 5 L 0 9" fill="none" stroke="rgba(227,217,198,0.34)" stroke-width="1.2"/>
+            </marker>
+          </defs>
+          <g stroke="rgba(227,217,198,0.4)" stroke-width="1">
+            <path d="M 14 34 v-20 h20 M 1166 34 v-20 h-20 M 14 436 v20 h20 M 1166 436 v20 h-20" fill="none"/>
+          </g>
+          <g fill="none" stroke="rgba(227,217,198,0.62)" stroke-width="1.4">
+            <path data-draw pathLength="1" d="M 154 200 H 288" marker-end="url(#arrow)"/>
+            <path data-draw pathLength="1" d="M 398 200 H 532" marker-end="url(#arrow)"/>
+            <path data-draw pathLength="1" d="M 642 200 H 776" marker-end="url(#arrow)"/>
+            <path data-draw pathLength="1" d="M 886 200 H 1020" marker-end="url(#arrow)"/>
+          </g>
+          <g fill="none" stroke="rgba(227,217,198,0.34)" stroke-width="1.2" stroke-dasharray="5 5">
+            <path data-draw pathLength="1" d="M 587 255 V 330" marker-end="url(#arrowFaint)"/>
+            <path data-draw pathLength="1" d="M 532 372 C 300 372 100 340 100 255" marker-end="url(#arrowFaint)"/>
+            <path data-draw pathLength="1" d="M 831 255 C 831 300 700 330 646 355" marker-end="url(#arrowFaint)"/>
+          </g>
+          <g fill="none" stroke="rgba(227,217,198,0.62)" stroke-width="1.4">
+            <circle data-draw pathLength="1" cx="100" cy="200" r="54"/>
+            <circle data-draw pathLength="1" cx="343" cy="200" r="54"/>
+            <circle data-draw pathLength="1" cx="587" cy="200" r="54"/>
+            <circle data-draw pathLength="1" cx="831" cy="200" r="54"/>
+            <circle data-draw pathLength="1" cx="1075" cy="200" r="54"/>
+            <circle data-draw pathLength="1" cx="1075" cy="200" r="61"/>
+            <circle data-draw pathLength="1" cx="587" cy="372" r="42" fill="url(#hatch)"/>
+          </g>
+          <g class="node-label" font-family="'JetBrains Mono',monospace" font-size="13" letter-spacing="2.5" fill="#E3D9C6" text-anchor="middle">
+            <text x="100" y="205">IDLE</text>
+            <text x="343" y="205">STAGED</text>
+            <text x="587" y="205">PUBLISH</text>
+            <text x="831" y="205">VERIFY</text>
+            <text x="1075" y="205">RELEASED</text>
+            <text x="587" y="377" fill="#8F8574">FAILED</text>
+          </g>
+          <g class="node-label" font-family="'JetBrains Mono',monospace" font-size="10.5" letter-spacing="1" fill="#8F8574" text-anchor="middle">
+            <text x="221" y="186">stage()</text>
+            <text x="465" y="186">publish()</text>
+            <text x="709" y="186">verify()</text>
+            <text x="953" y="186">release()</text>
+            <text x="628" y="300">on error</text>
+            <text x="300" y="415">reset — idempotent</text>
+          </g>
+          <g class="verify-mark" font-family="'JetBrains Mono',monospace" font-size="12" fill="#A9884C" text-anchor="middle">
+            <text x="221" y="222">✓</text>
+            <text x="465" y="222">✓</text>
+            <text x="709" y="222">✓</text>
+            <text x="953" y="222">✓</text>
+            <text x="551" y="300">✓</text>
+          </g>
+        </svg>
+      </div>
+      <figcaption class="plate-caption">
+        <span><span class="plate-no">PLATE III — HALYARD:</span> RELEASE STATE MACHINE. STATES, TRANSITIONS, AND FAIL-SAFE PATHS. <span class="verified">✓</span> MARKS TESTED TRANSITIONS.</span>
+        <span>[L1 PLACEHOLDER — FINAL PLATE DERIVED FROM REPOSITORY DEFINITIONS]</span>
+      </figcaption>
+    </figure>
+
+    <article class="entry" id="halyard">
+      <div class="entry-head">
+        <h3>Halyard</h3>
+        <span class="entry-meta">EVENT-DRIVEN RELEASE PIPELINE · MULTI-PLATFORM LAUNCHES</span>
+      </div>
+      <div class="body-grid">
+        <div class="prose">
+          <p>Release day is when software is least supervised and most consequential, which is exactly the wrong time to depend on a checklist and a steady hand. Halyard is a state machine for multi-platform launches: every transition is explicit, every failure path returns the system to a known state, and re-running a step you have already run changes nothing.<sup class="noteref">1</sup> The claims worth making about it are the ones its test suite makes first — the state machine, its transitions, its idempotence, and its fail-safe paths are all tested.<sup class="noteref">2</sup> What it does not yet do is also worth saying: [not-yet list rendered from claims.yaml].</p>
+        </div>
+        <aside class="margin-note">
+          <span class="cite-mark">↳ 1</span> idempotent re-entry —<br><a href="#">test suite § idempotence</a><br><br>
+          <span class="cite-mark">↳ 2</span> <span class="verified">✓ verified</span> — transitions,<br>fail-safe paths, recovery<br><a href="#">CI run · repository</a><br><br>
+          <span style="color:var(--plate-line-faint)">[links resolve from<br>claims.yaml at build;<br>orphan claims fail CI]</span>
+        </aside>
+      </div>
+    </article>
+  </section>
+
+  <section id="essays">
+    <p class="section-label smallcaps"><span class="num">III</span>Essays</p>
+    <div class="body-grid">
+      <div class="prose">
+        <p>The same conviction, applied to political economy: institutions, like software, should not be trusted on their self-report. A series on insider–outsider dynamics and the design of rules that cannot quietly favor the people who wrote them.</p>
+      </div>
+      <aside class="margin-note">
+        <span class="cite-mark">↳</span> series in progress ·<br>mechanism design applied<br>to generational economics
+      </aside>
+    </div>
+
+    <div class="essay">
+      <div class="body-grid">
+        <div class="prose">
+          <h3><a href="#">The Price of the Ticket</a></h3>
+          <p class="abstract">On the arithmetic of effort across generations — what an hour of work bought in 1975 and what it buys now, written for the reader most inclined to disagree.</p>
+        </div>
+        <aside class="margin-note"><span class="cite-mark">↳</span> essay I · complete</aside>
+      </div>
+    </div>
+
+    <div class="essay">
+      <div class="body-grid">
+        <div class="prose">
+          <h3><a href="#">The Ladder Problem</a></h3>
+          <p class="abstract">The insider–outsider pattern across zoning, licensing, and two-tier contracts — and five mechanisms for rules that bind the rule-makers symmetrically.</p>
+        </div>
+        <aside class="margin-note"><span class="cite-mark">↳</span> essay II · complete</aside>
+      </div>
+    </div>
+  </section>
+
+  <section id="workshop">
+    <p class="section-label smallcaps"><span class="num">IV</span>The Workshop</p>
+    <div class="body-grid">
+      <div class="prose">
+        <p>Not everything here is infrastructure. In the workshop: a story-driven JRPG and a tactical RPG, both in Godot 4, built toward a hand-drawn standard rather than a generated one — and, underneath the story, a dialog engine that models characters' moral foundations and evaluates the player's choices against them.<sup class="noteref">3</sup> The engine will get its own plate; the drawings are done by hand, which is the point.</p>
+      </div>
+      <aside class="margin-note">
+        <span class="cite-mark">↳ 3</span> MoralEvaluator —<br>PLATE V · planned<br><br>
+        <span style="color:var(--plate-line-faint)">worldbuilding · figure<br>drawing · asset pipeline</span>
+      </aside>
+    </div>
+  </section>
+
+  <section id="author">
+    <p class="section-label smallcaps"><span class="num">V</span>The Author</p>
+    <div class="body-grid">
+      <div class="prose">
+        <p>[One paragraph, essay voice: philosophy B.A. → Hack Reactor → Garmin (SE → SE II → Senior); mobile platform work by profession; trust infrastructure for autonomous systems by conviction; essays and the workshop as the same argument in other materials.]</p>
+      </div>
+      <aside class="margin-note">
+        <span class="cite-mark">↳</span> correspondence:<br><a href="#">email</a> · <a href="#">github</a> · <a href="#">calendar</a>
+      </aside>
+    </div>
+  </section>
+
+  <footer class="colophon" id="colophon">
+    <div class="device" aria-hidden="true">✳</div>
+    <p class="smallcaps" style="color:var(--bone)">Colophon</p>
+    <p>Set in Newsreader and JetBrains Mono on a ground of lampblack. The figures are engraved from the repositories they depict. Every claim on this page carries a citation in the margin; at build time, a claim without evidence fails the build, a link that does not resolve fails the build, and so does any word under embargo. The site is held to the same ladder as the systems it describes.</p>
+    <p class="mono" style="font-size:0.7rem">LAST VERIFIED: [build date] · SOURCE: [repo link] · GATES: EMBARGO ✓ CLAIMS ✓ LINKS ✓</p>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  var plates = document.querySelectorAll('.plate-frame.will-draw');
+  if(!('IntersectionObserver' in window)){
+    plates.forEach(function(p){ p.classList.add('drawn'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('drawn'); io.unobserve(e.target); }
+    });
+  },{threshold:0.35});
+  plates.forEach(function(p){ io.observe(p); });
+})();
+</script>
+</body>
+</html>

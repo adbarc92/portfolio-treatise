@@ -38,6 +38,11 @@ try {
     ? gitOut(["-C", site, "show", "HEAD:CNAME"])
     : null;
 
+  // v1 = the last commit of the old portfolio, v2 = this replacement
+  const tagExists = (t) =>
+    gitOut(["-C", site, "ls-remote", "--tags", "origin", `refs/tags/${t}`]) !== "";
+  if (!tagExists("v1")) git(["-C", site, "tag", "v1"]);
+
   git(["-C", site, "rm", "-rq", "."], { stdio: "ignore" });
   cpSync("dist", site, { recursive: true });
   writeFileSync(path.join(site, ".nojekyll"), "");
@@ -45,9 +50,11 @@ try {
   cpSync("deploy-target/pages.yml", path.join(site, ".github", "workflows", "pages.yml"));
 
   git(["-C", site, "add", "-A"]);
-  git(["-C", site, "commit", "-m", `deploy: treatise ${sha}${dirty} (manual)`]);
+  git(["-C", site, "commit", "-m", `deploy: portfolio v2 — the treatise (treatise@${sha}${dirty})`]);
+  if (!tagExists("v2")) git(["-C", site, "tag", "v2"]);
   git(["-C", site, "push"]);
-  console.log(`\ndeployed treatise@${sha}${dirty} to ${TARGET} — Pages will publish it shortly.`);
+  git(["-C", site, "push", "origin", "--tags"]);
+  console.log(`\ndeployed portfolio v2 (treatise@${sha}${dirty}) to ${TARGET} — Pages will publish it shortly.`);
 } finally {
   rmSync(work, { recursive: true, force: true });
 }

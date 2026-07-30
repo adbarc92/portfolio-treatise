@@ -243,16 +243,14 @@ const secNum: Record<string, string> = Object.fromEntries(
         <div class="device" aria-hidden="true">✳</div>
         <p class="smallcaps" style="color:var(--bone)">Colophon</p>
         <p>
-          Set in Newsreader and JetBrains Mono, self-hosted, on a ground of lampblack. The figures are
-          engraved from the repositories they depict — their states and transitions extracted by script,
-          their composition set by hand. Every factual claim in the prose carries a citation in the margin,
-          generated from a single claims file; at build time, a claim without evidence fails the build, as
-          does a figure that no longer matches its repository, and no build ships without passing an
-          embargo scan of its output. Link resolution is not yet gated; the site is held to the same
-          ladder as the systems it describes, and its rungs are labeled honestly.
+          Set in Newsreader and JetBrains Mono, self-hosted. The figures are drawn from the repositories
+          they describe, extracted by script and laid out by hand; a figure that stops matching its
+          repository stops the build. A claim without evidence does the same — the margin notes are
+          generated from one claims file, and the build refuses what it cannot cite. Nothing ships without
+          a scan of the built output. Links are not yet checked.
         </p>
         <p class="mono" style="font-size:0.7rem">
-          LAST VERIFIED: {buildDate} · SOURCE: PRIVATE UNTIL RELEASE · GATES: CLAIMS ✓ · EMBARGO ✓ · LINKS: PENDING
+          LAST VERIFIED: {buildDate} · GATES: CLAIMS ✓ · EMBARGO ✓ · LINKS: PENDING
         </p>
       </footer>
     </div>

@@ -47,6 +47,20 @@ const workshopSegs = segments(workshop.prose.trimEnd(), (id) => workshopRefs.get
 const roman = (n: number) => ["", "I", "II", "III", "IV", "V", "VI", "VII"][n] ?? String(n);
 const buildDate = new Date().toISOString().slice(0, 10);
 const DRAFT_BADGE = "[DRAFT — AWAITING ALEX'S VOICE]";
+
+// essays render only once they live somewhere; with none linkable, the whole
+// section (and its nav entry) hides and the remaining sections renumber
+const visibleEssays = essays.filter((e) => e.url);
+const sectionList = [
+  { id: "thesis", label: "Thesis" },
+  { id: "plates", label: "Plates" },
+  ...(visibleEssays.length > 0 ? [{ id: "essays", label: "Essays" }] : []),
+  { id: "workshop", label: "The Workshop" },
+  { id: "author", label: "The Author" },
+];
+const secNum: Record<string, string> = Object.fromEntries(
+  sectionList.map((s, i) => [s.id, roman(i + 1)]),
+);
 ---
 
 <!doctype html>
@@ -63,11 +77,11 @@ const DRAFT_BADGE = "[DRAFT — AWAITING ALEX'S VOICE]";
     <div class="page">
       <nav class="contents smallcaps">
         Contents
-        <span class="sep">—</span><a href="#thesis">I. Thesis</a>
-        <span class="sep">·</span><a href="#plates">II. Plates</a>
-        <span class="sep">·</span><a href="#essays">III. Essays</a>
-        <span class="sep">·</span><a href="#workshop">IV. The Workshop</a>
-        <span class="sep">·</span><a href="#author">V. The Author</a>
+        {sectionList.map((s, i) => (
+          <Fragment>
+            <span class="sep">{i === 0 ? "—" : "·"}</span><a href={`#${s.id}`}>{secNum[s.id]}. {s.label}</a>
+          </Fragment>
+        ))}
         <span class="sep">·</span><a href="#colophon">Colophon</a>
       </nav>
 
@@ -83,7 +97,7 @@ const DRAFT_BADGE = "[DRAFT — AWAITING ALEX'S VOICE]";
       </header>
 
       <section id="plates">
-        <p class="section-label smallcaps"><span class="num">II</span>Plates</p>
+        <p class="section-label smallcaps"><span class="num">{secNum.plates}</span>Plates</p>
 
         <div class="body-grid">
           <div class="prose">
@@ -143,43 +157,45 @@ const DRAFT_BADGE = "[DRAFT — AWAITING ALEX'S VOICE]";
         ))}
       </section>
 
-      <section id="essays">
-        <p class="section-label smallcaps"><span class="num">III</span>Essays</p>
-        <div class="body-grid">
-          <div class="prose">
-            {sections.essays_intro.draft && <p class="draft-badge">{DRAFT_BADGE}</p>}
-            <p>{sections.essays_intro.prose.trimEnd()}</p>
-          </div>
-          {sections.essays_intro.margin && (
-            <aside class="margin-note">
-              <span class="cite-mark">↳</span> {sections.essays_intro.margin}
-            </aside>
-          )}
-        </div>
-
-        {essays.map((e) => (
-          <div class="essay">
-            <div class="body-grid">
-              <div class="prose">
-                <h3>{e.url ? <a href={e.url}>{e.title}</a> : e.title}</h3>
-                <p class="abstract">{e.abstract}</p>
-              </div>
-              <aside class="margin-note">
-                <span class="cite-mark">↳</span> essay {roman(e.series_position)} · {e.status}
-                {e.draft && (
-                  <Fragment>
-                    <br />
-                    <span class="draft-badge">{DRAFT_BADGE}</span>
-                  </Fragment>
-                )}
-              </aside>
+      {visibleEssays.length > 0 && (
+        <section id="essays">
+          <p class="section-label smallcaps"><span class="num">{secNum.essays}</span>Essays</p>
+          <div class="body-grid">
+            <div class="prose">
+              {sections.essays_intro.draft && <p class="draft-badge">{DRAFT_BADGE}</p>}
+              <p>{sections.essays_intro.prose.trimEnd()}</p>
             </div>
+            {sections.essays_intro.margin && (
+              <aside class="margin-note">
+                <span class="cite-mark">↳</span> {sections.essays_intro.margin}
+              </aside>
+            )}
           </div>
-        ))}
-      </section>
+
+          {visibleEssays.map((e) => (
+            <div class="essay">
+              <div class="body-grid">
+                <div class="prose">
+                  <h3><a href={e.url}>{e.title}</a></h3>
+                  <p class="abstract">{e.abstract}</p>
+                </div>
+                <aside class="margin-note">
+                  <span class="cite-mark">↳</span> essay {roman(e.series_position)} · {e.status}
+                  {e.draft && (
+                    <Fragment>
+                      <br />
+                      <span class="draft-badge">{DRAFT_BADGE}</span>
+                    </Fragment>
+                  )}
+                </aside>
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
 
       <section id="workshop">
-        <p class="section-label smallcaps"><span class="num">IV</span>The Workshop</p>
+        <p class="section-label smallcaps"><span class="num">{secNum.workshop}</span>The Workshop</p>
         <div class="body-grid">
           <div class="prose">
             {workshop.draft && <p class="draft-badge">{DRAFT_BADGE}</p>}
@@ -204,7 +220,7 @@ const DRAFT_BADGE = "[DRAFT — AWAITING ALEX'S VOICE]";
       </section>
 
       <section id="author">
-        <p class="section-label smallcaps"><span class="num">V</span>The Author</p>
+        <p class="section-label smallcaps"><span class="num">{secNum.author}</span>The Author</p>
         <div class="body-grid">
           <div class="prose">
             {author.draft && <p class="draft-badge">{DRAFT_BADGE}</p>}

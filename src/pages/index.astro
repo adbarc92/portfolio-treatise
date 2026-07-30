@@ -231,12 +231,12 @@ const DRAFT_BADGE = "[DRAFT — AWAITING ALEX'S VOICE]";
           engraved from the repositories they depict — their states and transitions extracted by script,
           their composition set by hand. Every factual claim in the prose carries a citation in the margin,
           generated from a single claims file; at build time, a claim without evidence fails the build, as
-          does a figure that no longer matches its repository. Link resolution and embargo checks run in CI
-          and are not yet wired; the site is held to the same ladder as the systems it describes, and its
-          rungs are labeled honestly.
+          does a figure that no longer matches its repository, and no build ships without passing an
+          embargo scan of its output. Link resolution is not yet gated; the site is held to the same
+          ladder as the systems it describes, and its rungs are labeled honestly.
         </p>
         <p class="mono" style="font-size:0.7rem">
-          LAST VERIFIED: {buildDate} · SOURCE: PRIVATE UNTIL RELEASE · GATES: CLAIMS ✓ · LINKS & EMBARGO: PENDING CI
+          LAST VERIFIED: {buildDate} · SOURCE: PRIVATE UNTIL RELEASE · GATES: CLAIMS ✓ · EMBARGO ✓ · LINKS: PENDING
         </p>
       </footer>
     </div>

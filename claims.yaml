@@ -4,9 +4,9 @@
 #   - verified: true is the only source of --verify marks
 #   - not_yet must be present (empty only deliberately)
 #   - [^id] markers in prose must resolve to claims / planned plates
-# Evidence URLs are CANDIDATES extracted from the real repo, pinned to commit
-# e3f2b5b. verified stays false until Alex confirms each link. All prose is
-# draft: true (renders with a visible DRAFT badge) until Alex approves it.
+# Evidence URLs are CANDIDATES extracted from the real repos at pinned commits.
+# verified stays false until Alex confirms each link. Prose approved by Alex
+# 2026-07-29; new prose starts as draft: true (renders a visible DRAFT badge).
 
 meta:
   thesis: "Autonomous systems are easy to build and hard to trust. I work on the second problem."
@@ -21,7 +21,7 @@ meta:
 
 sections:
   plates_intro:
-    draft: true # reference-mock prose, awaiting Alex's voice
+    draft: false # approved by Alex 2026-07-29
     prose: |
       The interesting problem was never getting agents to work; it was knowing
       when they had. The systems below are attempts at that problem — control
@@ -30,7 +30,7 @@ sections:
       drawn from the repository itself, its proven claims cited in the margin,
       and its unproven ones labeled as such.
   essays_intro:
-    draft: true
+    draft: false # approved by Alex 2026-07-29
     prose: |
       The same conviction, applied to political economy: institutions, like
       software, should not be trusted on their self-report. A series on
@@ -46,7 +46,7 @@ projects:
       number: 3
       source: extractors/halyard.mjs
       status: derived
-    draft: true # energized register per Alex's request (2026-07-28); still draft until approved
+    draft: false # approved by Alex 2026-07-29
     prose: |
       Release day is the highest-stakes hour in software — the moment when a
       system is least supervised and most consequential — and most teams still
@@ -82,7 +82,7 @@ projects:
       number: 4 # TODO(alex): plate numbering beyond III and V is provisional
       source: null
       status: planned
-    draft: true # energized register per Alex's request (2026-07-28); still draft until approved
+    draft: false # approved by Alex 2026-07-29
     prose: |
       Anyone can wire an agent to open pull requests; the demos are
       everywhere. Reqdrive is built for the part the demos skip — the handoff,
@@ -126,7 +126,7 @@ projects:
       number: 1 # TODO(alex): plate numbering beyond III and V is provisional
       source: null
       status: planned
-    draft: true # energized register per Alex's request (2026-07-28); still draft until approved
+    draft: false # approved by Alex 2026-07-29
     prose: |
       One coding agent is a demo. A fleet is an operations problem — crashes
       mid-run, leaking budgets, state scattered across processes that die
@@ -172,7 +172,7 @@ projects:
       number: 2 # TODO(alex): plate numbering beyond III and V is provisional
       source: null
       status: planned
-    draft: true # energized register per Alex's request (2026-07-28); still draft until approved
+    draft: false # approved by Alex 2026-07-29
     prose: |
       Handing an AI assistant the keys to a real browser is real power, and
       real power wants a narrow doorway. Mcp-browser-bridge is that doorway:
@@ -212,20 +212,20 @@ essays:
   - id: price-of-the-ticket
     title: "The Price of the Ticket"
     abstract: "On the arithmetic of effort across generations — what an hour of work bought in 1975 and what it buys now, written for the reader most inclined to disagree."
-    draft: true # abstract from reference mock, awaiting Alex's words
+    draft: false # approved by Alex 2026-07-29
     status: complete
     series_position: 1
     url: "" # TODO(alex): where does this essay live?
   - id: ladder-problem
     title: "The Ladder Problem"
     abstract: "The insider–outsider pattern across zoning, licensing, and two-tier contracts — and five mechanisms for rules that bind the rule-makers symmetrically."
-    draft: true
+    draft: false # approved by Alex 2026-07-29
     status: complete
     series_position: 2
     url: "" # TODO(alex): where does this essay live?
 
 workshop:
-  draft: true # prose below is from the reference mock, not yet approved
+  draft: false # approved by Alex 2026-07-29
   prose: |
     Not everything here is infrastructure. In the workshop: a story-driven JRPG
     and a tactical RPG, both in Godot 4, built toward a hand-drawn standard
@@ -238,7 +238,7 @@ workshop:
     - { number: 5, name: MoralEvaluator, source: null, status: planned }
 
 author:
-  draft: true # my draft of the paragraph the reference specifies; awaiting Alex's voice
+  draft: false # approved by Alex 2026-07-29
   prose: |
     I came to software from philosophy, by way of Hack Reactor, and grew up as
     an engineer at Garmin — SE to SE II to Senior — building mobile platform

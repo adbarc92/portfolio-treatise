@@ -1,7 +1,7 @@
 # Build → gates → deploy to adbarc92.github.io (the public Pages repo).
 # Source stays in this private repo; only gated build output ships.
-# Required secrets: EMBARGO_TERMS (comma-separated, fail-closed if absent),
-# PAGES_DEPLOY_TOKEN (classic PAT, repo + workflow scopes on adbarc92.github.io).
+# Required secrets: PAGES_DEPLOY_TOKEN (classic PAT, repo + workflow scopes on
+# adbarc92.github.io).
 name: build-gate-deploy
 on:
   push:
@@ -19,10 +19,8 @@ jobs:
       # claims gate + plate-drift gate run in-process and fail this step
       - run: npm run build
       # the gate must catch its canary before it is trusted with the real scan
-      - run: node scripts/embargo-gate.mjs --selftest
-      - run: node scripts/embargo-gate.mjs
-        env:
-          EMBARGO_TERMS: ${{ secrets.EMBARGO_TERMS }}
+      - run: node scripts/content-gate.mjs --selftest
+      - run: node scripts/content-gate.mjs
       - uses: actions/upload-artifact@v4
         with: { name: dist, path: dist }
 

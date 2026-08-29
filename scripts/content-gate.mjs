@@ -6,27 +6,37 @@
 // That embargo lifted on 2026-08-29 and the secret scan was removed with it;
 // the mangling-resistant matcher is kept, because a retracted claim can be
 // reintroduced with a hyphen or a zero-width joiner just as easily.
-// --selftest proves the matcher catches a planted term, including one
-// mangled with case, hyphens, and zero-width joiners.
+// The matcher is exported and covered by content-gate.test.mjs; --selftest
+// remains so CI can prove the canary in the same shell that runs the scan.
 import { readFileSync, readdirSync, statSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import path from "node:path";
 
-const RETRACTED = [
+export const RETRACTED = [
   "Firefox",
   "Chrome Web Store",
   "16-agent",
   "Redis",
   "Tenzy",
 ];
-const BANNED_VOCABULARY = [
+export const BANNED_VOCABULARY = [
   "passionate", "cutting-edge", "blazingly", "seamless", "delightful", "crafting",
 ];
-const COMMITTED = [...RETRACTED, ...BANNED_VOCABULARY];
+export const COMMITTED = [...RETRACTED, ...BANNED_VOCABULARY];
 const TEXT_EXT = new Set([".html", ".js", ".css", ".xml", ".txt", ".json", ".svg", ".webmanifest"]);
 
 // strip whitespace, hyphens/underscores, soft hyphen, zero-width chars, word joiner
-const normalize = (s) =>
+export const normalize = (s) =>
   s.toLowerCase().replace(/[\s\-_\u00AD\u200B-\u200D\u2060]/g, "");
+
+/** Terms present in `text`, matched literally or with word-joiners stripped. */
+export function findTerms(text, terms) {
+  const lower = text.toLowerCase();
+  const squeezed = normalize(text);
+  return terms.filter(
+    (term) => lower.includes(term.toLowerCase()) || squeezed.includes(normalize(term))
+  );
+}
 
 function* walk(dir) {
   for (const name of readdirSync(dir)) {
@@ -36,21 +46,19 @@ function* walk(dir) {
   }
 }
 
-function scan(distDir, terms) {
+export function scan(distDir, terms) {
   const failures = [];
   for (const file of walk(distDir)) {
-    const raw = readFileSync(file, "utf8");
-    const lower = raw.toLowerCase();
-    const squeezed = normalize(raw);
-    for (const term of terms) {
-      if (lower.includes(term.toLowerCase()) || squeezed.includes(normalize(term)))
-        failures.push(`${file}: retracted/banned term "${term}" present`);
-    }
+    for (const term of findTerms(readFileSync(file, "utf8"), terms))
+      failures.push(`${file}: retracted/banned term "${term}" present`);
   }
   return failures;
 }
 
-if (process.argv.includes("--selftest")) {
+const isMain =
+  process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+
+if (isMain && process.argv.includes("--selftest")) {
   // canary: the gate must catch a planted term, plain and mangled
   const { mkdtempSync, writeFileSync, rmSync } = await import("node:fs");
   const { tmpdir } = await import("node:os");
@@ -73,22 +81,22 @@ if (process.argv.includes("--selftest")) {
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+} else if (isMain) {
+  const distDir = path.resolve(process.argv[2] ?? "dist");
+  if (COMMITTED.length === 0) {
+    console.error("content gate: no terms configured — a gate that checks nothing fails the build");
+    process.exit(1);
+  }
+  let failures;
+  try {
+    failures = scan(distDir, COMMITTED);
+  } catch (e) {
+    console.error(`content gate: cannot scan ${distDir}: ${e.message}`);
+    process.exit(1);
+  }
+  if (failures.length > 0) {
+    for (const f of failures) console.error(`content gate: ${f}`);
+    process.exit(1);
+  }
+  console.log(`content gate: clean (${COMMITTED.length} committed terms)`);
 }
-
-const distDir = path.resolve(process.argv[2] ?? "dist");
-if (COMMITTED.length === 0) {
-  console.error("content gate: no terms configured — a gate that checks nothing fails the build");
-  process.exit(1);
-}
-let failures;
-try {
-  failures = scan(distDir, COMMITTED);
-} catch (e) {
-  console.error(`content gate: cannot scan ${distDir}: ${e.message}`);
-  process.exit(1);
-}
-if (failures.length > 0) {
-  for (const f of failures) console.error(`content gate: ${f}`);
-  process.exit(1);
-}
-console.log(`content gate: clean (${COMMITTED.length} committed terms)`);

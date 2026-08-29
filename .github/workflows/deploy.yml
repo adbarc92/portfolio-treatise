@@ -16,6 +16,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
+      - run: npm test
       # claims gate + plate-drift gate run in-process and fail this step
       - run: npm run build
       # the gate must catch its canary before it is trusted with the real scan

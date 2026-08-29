@@ -7,6 +7,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "test": "node --test \"scripts/**/*.test.mjs\"",
     "extract": "node extractors/halyard.mjs",
     "deploy": "node scripts/deploy-local.mjs"
   },

@@ -83,7 +83,7 @@ Engraving language (the shared "engraving kit" — one set of SVG defs reused by
 Same body-grid prose treatment. Game-development systems (e.g., the MoralEvaluator dialog engine) graduate to plates like any other system; hand-drawn work is referenced, not simulated.
 
 ### 2.9 Colophon
-Hand-drawn printer's device (placeholder: ✳ in a hairline circle until the real mark is inked and scanned) → small-caps "Colophon" → prose stating typefaces, the plate-derivation method, and the three build gates → mono status line: `LAST VERIFIED: {build date} · SOURCE: {repo} · GATES: EMBARGO ✓ CLAIMS ✓ LINKS ✓` (values injected at build; never hardcoded).
+Hand-drawn printer's device (placeholder: ✳ in a hairline circle until the real mark is inked and scanned) → small-caps "Colophon" → prose stating typefaces, the plate-derivation method, and the three build gates → mono status line: `LAST VERIFIED: {build date} · SOURCE: {repo} · GATES: CONTENT ✓ CLAIMS ✓ LINKS ✓` (values injected at build; never hardcoded).
 
 ---
 

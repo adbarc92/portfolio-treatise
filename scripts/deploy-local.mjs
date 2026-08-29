@@ -1,7 +1,6 @@
 // Manual deploy: same gates as CI, same order, then push gated output to
 // adbarc92.github.io. Any gate failure aborts before the target repo is
-// even cloned. Run from the repo root with EMBARGO_TERMS set in the shell:
-//   $env:EMBARGO_TERMS = Read-Host -MaskInput "embargo terms"   (pwsh)
+// even cloned. Run from the repo root:
 //   npm run deploy
 import { execSync, execFileSync } from "node:child_process";
 import { cpSync, existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
@@ -19,8 +18,8 @@ const gitOut = (args, opts = {}) =>
 
 // ---- gates first; a throw here aborts before anything touches the target
 run("npm run build");
-run("node scripts/embargo-gate.mjs --selftest");
-run("node scripts/embargo-gate.mjs"); // fail-closed without EMBARGO_TERMS
+run("node scripts/content-gate.mjs --selftest");
+run("node scripts/content-gate.mjs"); // fail-closed on an empty term list
 
 // ---- provenance for the deploy commit
 const sha = gitOut(["rev-parse", "--short", "HEAD"]);

@@ -24,7 +24,7 @@ Where inputs conflict, the reference wins; report the conflict rather than resol
 
 - **Astro**, static output, zero client JS except the plate-draw IntersectionObserver (~20 lines, inline).
 - Self-hosted, subset **woff2** fonts: Newsreader (variable, incl. italic) + JetBrains Mono 400/500. Preload the serif. No font CDNs in production.
-- Deploy: **Cloudflare Pages** (matches existing infra). Private GitHub repo, `main` protected, PRs only.
+- Deploy: **GitHub Pages.** `.github/workflows/deploy.yml` builds here, runs the gates, then replaces the contents of the public `adbarc92/adbarc92.github.io` repo with the gated output, which Pages serves at the domain root. (Cloudflare Pages was the original intent; the pipeline that shipped does not use it.) `main` protected, PRs only. The repo was private under Hard Rule 5; that requirement lapsed with the embargo.
 - No CSS framework. Hand-rolled CSS from the design-system tokens, in one layer-ordered stylesheet. Watch selector-specificity collisions between section-level and element-level rules.
 
 ## Single source of truth: `claims.yaml`
@@ -105,7 +105,7 @@ Plate order of work: **Halyard first** (cleanest structure, best evidence-to-cla
 - **L1 — Skeleton.** Astro build matching `treatise-reference.html`: tokens, type (self-hosted), all six sections, marginalia rendering from `claims.yaml`, mobile collapse, quality floor (contrast, focus, keyboard, 380px). **Gate:** side-by-side with the reference at 1440px and 380px; Alex signs off.
 - **L2 — First true plate.** Halyard's plate rendered from extracted JSON through the engraving kit, animated. **Gate:** *"Would Alex frame it?"* If no, direction gets revised here, cheaply, before plates 2–4.
 - **L3 — Full body.** Remaining plates; all project entries; essays section (Alex-authored abstracts in place, drafts cleared); Workshop; Author; colophon with injected build values; all four CI gates green including canary.
-- **L4 — Shippable.** Lighthouse ≥ 95 across categories; axe clean; reduced-motion verified by toggling the OS setting, not by code review; content gate proven against a live canary; deployed to Cloudflare Pages behind Alex's domain choice. **Gate:** Alex ships it.
+- **L4 — Shippable.** Lighthouse ≥ 95 across categories; axe clean; reduced-motion verified by toggling the OS setting, not by code review; content gate proven against a live canary; deployed to GitHub Pages behind Alex's domain choice. **Gate:** Alex ships it.
 
 ## Working conventions
 

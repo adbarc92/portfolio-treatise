@@ -12,9 +12,12 @@ import {
   findTerms,
   normalize,
   scan,
+  scanAll,
   COMMITTED,
   RETRACTED,
   BANNED_VOCABULARY,
+  PROSE_EXT,
+  ALL_TEXT_EXT,
 } from "./content-gate.mjs";
 
 const SOFT_HYPHEN = "\u00AD";
@@ -85,6 +88,48 @@ test("scan walks nested directories and skips non-text extensions", () => {
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+});
+
+// The two lists have different scopes. Vendor bundles legitimately contain banned
+// words as identifiers — React's attribute table has `case"seamless":` — and a gate
+// that fails a deploy on React's internals is a gate that gets switched off.
+test("scanAll ignores banned vocabulary inside JavaScript", () => {
+  const dir = mkdtempSync(path.join(tmpdir(), "content-gate-test-"));
+  try {
+    writeFileSync(path.join(dir, "vendor.js"), 'case"seamless":case"scoped":');
+    assert.deepEqual(scanAll(dir), [], "React's attribute table must not fail the build");
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("scanAll still catches a retracted claim inside JavaScript", () => {
+  const dir = mkdtempSync(path.join(tmpdir(), "content-gate-test-"));
+  try {
+    writeFileSync(path.join(dir, "app.js"), 'const db = "Redis";');
+    const failures = scanAll(dir);
+    assert.equal(failures.length, 1, "a retracted claim must fail anywhere it appears");
+    assert.match(failures[0], /retracted term "Redis"/);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("scanAll catches banned vocabulary in reader-facing HTML", () => {
+  const dir = mkdtempSync(path.join(tmpdir(), "content-gate-test-"));
+  try {
+    writeFileSync(path.join(dir, "page.html"), "<p>a seamless experience</p>");
+    const failures = scanAll(dir);
+    assert.equal(failures.length, 1);
+    assert.match(failures[0], /banned term "seamless"/);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("the prose extension set is a strict subset of the full text set", () => {
+  for (const ext of PROSE_EXT) assert.ok(ALL_TEXT_EXT.has(ext), `${ext} missing from ALL_TEXT_EXT`);
+  assert.ok(!PROSE_EXT.has(".js"), "JavaScript is not reader-facing prose");
 });
 
 test("scan over a clean tree returns no failures", () => {

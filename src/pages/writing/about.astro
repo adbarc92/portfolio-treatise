@@ -1,0 +1,21 @@
+---
+import { getEntry, render } from "astro:content";
+
+import Writing from "../../layouts/Writing.astro";
+
+const DESCRIPTION =
+  "Software engineering, machine learning, and robotics — essays, projects, and the Eidos architecture.";
+
+const about = await getEntry("about", "about");
+if (!about) throw new Error("content/about.md is missing — /writing/about cannot be built");
+
+const { Content } = await render(about);
+---
+
+<Writing title="About" description={DESCRIPTION}>
+  <div class="page">
+    <article class="prose">
+      <Content />
+    </article>
+  </div>
+</Writing>

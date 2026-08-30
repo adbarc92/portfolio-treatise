@@ -1,0 +1,122 @@
+---
+import { getCollection, render } from "astro:content";
+import type { GetStaticPaths } from "astro";
+
+import Writing from "../../../layouts/Writing.astro";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const docs = (await getCollection("eidos")).sort((a, b) => a.data.order - b.data.order);
+
+  // The whole ordered set travels with each page: the sidebar lists every
+  // document and the footer needs the neighbours on either side.
+  return docs.map((doc, i) => ({
+    params: { slug: doc.id },
+    props: {
+      doc,
+      docs,
+      prev: i > 0 ? docs[i - 1] : null,
+      next: i < docs.length - 1 ? docs[i + 1] : null,
+    },
+  }));
+};
+
+const { doc, docs, prev, next } = Astro.props;
+const { Content } = await render(doc);
+---
+
+<Writing title={doc.data.title} description={doc.data.summary}>
+  <div class="page doc" style="--page-width: 60rem">
+    <nav class="sidebar">
+      <a class="sidebar__version" href="/writing/eidos">Eidos v{doc.data.version}</a>
+      <ol>
+        {
+          docs.map((d) => (
+            <li>
+              <a
+                href={`/writing/eidos/${d.id}`}
+                class="sidebar__link"
+                aria-current={d.id === doc.id ? "page" : undefined}
+              >
+                {d.data.title}
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+
+    <div class="body">
+      <h1>{doc.data.title}</h1>
+      <article class="prose">
+        <Content />
+      </article>
+
+      <div class="pager">
+        <span>{prev && <a href={`/writing/eidos/${prev.id}`}>&larr; {prev.data.title}</a>}</span>
+        <span>{next && <a href={`/writing/eidos/${next.id}`}>{next.data.title} &rarr;</a>}</span>
+      </div>
+    </div>
+  </div>
+</Writing>
+
+<style>
+  .doc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+    align-items: flex-start;
+  }
+
+  .sidebar {
+    flex: 1 1 11rem;
+    min-width: 11rem;
+    position: sticky;
+    top: 6rem;
+  }
+
+  .sidebar__version {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .sidebar ol {
+    list-style: none;
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .sidebar__link {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--color-text-muted);
+  }
+
+  .sidebar__link[aria-current="page"] {
+    color: var(--color-accent);
+  }
+
+  .body {
+    flex: 1 1 30rem;
+    min-width: 0;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+  }
+
+  .pager {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-gear-stroke);
+    font-size: 0.85rem;
+  }
+</style>

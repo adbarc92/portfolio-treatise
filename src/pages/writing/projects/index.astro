@@ -1,0 +1,105 @@
+---
+import { getCollection } from "astro:content";
+
+import Writing from "../../../layouts/Writing.astro";
+
+const DESCRIPTION =
+  "Selected work across software engineering, machine learning, and robotics.";
+
+const projects = (await getCollection("projects")).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<Writing title="Projects" description={DESCRIPTION}>
+  <div class="page" style="--page-width: 64rem">
+    <h1 class="page__title">Projects</h1>
+
+    {
+      projects.length === 0 ? (
+        <p class="empty">No projects yet.</p>
+      ) : (
+        <div class="grid">
+          {projects.map((project) => (
+            <a class="card entry" href={`/writing/projects/${project.id}`}>
+              {project.data.thumbnail && (
+                <div class="entry__thumb">
+                  <img src={project.data.thumbnail} alt={project.data.title} />
+                </div>
+              )}
+              <div class="entry__body">
+                <h3 class="entry__title">{project.data.title}</h3>
+                <p class="entry__description">{project.data.description}</p>
+                {project.data.tags.length > 0 && (
+                  <div class="tags entry__tags">
+                    {project.data.tags.map((tag) => (
+                      <span class="tag tag--sm">{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</Writing>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .entry {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .entry__thumb {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+  }
+
+  .entry__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .entry__body {
+    padding: 1.25rem;
+  }
+
+  .entry__title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 0.4rem;
+  }
+
+  .entry__description {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+
+  .entry__tags {
+    margin-top: 0.75rem;
+    gap: 0.4rem;
+  }
+
+  .tag--sm {
+    font-size: 0.7rem;
+    padding: 0.1rem 0.45rem;
+  }
+
+  .empty {
+    color: var(--color-text-muted);
+  }
+</style>

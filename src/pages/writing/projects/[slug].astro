@@ -1,0 +1,78 @@
+---
+import { getCollection, render } from "astro:content";
+import type { GetStaticPaths } from "astro";
+
+import Writing from "../../../layouts/Writing.astro";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const projects = await getCollection("projects");
+
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+};
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const { links } = project.data;
+---
+
+<Writing title={project.data.title} description={project.data.description}>
+  <div class="page">
+    <a class="back-link" href="/writing/projects">&larr; Back to Projects</a>
+
+    <h1>{project.data.title}</h1>
+    <p class="description">{project.data.description}</p>
+
+    <div class="tags project__tags">
+      {project.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+    </div>
+
+    {
+      links && (
+        <div class="links">
+          {links.github && (
+            <a href={links.github} target="_blank" rel="noopener noreferrer">
+              GitHub &rarr;
+            </a>
+          )}
+          {links.live && (
+            <a href={links.live} target="_blank" rel="noopener noreferrer">
+              Live Demo &rarr;
+            </a>
+          )}
+        </div>
+      )
+    }
+
+    <article class="prose">
+      <Content />
+    </article>
+  </div>
+</Writing>
+
+<style>
+  h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .description {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .project__tags {
+    margin-bottom: 1rem;
+  }
+
+  .links {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    font-size: 0.85rem;
+  }
+</style>

@@ -1,0 +1,90 @@
+---
+import { getCollection } from "astro:content";
+
+import Writing from "../../../layouts/Writing.astro";
+
+const DESCRIPTION =
+  "An architecture for cheap code: humans design the Forms, agents fill them, fitness functions verify the fit.";
+
+const docs = (await getCollection("eidos")).sort((a, b) => a.data.order - b.data.order);
+const version = docs[0]?.data.version;
+---
+
+<Writing title="Eidos" description={DESCRIPTION}>
+  <div class="page">
+    <div class="head">
+      <h1>Eidos</h1>
+      {version && <span class="version">v{version}</span>}
+    </div>
+
+    <p class="intro">
+      An architecture for cheap code: humans design the Forms, agents fill them, and
+      fitness functions verify the fit. The argument is in{" "}
+      <a href="/writing/blog/eidos-an-architecture-for-cheap-code">the essay</a>; the
+      specification is below.
+    </p>
+
+    <div class="list">
+      {
+        docs.map((doc, i) => (
+          <a class="card entry" href={`/writing/eidos/${doc.id}`}>
+            <span class="ordinal">{String(i + 1).padStart(2, "0")}</span>
+            <h2 class="card__title">{doc.data.title}</h2>
+            <p class="summary">{doc.data.summary}</p>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</Writing>
+
+<style>
+  .head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  .version {
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    color: var(--color-accent);
+    background: var(--color-accent-dim);
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+  }
+
+  .intro {
+    color: var(--color-text-muted);
+    margin: 1rem 0 2.5rem;
+    line-height: 1.7;
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .entry {
+    padding: 1.5rem;
+  }
+
+  .ordinal {
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+  }
+
+  .summary {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+</style>

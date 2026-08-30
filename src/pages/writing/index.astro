@@ -1,0 +1,68 @@
+---
+import Writing from "../../layouts/Writing.astro";
+
+const DESCRIPTION =
+  "Software engineering, machine learning, and robotics — essays, projects, and the Eidos architecture.";
+
+const navItems = [
+  { href: "/writing/blog", label: "Essays" },
+  { href: "/writing/eidos", label: "Eidos" },
+  { href: "/writing/projects", label: "Projects" },
+  { href: "/writing/about", label: "About" },
+];
+---
+
+<Writing description={DESCRIPTION} showNav={false}>
+  <div class="landing">
+    <h1>Alex Barclay</h1>
+    <p class="role">Software Engineer</p>
+    <nav class="landing__nav">
+      {navItems.map(({ href, label }) => <a href={href}>{label}</a>)}
+    </nav>
+  </div>
+</Writing>
+
+<style>
+  .landing {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+  }
+
+  .role {
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    color: var(--color-text-muted);
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .landing__nav {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .landing__nav a {
+    color: var(--color-accent);
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-accent-dim);
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+</style>

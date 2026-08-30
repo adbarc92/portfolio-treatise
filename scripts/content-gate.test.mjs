@@ -141,3 +141,56 @@ test("scan over a clean tree returns no failures", () => {
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+// ---------------------------------------------------------------------------
+// Word boundaries.
+//
+// Consolidation fed the gate the essays for the first time and it failed twice,
+// on prose that mentions nothing retracted:
+//
+//   "currently being rediscovered"            -> "Redis" as a plain substring
+//   "a backup that has never been restored is" -> "restored is" squeezed to "restoredis"
+//
+// A gate that cries wolf on ordinary English gets switched off, which costs more
+// than the false negative it was buying. The mangling cases below are the reason
+// the fix cannot simply be a whole-word search over the raw text.
+// ---------------------------------------------------------------------------
+
+test("a term embedded in a longer word is not a hit", () => {
+  assert.deepEqual(findTerms("currently being rediscovered", ["Redis"]), []);
+});
+
+test("a term spanning a word boundary is not a hit", () => {
+  assert.deepEqual(findTerms("a backup that has never been restored is debt", ["Redis"]), []);
+});
+
+test("a term is still caught when it stands alone next to punctuation", () => {
+  assert.deepEqual(findTerms("we used Redis.", ["Redis"]), ["Redis"]);
+  assert.deepEqual(findTerms("(Redis)", ["Redis"]), ["Redis"]);
+});
+
+test("a hyphenated compound still trips the banned word it starts with", () => {
+  // The naive fix — strip hyphens, then match whole words — misses this, because
+  // stripping fuses "blazingly-fast" into one word that no longer ends at "blazingly".
+  assert.deepEqual(findTerms("a blazingly-fast rewrite", ["blazingly"]), ["blazingly"]);
+});
+
+test("letter-by-letter mangling is still caught", () => {
+  assert.deepEqual(findTerms("we used R-e-d-i-s here", ["Redis"]), ["Redis"]);
+  assert.deepEqual(findTerms(`we used R${ZWSP}e${ZWNJ}d${ZWJ}i-s here`, ["Redis"]), ["Redis"]);
+});
+
+test("a retracted hyphenated term is caught however it is spaced", () => {
+  for (const text of ["a 16-agent swarm", "a 16 agent swarm", "a 16agent swarm"]) {
+    assert.deepEqual(findTerms(text, ["16-agent"]), ["16-agent"], text);
+  }
+});
+
+test("the real essay prose that exposed this passes the gate", () => {
+  const prose = [
+    "This synthesis is currently being rediscovered, independently and in fragments.",
+    "Restore drills on a schedule; a backup that has never been restored is Unenforced debt.",
+  ].join("\n");
+
+  assert.deepEqual(findTerms(prose, COMMITTED), []);
+});

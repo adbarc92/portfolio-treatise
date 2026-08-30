@@ -23,7 +23,15 @@ export const BANNED_VOCABULARY = [
   "passionate", "cutting-edge", "blazingly", "seamless", "delightful", "crafting",
 ];
 export const COMMITTED = [...RETRACTED, ...BANNED_VOCABULARY];
-const TEXT_EXT = new Set([".html", ".js", ".css", ".xml", ".txt", ".json", ".svg", ".webmanifest"]);
+
+// The two lists have different scopes, and conflating them produces false positives.
+// A retracted claim is a factual assertion: it must not appear in ANY emitted text.
+// Banned vocabulary is a rule about the prose a reader sees, so it is scanned only
+// over reader-facing output. Vendor bundles are full of these words as identifiers —
+// React's attribute table contains `case"seamless":` — and failing a deploy on
+// React's internals protects nobody from anything.
+export const ALL_TEXT_EXT = new Set([".html", ".js", ".css", ".xml", ".txt", ".json", ".svg", ".webmanifest"]);
+export const PROSE_EXT = new Set([".html", ".xml", ".txt"]);
 
 // strip whitespace, hyphens/underscores, soft hyphen, zero-width chars, word joiner
 export const normalize = (s) =>
@@ -38,21 +46,29 @@ export function findTerms(text, terms) {
   );
 }
 
-function* walk(dir) {
+function* walk(dir, exts) {
   for (const name of readdirSync(dir)) {
     const p = path.join(dir, name);
-    if (statSync(p).isDirectory()) yield* walk(p);
-    else if (TEXT_EXT.has(path.extname(p))) yield p;
+    if (statSync(p).isDirectory()) yield* walk(p, exts);
+    else if (exts.has(path.extname(p))) yield p;
   }
 }
 
-export function scan(distDir, terms) {
+export function scan(distDir, terms, exts = ALL_TEXT_EXT, label = "retracted/banned") {
   const failures = [];
-  for (const file of walk(distDir)) {
+  for (const file of walk(distDir, exts)) {
     for (const term of findTerms(readFileSync(file, "utf8"), terms))
-      failures.push(`${file}: retracted/banned term "${term}" present`);
+      failures.push(`${file}: ${label} term "${term}" present`);
   }
   return failures;
+}
+
+/** The gate as CI runs it: each list over the output it actually governs. */
+export function scanAll(distDir) {
+  return [
+    ...scan(distDir, RETRACTED, ALL_TEXT_EXT, "retracted"),
+    ...scan(distDir, BANNED_VOCABULARY, PROSE_EXT, "banned"),
+  ];
 }
 
 const isMain =
@@ -89,7 +105,7 @@ if (isMain && process.argv.includes("--selftest")) {
   }
   let failures;
   try {
-    failures = scan(distDir, COMMITTED);
+    failures = scanAll(distDir);
   } catch (e) {
     console.error(`content gate: cannot scan ${distDir}: ${e.message}`);
     process.exit(1);
@@ -98,5 +114,8 @@ if (isMain && process.argv.includes("--selftest")) {
     for (const f of failures) console.error(`content gate: ${f}`);
     process.exit(1);
   }
-  console.log(`content gate: clean (${COMMITTED.length} committed terms)`);
+  console.log(
+    `content gate: clean (${RETRACTED.length} retracted over all output, ` +
+      `${BANNED_VOCABULARY.length} banned over prose)`
+  );
 }

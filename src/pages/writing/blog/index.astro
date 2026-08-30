@@ -2,18 +2,30 @@
 import { getCollection } from "astro:content";
 
 import Writing from "../../../layouts/Writing.astro";
+import BlogList from "../../../components/BlogList";
 import { formatDate } from "../../../lib/dates.mjs";
 import { isPublished } from "../../../lib/drafts.mjs";
 
 const DESCRIPTION =
   "Essays on software, fiction, and whatever else holds still long enough.";
 
-// The category filter chips are a React island and arrive in phase 4. Until then
-// this lists every published post, which is what the chips' "All" state shows.
 const showDrafts = import.meta.env.DEV;
-const posts = (await getCollection("blog", ({ data }) => isPublished(data, showDrafts))).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-);
+
+// Dates are formatted here rather than in the island: the formatter must run in
+// UTC to print the authored day, and doing it server-side keeps that guarantee
+// out of the browser's hands — and the formatter out of the bundle.
+const posts = (await getCollection("blog", ({ data }) => isPublished(data, showDrafts)))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .map((post) => ({
+    slug: post.id,
+    title: post.data.title,
+    excerpt: post.data.excerpt,
+    category: post.data.category,
+    tags: post.data.tags,
+    dateLabel: formatDate(post.data.date),
+    dateTime: post.data.date.toISOString(),
+    draft: post.data.draft,
+  }));
 ---
 
 <Writing title="Essays" description={DESCRIPTION}>
@@ -24,46 +36,12 @@ const posts = (await getCollection("blog", ({ data }) => isPublished(data, showD
       posts.length === 0 ? (
         <p class="empty">Nothing here yet.</p>
       ) : (
-        <div class="list">
-          {posts.map((post) => (
-            <a class="card entry" href={`/writing/blog/${post.id}`}>
-              {showDrafts && post.data.draft && <span class="draft-badge">DRAFT</span>}
-              <time class="meta" datetime={post.data.date.toISOString()}>
-                {formatDate(post.data.date)}
-              </time>
-              <h2 class="card__title">{post.data.title}</h2>
-              <p class="card__excerpt">{post.data.excerpt}</p>
-              {post.data.tags.length > 0 && (
-                <div class="tags entry__tags">
-                  {post.data.tags.map((tag) => (
-                    <span class="tag">{tag}</span>
-                  ))}
-                </div>
-              )}
-            </a>
-          ))}
-        </div>
+        /* client:load, not client:idle — the chips are the first thing a reader
+           reaches for on this page, and an unresponsive control is worse than a
+           slightly earlier one. The island server-renders, so the full list is in
+           the HTML either way. */
+        <BlogList client:load posts={posts} showDrafts={showDrafts} />
       )
     }
   </div>
 </Writing>
-
-<style>
-  .list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .entry {
-    padding: 1.5rem;
-  }
-
-  .entry__tags {
-    margin-top: 0.75rem;
-  }
-
-  .empty {
-    color: var(--color-text-muted);
-  }
-</style>

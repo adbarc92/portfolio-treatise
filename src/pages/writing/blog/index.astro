@@ -5,9 +5,8 @@ import Writing from "../../../layouts/Writing.astro";
 import BlogList from "../../../components/BlogList";
 import { formatDate } from "../../../lib/dates.mjs";
 import { isPublished } from "../../../lib/drafts.mjs";
+import { DESCRIPTIONS } from "../../../lib/site.mjs";
 
-const DESCRIPTION =
-  "Essays on software, fiction, and whatever else holds still long enough.";
 
 const showDrafts = import.meta.env.DEV;
 
@@ -28,7 +27,7 @@ const posts = (await getCollection("blog", ({ data }) => isPublished(data, showD
   }));
 ---
 
-<Writing title="Essays" description={DESCRIPTION}>
+<Writing title="Essays" description={DESCRIPTIONS.blog}>
   <div class="page">
     <h1 class="page__title">Essays</h1>
 

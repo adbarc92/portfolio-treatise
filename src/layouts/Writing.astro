@@ -2,26 +2,29 @@
 // The shared shell for every /writing/* page: document head, the fixed nav bar,
 // and the essays' stylesheet.
 //
-// The gear background is deliberately absent — it is a React island and arrives
-// in phase 4 along with the category filter. Open Graph, Twitter, and feed tags
-// are likewise phase 5; this phase emits title, description, and canonical only.
+// The head is the load-bearing part. Every tag here already exists on the live
+// pages and has been indexed, unfurled, or subscribed to, so this is a
+// reproduction rather than a design — parity is verified by diffing the built
+// <head> against the live one, not by reading it.
+//
+// The gear background is deliberately absent. It is being redesigned rather than
+// ported, and arrives as its own phase.
 import "../styles/writing.css";
+import { SITE, absoluteUrl, canonicalPath, pageTitle } from "../lib/site.mjs";
 
 interface Props {
   title?: string;
   description: string;
+  /** 'article' for a post, a spec document, or a project; 'website' otherwise. */
+  ogType?: "website" | "article";
   /** The landing page hides the bar, as the React site did at `/`. */
   showNav?: boolean;
 }
 
-const { title, description, showNav = true } = Astro.props;
+const { title, description, ogType = "website", showNav = true } = Astro.props;
 
-const SITE_TITLE = "Alex Barclay";
-const pageTitle = title ? `${title} — ${SITE_TITLE}` : SITE_TITLE;
-
-// Astro.site is set in astro.config.mjs; the prefix comes from this file living
-// under src/pages/writing/, not from a base path.
-const canonical = new URL(Astro.url.pathname, Astro.site);
+const fullTitle = pageTitle(title);
+const canonical = absoluteUrl(canonicalPath(Astro.url.pathname));
 
 const links = [
   { href: "/writing/blog", label: "Essays" },
@@ -38,9 +41,23 @@ const path = Astro.url.pathname;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{pageTitle}</title>
+    <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    <meta name="author" content={SITE.author} />
     <link rel="canonical" href={canonical} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={SITE.title} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={absoluteUrl(SITE.image)} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={SITE.title}
+      href={absoluteUrl(SITE.feed)}
+    />
   </head>
   <body>
     {

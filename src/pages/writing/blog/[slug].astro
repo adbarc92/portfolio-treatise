@@ -20,7 +20,7 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 ---
 
-<Writing title={post.data.title} description={post.data.excerpt}>
+<Writing title={post.data.title} description={post.data.excerpt} ogType="article">
   <div class="page">
     <a class="back-link" href="/writing/blog">&larr; Back to Blog</a>
 

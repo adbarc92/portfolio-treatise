@@ -4,6 +4,8 @@ import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 
 import remarkContentLinks from "./src/lib/content-links.mjs";
+import { canonicalPath } from "./src/lib/site.mjs";
+import { siteSurface } from "./src/lib/shiki-surface.mjs";
 
 // `site` is required for @astrojs/sitemap and @astrojs/rss to emit absolute URLs.
 // `base` deliberately stays "/" — it applies site-wide, so pointing it at /writing
@@ -12,11 +14,28 @@ import remarkContentLinks from "./src/lib/content-links.mjs";
 export default defineConfig({
   site: "https://alexanderdbarclay.com",
   output: "static",
-  integrations: [react(), sitemap()],
+  integrations: [
+    react(),
+    sitemap({
+      // The build emits directory URLs, so every entry would carry a trailing
+      // slash the pages' own canonical tags do not. Pointing a sitemap at URLs
+      // that redirect to the canonical form is a contradiction worth not
+      // shipping; the same rule decides both.
+      serialize: (entry) => ({
+        ...entry,
+        url: new URL(canonicalPath(new URL(entry.url).pathname), entry.url).href,
+      }),
+    }),
+  ],
   markdown: {
     // Content authored for the old site writes root-relative links like `/eidos`,
     // which now resolve to the treatise root. This restores the /writing prefix
     // that the src/pages/writing/ directory supplies.
     remarkPlugins: [remarkContentLinks],
+    shikiConfig: {
+      // Keep Shiki's token colours; drop the page background it inlines onto the
+      // <pre>, so code blocks sit on the site's own surface rather than GitHub's.
+      transformers: [siteSurface],
+    },
   },
 });

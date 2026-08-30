@@ -155,3 +155,9 @@ test("replacing a category does not stack two of them", () => {
 test("unrelated query parameters survive", () => {
   assert.equal(nextSearch("?utm_source=post", "meta"), "?utm_source=post&category=meta");
 });
+
+test("no category id appears twice", () => {
+  // A duplicate splits one filter into two chips that each show half the posts.
+  // The label map cannot hold duplicates, so this guards the schema's list.
+  assert.equal(new Set(CATEGORY_IDS).size, CATEGORY_IDS.length);
+});

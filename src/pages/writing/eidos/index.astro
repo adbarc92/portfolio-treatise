@@ -2,15 +2,14 @@
 import { getCollection } from "astro:content";
 
 import Writing from "../../../layouts/Writing.astro";
+import { DESCRIPTIONS } from "../../../lib/site.mjs";
 
-const DESCRIPTION =
-  "An architecture for cheap code: humans design the Forms, agents fill them, fitness functions verify the fit.";
 
 const docs = (await getCollection("eidos")).sort((a, b) => a.data.order - b.data.order);
 const version = docs[0]?.data.version;
 ---
 
-<Writing title="Eidos" description={DESCRIPTION}>
+<Writing title="Eidos" description={DESCRIPTIONS.eidos}>
   <div class="page">
     <div class="head">
       <h1>Eidos</h1>

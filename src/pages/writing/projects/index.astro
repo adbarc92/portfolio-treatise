@@ -2,16 +2,15 @@
 import { getCollection } from "astro:content";
 
 import Writing from "../../../layouts/Writing.astro";
+import { DESCRIPTIONS } from "../../../lib/site.mjs";
 
-const DESCRIPTION =
-  "Selected work across software engineering, machine learning, and robotics.";
 
 const projects = (await getCollection("projects")).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
 ---
 
-<Writing title="Projects" description={DESCRIPTION}>
+<Writing title="Projects" description={DESCRIPTIONS.projects}>
   <div class="page" style="--page-width: 64rem">
     <h1 class="page__title">Projects</h1>
 

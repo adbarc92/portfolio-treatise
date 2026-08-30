@@ -24,7 +24,7 @@ const { doc, docs, prev, next } = Astro.props;
 const { Content } = await render(doc);
 ---
 
-<Writing title={doc.data.title} description={doc.data.summary}>
+<Writing title={doc.data.title} description={doc.data.summary} ogType="article">
   <div class="page doc" style="--page-width: 60rem">
     <nav class="sidebar">
       <a class="sidebar__version" href="/writing/eidos">Eidos v{doc.data.version}</a>

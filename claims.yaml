@@ -30,7 +30,7 @@ sections:
       drawn from the repository itself, its proven claims cited in the margin,
       and its unproven ones labeled as such.
   essays_intro:
-    draft: true # TODO(alex): voice pass on the added software clause, 2026-08-28
+    draft: false # software clause approved by Alex 2026-08-30
     prose: |
       The same conviction, at greater length. First in software: what fifty
       years of falling code costs does to the question of where a system's

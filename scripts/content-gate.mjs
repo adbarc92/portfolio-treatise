@@ -33,17 +33,43 @@ export const COMMITTED = [...RETRACTED, ...BANNED_VOCABULARY];
 export const ALL_TEXT_EXT = new Set([".html", ".js", ".css", ".xml", ".txt", ".json", ".svg", ".webmanifest"]);
 export const PROSE_EXT = new Set([".html", ".xml", ".txt"]);
 
-// strip whitespace, hyphens/underscores, soft hyphen, zero-width chars, word joiner
-export const normalize = (s) =>
-  s.toLowerCase().replace(/[\s\-_\u00AD\u200B-\u200D\u2060]/g, "");
+// The characters a term can be broken up with without a reader noticing:
+// whitespace, hyphens/underscores, soft hyphen, zero-width chars, word joiner.
+const SEPARATOR = "[\\s\\-_\\u00AD\\u200B-\\u200D\\u2060]";
 
-/** Terms present in `text`, matched literally or with word-joiners stripped. */
+// strip whitespace, hyphens/underscores, soft hyphen, zero-width chars, word joiner
+export const normalize = (s) => s.toLowerCase().replace(new RegExp(SEPARATOR, "g"), "");
+
+const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/**
+ * A term matches when its significant characters appear in order with nothing but
+ * separators between them, and the whole run stands as a word.
+ *
+ * Both halves are load-bearing, and each one is why the other cannot be dropped.
+ * Without the separators the gate misses `R-e-d-i-s` and `Fire<zwsp>fox`, which is
+ * the entire threat it was built for. Without the word boundaries it reads "Redis"
+ * out of "rediscovered" and \u2014 because separators include whitespace \u2014 out of
+ * "restored is", which is how ordinary English came to fail the build the first
+ * time this gate was pointed at essay prose.
+ *
+ * Every committed term begins and ends with an alphanumeric, which is what makes
+ * `\b` mean what it looks like it means here. A term starting with punctuation
+ * would need a different anchor.
+ */
+const patternFor = (term) =>
+  new RegExp(`\\b${[...normalize(term)].map(escapeRegExp).join(`${SEPARATOR}*`)}\\b`, "i");
+
+// The term list is short and committed; the file walk is not. Compiling each
+// pattern once keeps the cost where it belongs.
+const patterns = new Map();
+
+/** Terms present in `text`, tolerant of mangling but not of coincidence. */
 export function findTerms(text, terms) {
-  const lower = text.toLowerCase();
-  const squeezed = normalize(text);
-  return terms.filter(
-    (term) => lower.includes(term.toLowerCase()) || squeezed.includes(normalize(term))
-  );
+  return terms.filter((term) => {
+    if (!patterns.has(term)) patterns.set(term, patternFor(term));
+    return patterns.get(term).test(text);
+  });
 }
 
 function* walk(dir, exts) {

@@ -72,18 +72,22 @@ document moved here from `adbarc92/writing`, which is archived.
 - This repo has no `README.md`, which is now visible to anyone who finds it.
 
 **In flight: design system v2.** The essays are being brought onto the treatise's design system.
-The [design](plans/2026-08-30-writing-design-system-v2-design.md) is merged and authoritative;
-the [plan for phases 1–3](plans/2026-08-30-writing-design-system-v2-plan.md) is written. Measured
-against §6, the writing site trips most of the anti-patterns the document says to reject on
-sight, so the scope is a rewrite of the presentation layer rather than a restyle. **This also
-disposes of the gear background by deletion** — under this system there is no animated WebGL
-ground — which answers the request that opened the session.
+The [design](plans/2026-08-30-writing-design-system-v2-design.md) is merged and authoritative,
+and **phases 1–3 of the [plan](plans/2026-08-30-writing-design-system-v2-plan.md) are built**:
+`foundation.css` now shares tokens, faces, and layout primitives between both halves; one
+`<ContentsNav>` component serves the treatise and the essays; code blocks render from a Shiki
+theme built from the design system's own tokens; and the reference essay page is rebuilt in the
+treatise's idiom. Measured against §6, the writing site had tripped most of the anti-patterns the
+document says to reject on sight, so the scope was a rewrite of the presentation layer rather than
+a restyle. **This also disposes of the gear background by deletion** — under this system there is
+no animated WebGL ground — which answers the request that opened the session. **Awaiting a visual
+verdict on the reference essay page** — the plan's deliberate stop — before the remaining seven
+pages are touched.
 
 **Next steps**
 
-1. **Design system v2, phases 1–3** — extend the document, extract `foundation.css`, and rebuild
-   one essay page. Phase 3 is a deliberate stop: the reference page gets a visual verdict before
-   the other seven are touched.
+1. **A visual verdict on the reference essay page** — phases 1–3 are built and the plan stops
+   here deliberately, before the other seven pages are touched.
 2. Phases 4–6 get their own plan after that verdict, since the verdict may change the vocabulary
    they would be written against.
 3. Testing and CI improvements: add `PAGES_DEPLOY_TOKEN` so a merge can deploy, and decide
@@ -94,6 +98,34 @@ ground — which answers the request that opened the session.
 ---
 
 ## Session log
+
+### 2026-08-30 (phases 1–3) — Design system v2, built
+
+Implemented the plan's phases 1–3 in `portfolio-website` on `feat/design-system-v2-phases-1-3`,
+task-by-task, then closed a whole-branch review's six findings.
+
+- **Extended `DESIGN-SYSTEM.md`** with §§2.10–2.16 and extracted `src/styles/foundation.css`
+  verbatim from `treatise.css`, so both halves of the site now share one set of tokens, faces,
+  and layout primitives. The treatise's rendered output did not move — checked by diff at every
+  step.
+- **One `<ContentsNav>` component** now serves the treatise and the essays, replacing the
+  inline nav that only ever emitted anchors. Its link logic moved into a plain, tested function
+  (`src/lib/contents-nav.mjs`) once review caught that the off-root anchors it had been emitting
+  orphaned `/writing/*` from the contents nav — `III. Essays` now points at `/writing/` per
+  §2.10, and the treatise's markup is unchanged apart from that one href.
+- **A Shiki theme built from the design system's own tokens** (`src/lib/code-theme.mjs`)
+  replaced `github-dark`. Review also caught that its original oxblood keyword colour measured
+  2.49:1 against the ground, below §4's 4.5:1 floor for muted text at code-block scale; keywords
+  are now `--bone`, bold — distinguished by weight, not a hue that failed the floor. `--oxblood`
+  is not a design-system token change, it is a correction of what §2.14 mandated in error.
+- **The reference essay page** (`/writing/blog/hello-world`) is rebuilt on the body grid, in the
+  treatise's idiom, with zero client JS. This is the plan's Phase 3 stop: a visual verdict on
+  this one page before the other seven are touched.
+- Also fixed while reviewing: the v2 preamble undercounted its own sections (§§2.10–2.15 →
+  2.10–2.16); the plan still named `.doc-nav` as a Phase 4 convention after a later commit
+  correctly deleted it as unused; and `foundation.css` gained `img{max-width:100%;display:block}`
+  — dropped along with old `writing.css`, harmless today because no essay carries an image yet,
+  but the next one that does would have overflowed the measure.
 
 ### 2026-08-30 (design) — The essays join the treatise's design system
 

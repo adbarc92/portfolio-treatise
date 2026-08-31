@@ -526,7 +526,10 @@ The page to be judged before anything else is rebuilt. **Stop here** when it is 
 
 **Interfaces:**
 - Consumes: `foundation.css` (Task 2), `<ContentsNav>` (Task 3), `plateTheme` (Task 4).
-- Produces: the `.essay-page`, `.essay-title`, `.doc-nav` conventions Phase 4 will reuse.
+- Produces: the `.essay-page`, `.essay-title` conventions Phase 4 will reuse. `.doc-nav`,
+  written below in Step 2, was later removed as unused (commit `87b51f4`) — nothing on the
+  reference page renders it. Phase 4 should define document navigation where it is actually
+  used, rather than assume this rule.
 
 - [ ] **Step 1: Point the layout at the foundation and drop the navbar**
 
@@ -735,6 +738,10 @@ Replace the file entirely:
 
 /* ============ DOCUMENT NAVIGATION — §2.15 ============ */
 
+/* `.doc-nav` below was later removed as unused (commit `87b51f4`) — the
+   reference page never renders it, since the single essay it links has
+   nowhere to link to yet. Phase 4 should define document navigation where
+   it is actually used rather than reuse this rule as written here. */
 .doc-nav {
   display: flex;
   justify-content: space-between;

@@ -3,7 +3,7 @@
 
 The reference implementation (`treatise-reference.html`) is the visual source of truth for the treatise. Where this document and the reference disagree, the reference wins; flag the discrepancy rather than silently choosing.
 
-**v2 extends v1 to cover the essays at `/writing/*`**, which joined this repository in the consolidation of 2026-08-30. v1 described a single continuous page and had no vocabulary for a list of entries, a filtered view, a section front page, or a code block. §§2.10–2.15 add those. No token changed; §1.1 is identical to v1.
+**v2 extends v1 to cover the essays at `/writing/*`**, which joined this repository in the consolidation of 2026-08-30. v1 described a single continuous page and had no vocabulary for a list of entries, a filtered view, a section front page, or a code block. §§2.10–2.16 add those. No token changed; §1.1 is identical to v1.
 
 **Design thesis:** a printed treatise on trustworthy autonomous systems, illustrated with plates engraved from the author's actual machinery. Restraint with gravity. Evidence is the ornament. Nothing is asserted above what the margin can cite.
 
@@ -100,7 +100,7 @@ The list form. Essays use `.essay` (2.7); projects use `article.entry` (2.6). Bo
 A category or tag view is a real prerendered URL, never a client-side filter. Only categories with at least one published entry are linked: the taxonomy may be declared ahead of the writing, but empty rooms are not advertised. A filtered view states its filter in a margin note and links back to the unfiltered list.
 
 ### 2.14 Code blocks
-Set as a small plate. Hairline `--plate-line-faint` frame, the page ground, no fill, mono at plate-label scale, horizontal scroll inside its own box. Syntax uses **three values only** — `--bone` for code, `--bone-muted` for comments and punctuation, `--oxblood` for keywords — plus weight. `--verify` is not available here: it means "proven claim", and a syntax highlighter has no claims to prove. If three values prove insufficient, that is a finding for §1.1 as a documented revision, not a decision made inside a stylesheet.
+Set as a small plate. Hairline `--plate-line-faint` frame, the page ground, no fill, mono at plate-label scale, horizontal scroll inside its own box. Syntax uses comments and punctuation in `--bone-muted`, everything else in `--bone`, keywords distinguished by weight. `--oxblood` was rejected here: it measures 2.49:1 against the ground, where §4 requires 4.5:1. `--verify` is not available here: it means "proven claim", and a syntax highlighter has no claims to prove. If this proves insufficient, that is a finding for §1.1 as a documented revision, not a decision made inside a stylesheet.
 
 ### 2.15 Document navigation
 For a sequenced specification: the sibling documents listed in the margin column, the current one marked with `--bone` against the others' `--bone-muted`, and previous/next links on a hairline top rule at the foot. No sticky positioning.

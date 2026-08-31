@@ -71,33 +71,51 @@ document moved here from `adbarc92/writing`, which is archived.
 - `og:image` is a single site-wide card.
 - This repo has no `README.md`, which is now visible to anyone who finds it.
 
-**In flight: design system v2.** The essays are being brought onto the treatise's design system.
-The [design](plans/2026-08-30-writing-design-system-v2-design.md) is merged and authoritative,
-and **phases 1–3 of the [plan](plans/2026-08-30-writing-design-system-v2-plan.md) are built**:
-`foundation.css` now shares tokens, faces, and layout primitives between both halves; one
-`<ContentsNav>` component serves the treatise and the essays; code blocks render from a Shiki
-theme built from the design system's own tokens; and the reference essay page is rebuilt in the
-treatise's idiom. Measured against §6, the writing site had tripped most of the anti-patterns the
-document says to reject on sight, so the scope was a rewrite of the presentation layer rather than
-a restyle. **This also disposes of the gear background by deletion** — under this system there is
-no animated WebGL ground — which answers the request that opened the session. **Awaiting a visual
-verdict on the reference essay page** — the plan's deliberate stop — before the remaining seven
-pages are touched.
+**In flight: `/writing/` becomes the hub.** Design system v2 phases 1–3 are **merged** (#12) and
+Alex has approved the rebuilt essay page by eye. Reviewing it surfaced a deeper problem than
+styling: the root's `III. Essays`, `/writing/`, and `/writing/blog` were three doors onto the same
+essays. The [hub design](plans/2026-08-30-writing-hub-design.md) and its
+[plan](plans/2026-08-30-writing-hub-plan.md) collapse them — the root previews, `/writing/` lists
+and filters everything written, and `/blog/` is retired with essays moving to `/writing/<slug>`.
+Both documents are in **PR #13, open**. Implementation is **handed off**; see
+[the brief](handoffs/c4c01ade-e5b0-44ea-9dec-3afff5ebdc5e.md).
 
 **Next steps**
 
-1. **A visual verdict on the reference essay page** — phases 1–3 are built and the plan stops
-   here deliberately, before the other seven pages are touched.
-2. Phases 4–6 get their own plan after that verdict, since the verdict may change the vocabulary
-   they would be written against.
-3. Testing and CI improvements: add `PAGES_DEPLOY_TOKEN` so a merge can deploy, and decide
-   whether to build the two specified-but-missing gates.
-4. Post the Eidos essay — run it through LinkedIn's Post Inspector first to prime the cache.
+1. **Review and merge PR #13**, then implement the hub plan's seven tasks. The handoff brief is
+   the entry point and leads with the three things most likely to go wrong.
+2. Phases D and E — the remaining page rebuilds and the cutover — get their own plan, deliberately
+   not written yet: D's vocabulary depends on the hub being seen, and E should not be planned
+   until what it cuts over is final.
+3. Testing and CI improvements, parked by Alex for after this work: add `PAGES_DEPLOY_TOKEN` so a
+   merge can deploy at all, and decide whether to build the two specified-but-missing gates.
+4. Post the Eidos essay — run it through LinkedIn's Post Inspector first to prime the cache. Note
+   its URL is about to move, so posting before the cutover means posting a link that will later
+   resolve through a soft redirect.
 5. The political essays' voice pass and figure-checking, when Alex wants them.
 
 ---
 
 ## Session log
+
+### 2026-08-30 (hub) — Design system v2 lands; `/writing/` is redesigned around it
+
+- **Merged design system v2, phases 1–3** (#12): `foundation.css` extracted verbatim from
+  `treatise.css`, one shared contents nav, a Shiki theme built from the site's own tokens, and one
+  essay page rebuilt in the treatise's idiom. Subagent review caught four defects **in the plan**
+  that implementers had transcribed faithfully — three contrast violations (2.11:1 and 2.49:1
+  against a 4.5:1 floor) and a contents nav that emitted `/#essays`, silently orphaning four frozen
+  URLs from site navigation. All fixed; the code theme now asserts its own contrast floor.
+- **Alex reviewed the reference page and approved it**, then identified the real problem: the site
+  had three indexes of the same essays, and `/writing/` needed conceptual work rather than styling.
+- **Designed and planned the hub.** Two findings changed the design while writing it. GitHub Pages
+  serves static files only, so **no true 301 is achievable** — Astro's redirects are meta-refresh
+  pages, which search engines treat as soft. And `@astrojs/rss` **hardcodes the guid to the item
+  link** with no override, so with essay URLs moving it cannot be used without republishing every
+  post into every subscriber's reader; the feed is hand-built with the guid pinned to the
+  historical URL.
+- **Handed off before implementation**, at Alex's request:
+  [`handoffs/c4c01ade-…`](handoffs/c4c01ade-e5b0-44ea-9dec-3afff5ebdc5e.md).
 
 ### 2026-08-30 (phases 1–3) — Design system v2, built
 

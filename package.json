@@ -12,15 +12,10 @@
     "deploy": "node scripts/deploy-local.mjs"
   },
   "dependencies": {
-    "@astrojs/react": "^6.0.4",
     "@astrojs/sitemap": "^3.7.3",
     "@fontsource-variable/newsreader": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.5",
     "astro": "^5.0.0",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
     "yaml": "^2.5.0"
   }
 }

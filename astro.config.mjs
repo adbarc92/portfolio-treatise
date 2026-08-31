@@ -1,6 +1,5 @@
 import { defineConfig } from "astro/config";
 
-import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 
 import remarkContentLinks from "./src/lib/content-links.mjs";
@@ -23,7 +22,6 @@ export default defineConfig({
     "/writing/blog/[slug]": "/writing/[slug]",
   },
   integrations: [
-    react(),
     sitemap({
       // The build emits directory URLs, so every entry would carry a trailing
       // slash the pages' own canonical tags do not. Pointing a sitemap at URLs

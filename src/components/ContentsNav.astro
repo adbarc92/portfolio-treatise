@@ -1,0 +1,44 @@
+---
+// The one contents nav, per DESIGN-SYSTEM §2.10. A table of contents, not a
+// navbar: no logo, no CTA, no sticky behaviour.
+//
+// On the root the section links are plain anchors, which is what the treatise
+// has always emitted; anywhere else they are root-relative so they still lead
+// somewhere. `onRoot` exists to keep the root's markup byte-identical while the
+// essays are being rebuilt — see docs/plans/2026-08-30-...-plan.md, Task 2.
+import { claims } from "../lib/claims";
+
+interface Props {
+  onRoot?: boolean;
+}
+
+const { onRoot = false } = Astro.props;
+
+const roman = (n: number) => ["I", "II", "III", "IV", "V", "VI"][n - 1] ?? String(n);
+
+const visibleEssays = claims.essays.filter((e) => e.url);
+const sectionList = [
+  { id: "thesis", label: "Thesis" },
+  { id: "plates", label: "Plates" },
+  ...(visibleEssays.length > 0 ? [{ id: "essays", label: "Essays" }] : []),
+  { id: "workshop", label: "The Workshop" },
+  { id: "author", label: "The Author" },
+];
+const secNum: Record<string, string> = Object.fromEntries(
+  sectionList.map((s, i) => [s.id, roman(i + 1)]),
+);
+
+const href = (id: string) => (onRoot ? `#${id}` : `/#${id}`);
+---
+
+<nav class="contents smallcaps">
+  Contents
+  {
+    sectionList.map((s, i) => (
+      <Fragment>
+        <span class="sep">{i === 0 ? "—" : "·"}</span><a href={href(s.id)}>{secNum[s.id]}. {s.label}</a>
+      </Fragment>
+    ))
+  }
+  <span class="sep">·</span><a href={href("colophon")}>Colophon</a>
+</nav>

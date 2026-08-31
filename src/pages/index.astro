@@ -3,6 +3,7 @@
 // and the extracted plate JSON. Visual truth: treatise-reference.html.
 import { claims } from "../lib/claims";
 import HalyardPlate from "../components/HalyardPlate.astro";
+import ContentsNav from "../components/ContentsNav.astro";
 import "../styles/treatise.css";
 
 const { meta, sections, projects, essays, workshop, author } = claims;
@@ -75,15 +76,7 @@ const secNum: Record<string, string> = Object.fromEntries(
   </head>
   <body>
     <div class="page">
-      <nav class="contents smallcaps">
-        Contents
-        {sectionList.map((s, i) => (
-          <Fragment>
-            <span class="sep">{i === 0 ? "—" : "·"}</span><a href={`#${s.id}`}>{secNum[s.id]}. {s.label}</a>
-          </Fragment>
-        ))}
-        <span class="sep">·</span><a href="#colophon">Colophon</a>
-      </nav>
+      <ContentsNav onRoot />
 
       <header class="front" id="thesis">
         <p class="epigraph">

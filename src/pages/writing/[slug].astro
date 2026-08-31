@@ -5,7 +5,7 @@ import type { GetStaticPaths } from "astro";
 import Writing from "../../layouts/Writing.astro";
 import { formatDate } from "../../lib/dates.mjs";
 import { isPublished } from "../../lib/drafts.mjs";
-import { CATEGORY_LABELS } from "../../lib/post-filter.mjs";
+import { CATEGORY_LABELS } from "../../lib/writing-index.mjs";
 import { assertNoReservedSlugs } from "../../lib/reserved-slugs.mjs";
 
 export const getStaticPaths: GetStaticPaths = async () => {

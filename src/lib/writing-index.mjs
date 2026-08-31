@@ -6,6 +6,27 @@
 // a description — so each is mapped into one shape here rather than being
 // special-cased at every call site.
 
+/**
+ * The category set is closed on purpose. An open one drifts until `politics` and
+ * `political` both exist and a filter silently splits in two.
+ *
+ * The ids are duplicated from the Zod enum in src/content.config.ts rather than
+ * imported, because that file imports `astro:content` and cannot be loaded outside
+ * a build. writing-index.test.mjs reads the enum out of the config's source and
+ * fails if the two ever disagree, which is the guard the duplication needs.
+ *
+ * These moved here from post-filter.mjs when the React island was retired; that
+ * module and its test went with it, so the drift guard travelled too.
+ */
+export const CATEGORY_LABELS = {
+  software: "Software",
+  fiction: "Fiction",
+  politics: "Politics",
+  meta: "Meta",
+};
+
+export const CATEGORY_IDS = Object.keys(CATEGORY_LABELS);
+
 /** The kinds a chip may filter by. Closed, for the same reason categories are. */
 export const KINDS = ["essay", "specification", "project"];
 

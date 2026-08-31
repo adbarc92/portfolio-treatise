@@ -1,0 +1,156 @@
+---
+// The body of /writing/ and of every filtered view of it.
+//
+// The hub, /writing/essays, and /writing/category/<id> are the same page with a
+// different subset shown, so the layout lives here once rather than three times.
+// Filtering is done at build time and the chips are ordinary links: no client
+// JavaScript reaches this page, which is why the React island could be retired.
+import { getCollection } from "astro:content";
+
+import { formatDate } from "../lib/dates.mjs";
+import { isPublished } from "../lib/drafts.mjs";
+import {
+  CATEGORY_LABELS,
+  countByCategory,
+  countByKind,
+  toEntries,
+} from "../lib/writing-index.mjs";
+
+interface Props {
+  /** This page's own path, so its chip can mark itself aria-current. */
+  current: string;
+  /** Narrow to one kind, or one essay category. Unset means everything. */
+  kind?: string;
+  category?: string;
+}
+
+const { current, kind, category } = Astro.props;
+
+const [posts, docs, projects] = await Promise.all([
+  getCollection("blog", ({ data }) => isPublished(data, false)),
+  getCollection("eidos"),
+  getCollection("projects"),
+]);
+
+const all = toEntries({ posts, docs, projects });
+
+// Counts describe the whole body of writing, not the current view, so a chip
+// always reports how many entries clicking it would show — including the chip
+// already selected.
+const kindCounts = countByKind(all);
+const categoryCounts = countByCategory(all);
+
+// The kind chips point at pages the site already has. /writing/eidos and
+// /writing/projects list exactly what those chips mean, so inventing a parallel
+// set of filter pages would only add URLs that duplicate them.
+const kindChips = [
+  { href: "/writing/", label: "All", count: all.length },
+  { href: "/writing/essays", label: "Essays", count: kindCounts.essay },
+  { href: "/writing/eidos", label: "Specification", count: kindCounts.specification },
+  { href: "/writing/projects", label: "Projects", count: kindCounts.project },
+].filter((c) => c.count > 0);
+
+// No empty rooms: a category with nothing published gets no chip.
+const categoryChips = Object.entries(categoryCounts).map(([id, count]) => ({
+  href: `/writing/category/${id}`,
+  label: CATEGORY_LABELS[id] ?? id,
+  count,
+}));
+
+const entries = all.filter(
+  (e) => (!kind || e.kind === kind) && (!category || e.category === category),
+);
+
+const KIND_LABELS: Record<string, string> = {
+  essay: "Essay",
+  specification: "Specification",
+  project: "Project",
+};
+
+// Eidos documents have an `order`, not a date — their sort key is a stand-in, so
+// printing it would show 1970. They say what they are and nothing more.
+const noteFor = (e: (typeof entries)[number]) =>
+  e.kind === "specification"
+    ? KIND_LABELS[e.kind]
+    : `${KIND_LABELS[e.kind]} · ${formatDate(e.date)}`;
+---
+
+<div class="writing-index">
+  <p class="section-label smallcaps">Writing</p>
+
+  <div class="body-grid">
+    <div class="prose">
+      {/* Hard Rule 4: prose Alex has not approved carries a visible badge. */}
+      <p class="draft-badge">[DRAFT — AWAITING ALEX'S VOICE]</p>
+      <p>Essays, the Eidos specification, and the projects behind them.</p>
+    </div>
+  </div>
+
+  <nav class="chips" aria-label="Filter writing">
+    <div class="chip-row">
+      {
+        kindChips.map((c) => (
+          <a
+            class="chip smallcaps"
+            href={c.href}
+            aria-current={c.href === current ? "page" : undefined}
+          >
+            {c.label} <span class="chip-count">{c.count}</span>
+          </a>
+        ))
+      }
+    </div>
+
+    {
+      categoryChips.length > 0 && (
+        <div class="chip-row chip-row--sub">
+          {categoryChips.map((c) => (
+            <a
+              class="chip smallcaps"
+              href={c.href}
+              aria-current={c.href === current ? "page" : undefined}
+            >
+              {c.label} <span class="chip-count">{c.count}</span>
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </nav>
+
+  {
+    entries.length === 0 ? (
+      <p class="empty">Nothing here yet.</p>
+    ) : (
+      entries.map((e) =>
+        e.kind === "project" ? (
+          <article class="entry">
+            <div class="entry-head">
+              <h3>
+                <a href={e.href}>{e.title}</a>
+              </h3>
+            </div>
+            <div class="body-grid">
+              <div class="prose">
+                <p class="abstract">{e.blurb}</p>
+              </div>
+              <aside class="margin-note">{noteFor(e)}</aside>
+            </div>
+          </article>
+        ) : (
+          <div class="essay">
+            <div class="body-grid">
+              <div class="prose">
+                <h3>
+                  <a href={e.href}>{e.title}</a>
+                </h3>
+                <p class="abstract">{e.blurb}</p>
+              </div>
+              <aside class="margin-note">{noteFor(e)}</aside>
+            </div>
+          </div>
+        ),
+      )
+    )
+  }
+</div>

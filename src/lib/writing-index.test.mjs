@@ -1,7 +1,17 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-import { KINDS, countByCategory, countByKind, toEntries } from "./writing-index.mjs";
+import {
+  CATEGORY_IDS,
+  CATEGORY_LABELS,
+  KINDS,
+  countByCategory,
+  countByKind,
+  toEntries,
+} from "./writing-index.mjs";
 
 const posts = [
   { id: "a", data: { title: "A", excerpt: "ex-a", date: new Date("2026-08-10"), category: "software" } },
@@ -70,4 +80,18 @@ test("toEntries does not mutate its inputs", () => {
   const snapshot = structuredClone({ posts, docs, projects });
   toEntries({ posts, docs, projects });
   assert.deepEqual({ posts, docs, projects }, snapshot);
+});
+
+test("the label map covers exactly the categories the schema accepts", () => {
+  // The Zod enum in content.config.ts decides what may be authored; this map
+  // decides what a chip can say. An id in one and not the other is how a filter
+  // silently splits in two, so the two are compared rather than trusted.
+  const here = path.dirname(fileURLToPath(import.meta.url));
+  const config = readFileSync(path.join(here, "..", "content.config.ts"), "utf8");
+  const literal = config.match(/CATEGORIES\s*=\s*\[([^\]]*)\]/);
+  assert.ok(literal, "could not find the CATEGORIES literal in content.config.ts");
+
+  const schemaIds = [...literal[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+  assert.deepEqual([...CATEGORY_IDS].sort(), schemaIds.sort());
+  for (const id of CATEGORY_IDS) assert.ok(CATEGORY_LABELS[id], `category "${id}" has no label`);
 });

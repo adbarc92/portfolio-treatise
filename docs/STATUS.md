@@ -71,18 +71,50 @@ document moved here from `adbarc92/writing`, which is archived.
 - `og:image` is a single site-wide card.
 - This repo has no `README.md`, which is now visible to anyone who finds it.
 
+**In flight: design system v2.** The essays are being brought onto the treatise's design system.
+The [design](plans/2026-08-30-writing-design-system-v2-design.md) is merged and authoritative;
+the [plan for phases 1–3](plans/2026-08-30-writing-design-system-v2-plan.md) is written. Measured
+against §6, the writing site trips most of the anti-patterns the document says to reject on
+sight, so the scope is a rewrite of the presentation layer rather than a restyle. **This also
+disposes of the gear background by deletion** — under this system there is no animated WebGL
+ground — which answers the request that opened the session.
+
 **Next steps**
 
-1. **The gear background redesign** — more abstract, matched to the landing page. The original
-   request that started all of this, now unblocked and starting from nothing.
-2. Testing and CI improvements: add `PAGES_DEPLOY_TOKEN` so a merge can deploy, and decide
+1. **Design system v2, phases 1–3** — extend the document, extract `foundation.css`, and rebuild
+   one essay page. Phase 3 is a deliberate stop: the reference page gets a visual verdict before
+   the other seven are touched.
+2. Phases 4–6 get their own plan after that verdict, since the verdict may change the vocabulary
+   they would be written against.
+3. Testing and CI improvements: add `PAGES_DEPLOY_TOKEN` so a merge can deploy, and decide
    whether to build the two specified-but-missing gates.
-3. Post the Eidos essay — run it through LinkedIn's Post Inspector first to prime the cache.
-4. The political essays' voice pass and figure-checking, when Alex wants them.
+4. Post the Eidos essay — run it through LinkedIn's Post Inspector first to prime the cache.
+5. The political essays' voice pass and figure-checking, when Alex wants them.
 
 ---
 
 ## Session log
+
+### 2026-08-30 (design) — The essays join the treatise's design system
+
+Design and plan only; no site code changed.
+
+- **Merged the v2 design** (#10). Scope was measured against `DESIGN-SYSTEM.md` §6 rather than
+  asserted: the writing site trips the blue-grey ground, card grids with radii, navbar chrome, a
+  third typeface, and brass spent decoratively — five of the six anti-patterns the document says
+  to reject on sight — and breaks §4's zero-JS floor on one page. So the spec says plainly that
+  this is a rewrite of the presentation layer, not a restyle.
+- **The gear background is disposed of by deletion.** Under this system there is no animated
+  WebGL ground; gradients are banned and the whole motion inventory is "plates draw themselves,
+  links thicken on hover." If the gears return it is as an engraved plate derived from a real
+  repository, which is a different conversation.
+- **Wrote the plan for phases 1–3**, stopping at the spec's visual-verdict gate. Writing tasks
+  for eight pages before agreeing what one page looks like would be waste.
+- Two findings while planning. `.entry` and `.essay` already exist in `treatise.css`, so the
+  index vocabulary is reusable rather than inventable. And `.cite-mark` — the brass `↳` — is part
+  of the citation system, so the essays' editorial margin notes must not use it; a redesign that
+  did would reintroduce the exact brass-as-decoration violation it exists to fix. That became
+  §2.16.
 
 ### 2026-08-30 (cutover) — Phases 7 and 8: the consolidation is live
 

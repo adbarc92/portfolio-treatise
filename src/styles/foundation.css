@@ -66,6 +66,7 @@ body{
 a{color:var(--bone);text-decoration:underline;text-decoration-color:var(--oxblood);text-underline-offset:3px;text-decoration-thickness:1px;transition:text-decoration-thickness .12s ease}
 a:hover{text-decoration-thickness:2.5px}
 a:focus-visible{outline:2px solid var(--verify);outline-offset:3px;border-radius:1px}
+img{max-width:100%;display:block}
 
 .smallcaps{font-variant-caps:all-small-caps;letter-spacing:0.12em;font-weight:500}
 .mono{font-family:var(--mono)}

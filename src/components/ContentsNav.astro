@@ -7,6 +7,7 @@
 // somewhere. `onRoot` exists to keep the root's markup byte-identical while the
 // essays are being rebuilt — see docs/plans/2026-08-30-...-plan.md, Task 2.
 import { claims } from "../lib/claims";
+import { sectionHref } from "../lib/contents-nav.mjs";
 
 interface Props {
   onRoot?: boolean;
@@ -27,8 +28,6 @@ const sectionList = [
 const secNum: Record<string, string> = Object.fromEntries(
   sectionList.map((s, i) => [s.id, roman(i + 1)]),
 );
-
-const href = (id: string) => (onRoot ? `#${id}` : `/#${id}`);
 ---
 
 <nav class="contents smallcaps">
@@ -36,9 +35,9 @@ const href = (id: string) => (onRoot ? `#${id}` : `/#${id}`);
   {
     sectionList.map((s, i) => (
       <Fragment>
-        <span class="sep">{i === 0 ? "—" : "·"}</span><a href={href(s.id)}>{secNum[s.id]}. {s.label}</a>
+        <span class="sep">{i === 0 ? "—" : "·"}</span><a href={sectionHref(s.id, onRoot)}>{secNum[s.id]}. {s.label}</a>
       </Fragment>
     ))
   }
-  <span class="sep">·</span><a href={href("colophon")}>Colophon</a>
+  <span class="sep">·</span><a href={sectionHref("colophon", onRoot)}>Colophon</a>
 </nav>

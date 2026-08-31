@@ -4,7 +4,10 @@
 // the essays arrived carrying three code blocks. They had been shipping in
 // Shiki's github-dark, which is a foreign object on bone-over-lampblack.
 //
-// Three values, and no more. Distinction beyond them comes from weight, not hue.
+// Two values, and no more. Distinction beyond them comes from weight, not hue.
+// Keywords are bone, bold — not oxblood: oxblood measures 2.49:1 against the
+// ground, and §4 requires muted text to clear 4.5:1, so at 0.72rem it fails
+// the floor §2.14 as originally written mandated. Weight substitutes for hue.
 // Brass is deliberately absent: it means "proven claim", and a syntax
 // highlighter has no claims to prove.
 
@@ -13,7 +16,6 @@ export const TOKEN_COLOURS = {
   ground: "#151110", // --ink-ground
   code: "#E3D9C6", // --bone
   comment: "#8F8574", // --bone-muted
-  keyword: "#8C3B32", // --oxblood
 };
 
 export const plateTheme = {
@@ -39,7 +41,7 @@ export const plateTheme = {
         "entity.name.tag",
         "markup.heading",
       ],
-      settings: { foreground: TOKEN_COLOURS.keyword, fontStyle: "bold" },
+      settings: { foreground: TOKEN_COLOURS.code, fontStyle: "bold" },
     },
   ],
 };

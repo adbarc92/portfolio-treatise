@@ -29,7 +29,7 @@ export const GET: APIRoute = async () => {
     "/writing/eidos",
     ...posts
       .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-      .map((p) => `/writing/blog/${p.id}`),
+      .map((p) => `/writing/${p.id}`),
     ...projects
       .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
       .map((p) => `/writing/projects/${p.id}`),

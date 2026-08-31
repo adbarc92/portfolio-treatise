@@ -148,27 +148,13 @@
 }
 
 .margin-note dt {
-  color: var(--plate-line-faint);
   letter-spacing: 0.08em;
   font-variant-caps: all-small-caps;
 }
 
 .margin-note dd {
   margin: 0;
-}
-
-/* ============ DOCUMENT NAVIGATION — §2.15 ============ */
-
-.doc-nav {
-  display: flex;
-  justify-content: space-between;
-  gap: 2rem;
-  margin-top: 4rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--plate-line-faint);
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  color: var(--bone-muted);
+  color: var(--bone);
 }
 
 .back-link {

@@ -2,11 +2,13 @@
 
 ## State summary
 
-_Last updated: 2026-08-30_
+_Last updated: 2026-08-31_
 
-**TL;DR.** **The consolidation is done and live.** One repository now serves the whole domain:
-the treatise at the root, the essays under `/writing/*`. All eight phases are complete. This
-document moved here from `adbarc92/writing`, which is archived.
+**TL;DR.** **The consolidation is done and live, and so is the `/writing/` hub.** One repository
+serves the whole domain: the treatise at the root, everything written under `/writing/*`. All eight
+consolidation phases and the hub's Phases A-C are complete and **deployed** (`treatise@e9fa18c`,
+2026-08-31). Essays now live at `/writing/<slug>`; `/blog/` is retired behind soft redirects; the
+site ships no React. This document moved here from `adbarc92/writing`, which is archived.
 
 **Where things live**
 
@@ -51,52 +53,114 @@ document moved here from `adbarc92/writing`, which is archived.
   `BASE_PATH` helpers the migration deletes. All 41 were audited against what replaced them
   before this was decided; no coverage was lost.
 
+**The `/writing/` hub - Phases A-C, live.** The root's `III. Essays`, `/writing/`, and
+`/writing/blog` were three doors onto the same essays. The [hub design](plans/2026-08-30-writing-hub-design.md)
+and its [plan](plans/2026-08-30-writing-hub-plan.md) (both merged, #13) collapsed them: the root
+**previews**, `/writing/` **lists and filters everything written**, and `/blog/` is gone.
+Implemented and merged in **#14**, deployed and verified live the same day.
+
+| Verified against the live site | Result |
+| --- | --- |
+| All 15 URLs - new, old, feed, sitemaps | 200 |
+| `/writing/blog/*` | soft-redirect pages: meta refresh + canonical to the new URL |
+| **`/writing/rss.xml` guids** | **byte-identical to the pre-deploy feed - nothing republished** |
+| Feed `<link>` / `isPermaLink` | new URLs / `"false"` |
+| Treatise root | `plates`, `workshop`, `author` byte-identical; only `essays` changed |
+| Hub | 0 `<script>`, 0 React, chips and counts correct |
+| Contrast | bone 13.40:1, muted 5.16:1; `--plate-line-faint` (2.11:1) borders only |
+
+**What the hub changed structurally**
+
+- **Essays moved** `/writing/blog/<slug>` to `/writing/<slug>`. Old paths persist as redirect
+  pages. **These are soft redirects, not 301s** - GitHub Pages serves static files only, so no
+  server-issued redirect is possible on this host. Do not describe them as 301s.
+- **The feed is hand-built** (`src/lib/feed.mjs`). `@astrojs/rss` hardcodes `guid` to the item
+  link with no override, so keeping it would have republished every essay to every subscriber.
+  Guids are pinned to the historical `/writing/blog/<slug>` URLs with `isPermaLink="false"`.
+  `@astrojs/rss` is uninstalled.
+- **`claims.yaml`'s `essays:` block is retired**; `content/blog/` is the only essay list, and
+  `AGENT-PROMPT.md`'s single-source rule is amended accordingly. The two lists had already
+  drifted - claims.yaml marked *The Price of the Ticket* `draft: false` against its own file's
+  `draft: true` - so that essay correctly stopped appearing.
+- **A reserved-slug guard** (`src/lib/reserved-slugs.mjs`) fails the build if an essay slug would
+  be shadowed by a static route under `src/pages/writing/`.
+- **The React island is gone**, and React with it. One `<script>` remains site-wide: the
+  treatise's inline plate observer.
+- `/writing/blog` is **deliberately still listed** in `/writing/sitemap.xml` - the design's risk 1
+  requires redirect pages indexed before the sitemap drops the old URLs. Phase E removes it.
+
 **Known gaps**
 
-- **CI has still never succeeded** — 8 runs, 8 failures, zero steps executed. Going public
-  should remove the Actions-quota cause, but the deploy job guards on a `PAGES_DEPLOY_TOKEN`
-  secret **that does not exist**, so CI cannot deploy until it is added. Every deploy remains
+- **CI has still never succeeded** - 8 runs, 8 failures, zero steps executed. The deploy job guards
+  on a `PAGES_DEPLOY_TOKEN` secret **that does not exist**, so CI cannot deploy. Every deploy is
   manual via `npm run deploy`. **A merge deploys nothing.**
-- **Rollback is three steps, not one.** The design doc said re-enabling Pages on
-  `adbarc92/writing` "reclaims `/writing/*` immediately." That repo published via a workflow,
-  not a branch, and is now archived — so rollback is unarchive, re-enable Pages, re-run
-  `deploy.yml`. The workflow is intact and last ran green on 2026-08-30.
-- Two of the four gates `AGENT-PROMPT.md` specifies were never built — the link gate and the
-  rendered-page claims gate. That document now says which. The merged repo is a better home for
-  them, since one link gate would cover both halves.
-- The two political essays are `draft: true`: prose drafted from the approved abstracts rather
-  than written, and every figure in *The Price of the Ticket* needs a source.
-- The React runtime is ~187 KB (~61 KB gzipped) on the blog index, to filter two published
-  posts. Named rather than decided.
-- `og:image` is a single site-wide card.
-- This repo has no `README.md`, which is now visible to anyone who finds it.
-
-**In flight: `/writing/` becomes the hub.** Design system v2 phases 1–3 are **merged** (#12) and
-Alex has approved the rebuilt essay page by eye. Reviewing it surfaced a deeper problem than
-styling: the root's `III. Essays`, `/writing/`, and `/writing/blog` were three doors onto the same
-essays. The [hub design](plans/2026-08-30-writing-hub-design.md) and its
-[plan](plans/2026-08-30-writing-hub-plan.md) collapse them — the root previews, `/writing/` lists
-and filters everything written, and `/blog/` is retired with essays moving to `/writing/<slug>`.
-Both documents are in **PR #13, open**. Implementation is **handed off**; see
-[the brief](handoffs/c4c01ade-e5b0-44ea-9dec-3afff5ebdc5e.md).
+- **Rollback is three steps, not one** - unarchive `adbarc92/writing`, re-enable Pages, re-run its
+  `deploy.yml`. Note this now also predates the URL move.
+- Two of the four gates `AGENT-PROMPT.md` specifies were never built - the link gate and the
+  rendered-page claims gate.
+- **Six `/writing/*` pages still render wrong** - `/writing/eidos`, its four documents,
+  `/writing/projects`, its detail page, and `/writing/about` carry `class="page"` and reference
+  dead `--color-*` variables. Expected: **Phase D rebuilds them.**
+- **The Eidos documents list in reverse on the hub** (Infrastructure 04 above Architecture 01).
+  `specDate = order * 1000` plus a newest-first sort does it. Alex reviewed and accepted it;
+  `new Date(-order * 1000)` would restore 01 to 04 and still pass every test.
+- The two political essays are `draft: true`, pending Alex's voice pass; every figure in *The
+  Price of the Ticket* needs a source. They are listed with `[DRAFT]` badges in `npm run dev`
+  and never in a build.
+- `og:image` is a single site-wide card, still in the pre-v2 palette.
+- This repo has no `README.md`.
 
 **Next steps**
 
-1. **Review and merge PR #13**, then implement the hub plan's seven tasks. The handoff brief is
-   the entry point and leads with the three things most likely to go wrong.
-2. Phases D and E — the remaining page rebuilds and the cutover — get their own plan, deliberately
-   not written yet: D's vocabulary depends on the hub being seen, and E should not be planned
-   until what it cuts over is final.
-3. Testing and CI improvements, parked by Alex for after this work: add `PAGES_DEPLOY_TOKEN` so a
-   merge can deploy at all, and decide whether to build the two specified-but-missing gates.
-4. Post the Eidos essay — run it through LinkedIn's Post Inspector first to prime the cache. Note
-   its URL is about to move, so posting before the cutover means posting a link that will later
-   resolve through a soft redirect.
+1. **Phase D** - rebuild `/writing/eidos`, its documents, `/writing/projects`, its detail page,
+   and `/writing/about` in the approved v2 vocabulary. Needs its own plan; the hub is now visible,
+   which was the precondition.
+2. **Phase E** - the cutover's remaining tidy-up: drop `/writing/blog` from `/writing/sitemap.xml`
+   once the redirect pages are indexed.
+3. Testing and CI improvements, parked by Alex: add `PAGES_DEPLOY_TOKEN` so a merge can deploy at
+   all, and decide whether to build the two specified-but-missing gates.
+4. Post the Eidos essay - **its URL has now moved**, so post
+   `/writing/eidos-an-architecture-for-cheap-code`, not the `/writing/blog/` form. Run it through
+   LinkedIn's Post Inspector first to prime the cache.
 5. The political essays' voice pass and figure-checking, when Alex wants them.
 
 ---
 
 ## Session log
+
+### 2026-08-31 - The `/writing/` hub ships; `/blog/` is retired (PR #14)
+
+Implemented all seven tasks of the [hub plan](plans/2026-08-30-writing-hub-plan.md), Phases A-C,
+from the [handoff brief](handoffs/c4c01ade-e5b0-44ea-9dec-3afff5ebdc5e.md). Merged as **#14** and
+**deployed** (`treatise@e9fa18c`); Pages published in 23s and every check was re-run against the
+live site afterwards.
+
+- **Tasks 1-2** - reserved-slug guard, then essays moved to `/writing/<slug>` with
+  `astro.config.mjs` `redirects` covering `/writing/blog` and `/writing/blog/[slug]`. Guard proven
+  by planting a colliding file: build exits 1, clean after removal.
+- **Task 3** - the feed hand-built so guids survive the move. Diffed against the **live** feed
+  before and after deploying: byte-identical. `@astrojs/rss` uninstalled.
+- **Task 4** - the root previews `content/blog/`; `claims.yaml`'s `essays:` block and
+  `AGENT-PROMPT.md`'s single-source rule retired. The drift published nothing: *The Price of the
+  Ticket* correctly disappeared from the root.
+- **Tasks 5-6** - `writing-index.mjs` gathers the three collections into one ordered list;
+  `/writing/` rebuilt as the hub with `/writing/essays` and `/writing/category/<id>`. Chips are
+  prerendered links, no client JS.
+- **Task 7** - `BlogList`, `CategoryFilter`, `post-filter` and React deleted. Net **-1,030 lines**.
+
+**Departures from the plan, all deliberate.** `ContentsNav.astro` also read `claims.essays` and
+would have broken the build - repointed at the collection. Added `src/components/WritingIndex.astro`
+so the hub and its two filtered views share one layout. Fixed a stale `/writing/blog/...` link on
+the eidos index (the design's risk 3). Restored dev-only draft visibility on the hub, which the
+plan did not specify and a first pass had dropped - that is where Alex's voice pass happens. The
+plan's `@astrojs/rss` removal guard matched its own explanatory comments, so real imports were
+checked instead; its brass check read the HTML while the CSS is a linked file, so the stylesheet
+was checked directly.
+
+**State delta.** Essays are at `/writing/<slug>`; `/blog/` exists only as redirect pages; the site
+ships no React and one `<script>` total; `content/blog/` is the sole essay list. Tests went 94 to 99
+(post-filter's 21 removed, 26 added; the category-drift guard was carried across and re-proven).
+Phases D and E remain unplanned by design.
 
 ### 2026-08-30 (hub) — Design system v2 lands; `/writing/` is redesigned around it
 

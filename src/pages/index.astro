@@ -1,12 +1,16 @@
 ---
 // The Illuminated Treatise — single page, rendered entirely from claims.yaml
 // and the extracted plate JSON. Visual truth: treatise-reference.html.
+import { getCollection } from "astro:content";
+
 import { claims } from "../lib/claims";
 import HalyardPlate from "../components/HalyardPlate.astro";
 import ContentsNav from "../components/ContentsNav.astro";
+import { formatDate } from "../lib/dates.mjs";
+import { isPublished } from "../lib/drafts.mjs";
 import "../styles/treatise.css";
 
-const { meta, sections, projects, essays, workshop, author } = claims;
+const { meta, sections, projects, workshop, author } = claims;
 
 // typographic dressing on the confirmed thesis text (words stay claims.yaml's)
 const thesisHtml = meta.thesis
@@ -49,13 +53,20 @@ const roman = (n: number) => ["", "I", "II", "III", "IV", "V", "VI", "VII"][n] ?
 const buildDate = new Date().toISOString().slice(0, 10);
 const DRAFT_BADGE = "[DRAFT — AWAITING ALEX'S VOICE]";
 
-// essays render only once they live somewhere; with none linkable, the whole
-// section (and its nav entry) hides and the remaining sections renumber
-const visibleEssays = essays.filter((e) => e.url);
+// The treatise previews the essays; it does not hold a list of them. content/blog
+// is the only source, so a draft cannot be advertised here while its own file
+// withholds it — which is exactly how claims.yaml's copy had already drifted.
+// Three is enough to show range without turning the treatise into an index.
+//
+// With none published the whole section (and its nav entry) hides and the
+// remaining sections renumber.
+const previewEssays = (await getCollection("blog", ({ data }) => isPublished(data, false)))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
 const sectionList = [
   { id: "thesis", label: "Thesis" },
   { id: "plates", label: "Plates" },
-  ...(visibleEssays.length > 0 ? [{ id: "essays", label: "Essays" }] : []),
+  ...(previewEssays.length > 0 ? [{ id: "essays", label: "Essays" }] : []),
   { id: "workshop", label: "The Workshop" },
   { id: "author", label: "The Author" },
 ];
@@ -150,7 +161,7 @@ const secNum: Record<string, string> = Object.fromEntries(
         ))}
       </section>
 
-      {visibleEssays.length > 0 && (
+      {previewEssays.length > 0 && (
         <section id="essays">
           <p class="section-label smallcaps"><span class="num">{secNum.essays}</span>Essays</p>
           <div class="body-grid">
@@ -165,25 +176,22 @@ const secNum: Record<string, string> = Object.fromEntries(
             )}
           </div>
 
-          {visibleEssays.map((e) => (
+          {previewEssays.map((essay) => (
             <div class="essay">
               <div class="body-grid">
                 <div class="prose">
-                  <h3><a href={e.url}>{e.title}</a></h3>
-                  <p class="abstract">{e.abstract}</p>
+                  <h3><a href={`/writing/${essay.id}`}>{essay.data.title}</a></h3>
+                  <p class="abstract">{essay.data.excerpt}</p>
                 </div>
+                {/* Editorial matter, not a verified claim: no --verify cite-mark. */}
                 <aside class="margin-note">
-                  <span class="cite-mark">↳</span> essay {roman(e.series_position)} · {e.status}
-                  {e.draft && (
-                    <Fragment>
-                      <br />
-                      <span class="draft-badge">{DRAFT_BADGE}</span>
-                    </Fragment>
-                  )}
+                  <time datetime={essay.data.date.toISOString()}>{formatDate(essay.data.date)}</time>
                 </aside>
               </div>
             </div>
           ))}
+
+          <p class="smallcaps all-writing"><a href="/writing/">All writing &rarr;</a></p>
         </section>
       )}
 

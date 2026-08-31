@@ -49,6 +49,14 @@ figcaption .plate-no{color:var(--bone);letter-spacing:0.14em}
   .plate-frame.drawn .node-label,.plate-frame.drawn .verify-mark{opacity:1;transition:opacity .5s ease .85s}
 }
 
+/* ============ ESSAYS PREVIEW ============ */
+/* The root shows three essays and then gets out of the way. Set in the contents
+   nav's idiom — muted until hovered — because it is a way through, not a call to
+   action. --bone-muted is 5.16:1 on the ground, above the §4 floor for muted text. */
+.all-writing{margin-top:1.9rem;font-size:0.82rem}
+.all-writing a{color:var(--bone-muted);text-decoration-color:transparent}
+.all-writing a:hover{color:var(--bone);text-decoration-color:var(--oxblood)}
+
 /* ============ COLOPHON ============ */
 footer.colophon{
   margin:6rem 0 5rem;padding-top:2.5rem;border-top:1px solid var(--plate-line-faint);

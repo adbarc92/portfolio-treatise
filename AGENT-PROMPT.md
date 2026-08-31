@@ -42,9 +42,24 @@ Where inputs conflict, the reference wins; report the conflict rather than resol
   intent; the pipeline that shipped does not use it.) `main` protected, PRs only.
 - No CSS framework. Hand-rolled CSS from the design-system tokens, in one layer-ordered stylesheet. Watch selector-specificity collisions between section-level and element-level rules.
 
-## Single source of truth: `claims.yaml`
+## Sources of truth: `claims.yaml` for claims, content collections for content
 
-All rendered content derives from one file. Schema:
+`claims.yaml` governs **claims and their evidence** — the thesis, the projects and
+what is asserted about them, the workshop, the author. **Content collections under
+`content/` govern content:** essays (`content/blog/`), the Eidos specification
+(`content/eidos/`), projects' prose pages (`content/projects/`), and the about page.
+
+This used to read "all rendered content derives from one file", and for essays that
+stopped being true on 2026-08-30. The root's `III. Essays` section now **previews**
+`content/blog/` and holds no copy of it; `/writing/` lists it in full.
+
+The rule changed because the duplication had already failed. `claims.yaml` carried a
+second essay list — title, abstract, `series_position`, and a hardcoded absolute URL —
+and it drifted: it marked *The Price of the Ticket* `draft: false` while the essay's own
+file marked it `draft: true`. A second list is a second chance to publish something that
+is not ready, and it took that chance. **Do not restore an `essays:` block here.**
+
+Schema:
 
 ```yaml
 meta:
@@ -78,13 +93,7 @@ projects:
     not_yet:
       - "..."                             # honest gaps, Alex-authored
 
-essays:
-  - id: price-of-the-ticket
-    title: "The Price of the Ticket"
-    abstract: "..."                       # Alex's words only; draft: true until approved
-    status: complete
-    series_position: 1
-    url: "..."
+# NB: no `essays:` block. Essays live in content/blog/ and nowhere else — see above.
 
 workshop:
   prose: |

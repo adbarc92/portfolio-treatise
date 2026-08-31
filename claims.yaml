@@ -210,29 +210,6 @@ projects:
         verified: false
     not_yet: [] # TODO(alex): author (no E2E browser tests yet, per scan — a candidate)
 
-essays:
-  - id: eidos-cheap-code
-    title: "Eidos: An Architecture for Cheap Code"
-    abstract: "For fifty years, software architecture has argued about where the boundaries should go, on the shared premise that a human's attention is the scarce resource. That premise no longer holds."
-    draft: false # verbatim from the essay's own excerpt, Alex-authored 2026-08-10
-    status: complete
-    series_position: 1
-    url: "https://alexanderdbarclay.com/writing/blog/eidos-an-architecture-for-cheap-code/"
-  - id: price-of-the-ticket
-    title: "The Price of the Ticket"
-    abstract: "On the arithmetic of effort across generations — what an hour of work bought in 1975 and what it buys now, written for the reader most inclined to disagree."
-    draft: false # approved by Alex 2026-07-29
-    status: complete
-    series_position: 2
-    url: "" # TODO(alex): where does this essay live?
-  - id: ladder-problem
-    title: "The Ladder Problem"
-    abstract: "The insider–outsider pattern across zoning, licensing, and two-tier contracts — and five mechanisms for rules that bind the rule-makers symmetrically."
-    draft: false # approved by Alex 2026-07-29
-    status: complete
-    series_position: 3
-    url: "" # TODO(alex): where does this essay live?
-
 workshop:
   draft: false # approved by Alex 2026-07-29
   prose: |

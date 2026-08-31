@@ -1,80 +1,8 @@
+@import "./foundation.css";
+
 /* The Illuminated Treatise — one layer-ordered stylesheet.
    Ported from treatise-reference.html (the visual source of truth);
    deviations: self-hosted fonts, .draft-badge (Hard Rule 4). */
-
-/* ============ FONTS — self-hosted, latin subset ============ */
-@font-face {
-  font-family: "Newsreader";
-  src: url("/fonts/newsreader-latin-opsz-normal.woff2") format("woff2-variations");
-  font-weight: 200 800;
-  font-style: normal;
-  font-display: block; /* preloaded; swap is sanctioned only for mono */
-}
-@font-face {
-  font-family: "Newsreader";
-  src: url("/fonts/newsreader-latin-opsz-italic.woff2") format("woff2-variations");
-  font-weight: 200 800;
-  font-style: italic;
-  font-display: block;
-}
-@font-face {
-  font-family: "JetBrains Mono";
-  src: url("/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "JetBrains Mono";
-  src: url("/fonts/jetbrains-mono-latin-500-normal.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* ============ TOKENS ============ */
-:root{
-  --ink-ground:#151110;
-  --bone:#E3D9C6;
-  --bone-muted:#8F8574;
-  --oxblood:#8C3B32;
-  --brass:#A9884C;
-  --verify:var(--brass);    /* verification accent — never used decoratively */
-  --plate-line:rgba(227,217,198,0.62);
-  --plate-line-faint:rgba(227,217,198,0.28);
-  --serif:'Newsreader',Georgia,'Times New Roman',serif;
-  --mono:'JetBrains Mono','Berkeley Mono',ui-monospace,'SF Mono',Menlo,monospace;
-  --measure:68ch;
-  --margin-col:17rem;
-}
-
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-body{
-  background:var(--ink-ground);
-  color:var(--bone);
-  font-family:var(--serif);
-  font-optical-sizing:auto;
-  font-size:18.5px;
-  line-height:1.68;
-  -webkit-font-smoothing:antialiased;
-  padding:0 1.5rem;
-}
-::selection{background:var(--oxblood);color:var(--bone)}
-a{color:var(--bone);text-decoration:underline;text-decoration-color:var(--oxblood);text-underline-offset:3px;text-decoration-thickness:1px;transition:text-decoration-thickness .12s ease}
-a:hover{text-decoration-thickness:2.5px}
-a:focus-visible{outline:2px solid var(--verify);outline-offset:3px;border-radius:1px}
-
-.smallcaps{font-variant-caps:all-small-caps;letter-spacing:0.12em;font-weight:500}
-.mono{font-family:var(--mono)}
-.page{max-width:calc(var(--measure) + var(--margin-col) + 4rem);margin:0 auto}
-
-/* ============ CONTENTS ============ */
-nav.contents{padding:3.5rem 0 0;font-size:0.82rem;color:var(--bone-muted)}
-nav.contents a{color:var(--bone-muted);text-decoration-color:transparent}
-nav.contents a:hover{color:var(--bone);text-decoration-color:var(--oxblood)}
-nav.contents .sep{margin:0 .5em;color:var(--plate-line-faint)}
 
 /* ============ FRONT MATTER ============ */
 header.front{padding:7.5rem 0 5rem;max-width:var(--measure)}
@@ -93,36 +21,9 @@ h1.thesis em{font-style:italic;font-weight:430}
 .byline .dot{margin:0 .6em;color:var(--oxblood)}
 
 /* ============ SECTIONS & BODY GRID ============ */
-section{padding:2.5rem 0}
-.section-label{font-size:0.95rem;color:var(--bone-muted);margin-bottom:2.2rem}
-.section-label .num{font-family:var(--mono);font-size:0.72rem;color:var(--oxblood);margin-right:.9em}
-
-.body-grid{display:grid;grid-template-columns:minmax(0,var(--measure)) var(--margin-col);column-gap:4rem}
-.prose{grid-column:1;max-width:var(--measure)}
-.prose p + p{margin-top:1.35em}
-
-.margin-note{
-  grid-column:2;align-self:start;
-  font-family:var(--mono);font-size:0.72rem;line-height:1.75;color:var(--bone-muted);
-  border-left:1px solid var(--plate-line-faint);padding-left:1rem;margin-top:.35rem;
-}
 .margin-note .cite-mark{color:var(--verify)}
-.margin-note a{color:var(--bone-muted);text-decoration-color:var(--plate-line-faint)}
-.margin-note a:hover{color:var(--bone);text-decoration-color:var(--verify)}
-.margin-note .faint{color:var(--plate-line-faint)}
-.verified{color:var(--verify)}
 sup.noteref{font-family:var(--mono);font-size:0.62em;color:var(--verify);margin-left:1px}
-
-/* Hard Rule 4: unapproved prose carries a visible badge */
-.draft-badge{
-  font-family:var(--mono);font-size:0.62rem;letter-spacing:0.08em;
-  color:var(--oxblood);margin-bottom:.8rem;
-}
-
-@media (max-width:960px){
-  .body-grid{grid-template-columns:1fr}
-  .margin-note{grid-column:1;border-left:2px solid var(--plate-line-faint);margin:1.1rem 0 .4rem;max-width:var(--measure)}
-}
+.verified{color:var(--verify)}
 
 /* ============ PLATES ============ */
 figure.plate{margin:4.5rem 0;max-width:none}
@@ -147,19 +48,6 @@ figcaption .plate-no{color:var(--bone);letter-spacing:0.14em}
   .plate-frame.will-draw .node-label,.plate-frame.will-draw .verify-mark{opacity:0}
   .plate-frame.drawn .node-label,.plate-frame.drawn .verify-mark{opacity:1;transition:opacity .5s ease .85s}
 }
-
-/* ============ ENTRIES ============ */
-article.entry{padding:1.5rem 0 3rem;border-top:1px solid var(--plate-line-faint)}
-.entry-head{display:flex;align-items:baseline;gap:1.4rem;margin-bottom:1.6rem;flex-wrap:wrap}
-.entry-head h3{font-variant-caps:all-small-caps;letter-spacing:0.16em;font-weight:500;font-size:1.28rem}
-.entry-head .entry-meta{font-family:var(--mono);font-size:0.7rem;color:var(--bone-muted)}
-
-/* ============ ESSAYS — set like items in a table of papers ============ */
-.essay{padding:1.6rem 0;border-top:1px solid var(--plate-line-faint)}
-.essay h3{font-weight:500;font-size:1.15rem;font-style:italic;letter-spacing:0}
-.essay h3 a{text-decoration-color:transparent}
-.essay h3 a:hover{text-decoration-color:var(--oxblood)}
-.essay .abstract{margin-top:.5rem;font-size:0.95rem;color:var(--bone-muted)}
 
 /* ============ COLOPHON ============ */
 footer.colophon{

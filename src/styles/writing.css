@@ -164,3 +164,92 @@
   color: var(--bone-muted);
   margin-bottom: 2.5rem;
 }
+
+/* ============ THE HUB ============ */
+/* /writing/ and its filtered views. Index entries reuse `.essay` and
+   `article.entry` from foundation.css — the forms DESIGN-SYSTEM §2.12 and §2.6
+   already define — so only the page's own furniture lives here. */
+
+.writing-index {
+  padding: 3.5rem 0 2.5rem;
+}
+
+.chips {
+  margin: 2.4rem 0 0.6rem;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.55rem;
+}
+
+/* The second line is essay categories, subordinate to the kinds above it. */
+.chip-row--sub {
+  margin-top: 0.55rem;
+  padding-left: 0.05rem;
+}
+
+/* A chip is a link, not a button: a hairline, no fill, no radius beyond a
+   hint, and no --verify — brass means "proven claim" and a filter proves
+   nothing. --bone-muted is 5.16:1 on the ground, above the §4 muted floor. */
+.chip {
+  font-size: 0.72rem;
+  color: var(--bone-muted);
+  border: 1px solid var(--plate-line-faint);
+  padding: 0.22rem 0.7rem;
+  text-decoration: none;
+  transition: color 0.12s ease, border-color 0.12s ease;
+}
+
+.chip:hover {
+  color: var(--bone);
+  border-color: var(--plate-line);
+}
+
+/* The current filter, marked the way the contents nav marks its own. */
+.chip[aria-current="page"] {
+  color: var(--bone);
+  border-color: var(--plate-line);
+}
+
+.chip-count {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  color: var(--bone-muted);
+}
+
+.chip:hover .chip-count,
+.chip[aria-current="page"] .chip-count {
+  color: var(--bone-muted);
+}
+
+/* The hub's entries carry their title as a link and their blurb beneath it. */
+.writing-index .entry-head {
+  margin-bottom: 0;
+}
+
+.writing-index .entry-head h3 a,
+.writing-index .essay h3 a {
+  text-decoration-color: transparent;
+}
+
+.writing-index .entry-head h3 a:hover,
+.writing-index .essay h3 a:hover {
+  text-decoration-color: var(--oxblood);
+}
+
+.writing-index .entry {
+  padding-bottom: 1.6rem;
+}
+
+.writing-index .abstract {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--bone-muted);
+}
+
+.empty {
+  margin-top: 2rem;
+  color: var(--bone-muted);
+}

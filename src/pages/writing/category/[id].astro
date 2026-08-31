@@ -1,0 +1,27 @@
+---
+import { getCollection } from "astro:content";
+import type { GetStaticPaths } from "astro";
+
+import Writing from "../../../layouts/Writing.astro";
+import WritingIndex from "../../../components/WritingIndex.astro";
+import { isPublished } from "../../../lib/drafts.mjs";
+import { CATEGORY_LABELS, countByCategory, toEntries } from "../../../lib/writing-index.mjs";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  // Only categories with something published get a page, for the same reason
+  // they only get a chip: a filter that leads to an empty room is a broken
+  // promise, and one that is indexed is a broken promise search engines repeat.
+  const posts = await getCollection("blog", ({ data }) => isPublished(data, import.meta.env.DEV));
+  const counts = countByCategory(toEntries({ posts }));
+
+  return Object.keys(counts).map((id) => ({ params: { id } }));
+};
+
+const { id } = Astro.params;
+const label = CATEGORY_LABELS[id!] ?? id!;
+---
+
+<Writing title={label} description={`Essays on ${label.toLowerCase()}.`}>
+  <a class="back-link" href="/writing/">&larr; All writing</a>
+  <WritingIndex current={`/writing/category/${id}`} category={id} />
+</Writing>

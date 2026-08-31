@@ -1,4 +1,10 @@
 // Loads claims.yaml and enforces its rendering rules at build time.
+//
+// claims.yaml governs claims and their evidence. It does NOT hold the essay list:
+// content/blog is the only source of that, and the root's Essays section previews
+// it. The two lists had already drifted — claims.yaml marked "The Price of the
+// Ticket" draft: false while its own file marked it draft: true — so restoring an
+// `essays:` block here would re-create a way to publish an unfinished essay.
 // Fail-closed: a schema violation throws, which fails `astro build`.
 // This is the in-process half of the claims gate; the CI half (walking
 // rendered pages) arrives with the CI gates.
@@ -25,15 +31,6 @@ export interface Project {
   claims: Claim[];
   not_yet: string[];
 }
-export interface Essay {
-  id: string;
-  title: string;
-  abstract: string;
-  draft: boolean;
-  status: string;
-  series_position: number;
-  url: string;
-}
 export interface Prose {
   draft: boolean;
   prose: string;
@@ -48,7 +45,6 @@ export interface Claims {
   };
   sections: { plates_intro: Prose; essays_intro: Prose };
   projects: Project[];
-  essays: Essay[];
   workshop: Prose & {
     disciplines: string;
     planned_plates: { number: number; name: string; source: string | null; status: string }[];
@@ -93,12 +89,6 @@ for (const p of data.projects ?? []) {
   const refs = markers(p.prose ?? "");
   for (const r of refs) if (!ids.includes(r)) fail(`project ${p.id}: prose cites unknown claim ${r}`);
   for (const id of ids) if (!refs.includes(id)) fail(`project ${p.id}: claim ${id} never cited in prose`);
-}
-
-for (const e of data.essays ?? []) {
-  if (!e.id || !e.title || !e.abstract) fail(`essay ${e.id ?? "?"} incomplete`);
-  if (typeof e.draft !== "boolean") fail(`essay ${e.id}: draft flag missing`);
-  if (!e.series_position) fail(`essay ${e.id}: series_position missing`);
 }
 
 if (!data.workshop?.prose || typeof data.workshop.draft !== "boolean") fail("workshop incomplete");

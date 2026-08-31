@@ -1,6 +1,5 @@
 import { defineConfig } from "astro/config";
 
-import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 
 import remarkContentLinks from "./src/lib/content-links.mjs";
@@ -14,8 +13,15 @@ import { plateTheme } from "./src/lib/code-theme.mjs";
 export default defineConfig({
   site: "https://alexanderdbarclay.com",
   output: "static",
+  // GitHub Pages serves static files only — no server-side 301 is possible here.
+  // Astro emits an HTML page carrying a meta refresh and a canonical link, which
+  // search engines treat as a soft redirect. That is the best this host allows,
+  // and it is why /blog was retired rather than merely restyled.
+  redirects: {
+    "/writing/blog": "/writing/",
+    "/writing/blog/[slug]": "/writing/[slug]",
+  },
   integrations: [
-    react(),
     sitemap({
       // The build emits directory URLs, so every entry would carry a trailing
       // slash the pages' own canonical tags do not. Pointing a sitemap at URLs

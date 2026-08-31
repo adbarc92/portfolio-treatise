@@ -1,67 +1,14 @@
 ---
+// The hub: everything written, newest first, with chips that filter it.
+//
+// This replaced a landing page of four nav buttons. It is now both a section
+// landing and a filtered index — see the design's risk 5: if the list ever grows
+// long enough to need pagination, that is the responsibility with no answer yet.
 import Writing from "../../layouts/Writing.astro";
+import WritingIndex from "../../components/WritingIndex.astro";
 import { SITE } from "../../lib/site.mjs";
-
-
-const navItems = [
-  { href: "/writing/blog", label: "Essays" },
-  { href: "/writing/eidos", label: "Eidos" },
-  { href: "/writing/projects", label: "Projects" },
-  { href: "/writing/about", label: "About" },
-];
 ---
 
 <Writing description={SITE.description}>
-  <div class="landing">
-    <h1>Alex Barclay</h1>
-    <p class="role">Software Engineer</p>
-    <nav class="landing__nav">
-      {navItems.map(({ href, label }) => <a href={href}>{label}</a>)}
-    </nav>
-  </div>
+  <WritingIndex current="/writing/" />
 </Writing>
-
-<style>
-  .landing {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    text-align: center;
-    gap: 1rem;
-  }
-
-  h1 {
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--color-text);
-  }
-
-  .role {
-    font-size: clamp(1rem, 2vw, 1.3rem);
-    color: var(--color-text-muted);
-    font-weight: 300;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .landing__nav {
-    display: flex;
-    gap: 2rem;
-    margin-top: 2rem;
-  }
-
-  .landing__nav a {
-    color: var(--color-accent);
-    font-size: 0.95rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--color-accent-dim);
-    border-radius: 4px;
-    transition: all 0.2s;
-  }
-</style>

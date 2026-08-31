@@ -1,0 +1,12 @@
+---
+// The Essays kind-filter. /writing/eidos and /writing/projects already serve as
+// the other two, so only this one needed a home of its own.
+import Writing from "../../layouts/Writing.astro";
+import WritingIndex from "../../components/WritingIndex.astro";
+import { DESCRIPTIONS } from "../../lib/site.mjs";
+---
+
+<Writing title="Essays" description={DESCRIPTIONS.blog}>
+  <a class="back-link" href="/writing/">&larr; All writing</a>
+  <WritingIndex current="/writing/essays" kind="essay" />
+</Writing>

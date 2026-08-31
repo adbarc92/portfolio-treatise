@@ -2,10 +2,11 @@
 import { getCollection, render } from "astro:content";
 import type { GetStaticPaths } from "astro";
 
-import Writing from "../../../layouts/Writing.astro";
-import { formatDate } from "../../../lib/dates.mjs";
-import { isPublished } from "../../../lib/drafts.mjs";
-import { CATEGORY_LABELS } from "../../../lib/post-filter.mjs";
+import Writing from "../../layouts/Writing.astro";
+import { formatDate } from "../../lib/dates.mjs";
+import { isPublished } from "../../lib/drafts.mjs";
+import { CATEGORY_LABELS } from "../../lib/writing-index.mjs";
+import { assertNoReservedSlugs } from "../../lib/reserved-slugs.mjs";
 
 export const getStaticPaths: GetStaticPaths = async () => {
   // Drafts are emitted by the dev server and never by a build, so a build cannot
@@ -13,6 +14,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await getCollection("blog", ({ data }) =>
     isPublished(data, import.meta.env.DEV),
   );
+
+  // Essays share this namespace with the static pages under src/pages/writing/,
+  // which Astro resolves first. A collision would build cleanly and be
+  // unreachable, so it fails the build instead.
+  const slugs = posts.map((p) => p.id);
+  assertNoReservedSlugs(slugs);
 
   return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
 };
@@ -23,7 +30,7 @@ const { Content } = await render(post);
 
 <Writing title={post.data.title} description={post.data.excerpt} ogType="article">
   <article class="essay-page">
-    <a class="back-link" href="/writing/blog">&larr; Essays</a>
+    <a class="back-link" href="/writing/">&larr; Writing</a>
 
     {import.meta.env.DEV && post.data.draft && <p class="draft-badge">[DRAFT]</p>}
 

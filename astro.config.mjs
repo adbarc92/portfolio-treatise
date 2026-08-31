@@ -5,7 +5,7 @@ import sitemap from "@astrojs/sitemap";
 
 import remarkContentLinks from "./src/lib/content-links.mjs";
 import { canonicalPath } from "./src/lib/site.mjs";
-import { siteSurface } from "./src/lib/shiki-surface.mjs";
+import { plateTheme } from "./src/lib/code-theme.mjs";
 
 // `site` is required for @astrojs/sitemap and @astrojs/rss to emit absolute URLs.
 // `base` deliberately stays "/" — it applies site-wide, so pointing it at /writing
@@ -33,9 +33,10 @@ export default defineConfig({
     // that the src/pages/writing/ directory supplies.
     remarkPlugins: [remarkContentLinks],
     shikiConfig: {
-      // Keep Shiki's token colours; drop the page background it inlines onto the
-      // <pre>, so code blocks sit on the site's own surface rather than GitHub's.
-      transformers: [siteSurface],
+      // A theme from our own tokens (DESIGN-SYSTEM §2.14). This supersedes the
+      // transformer that used to strip github-dark's inlined background: with
+      // our own ground there is nothing foreign left to strip.
+      theme: plateTheme,
     },
   },
 });

@@ -26,13 +26,20 @@ interface Props {
 
 const { current, kind, category } = Astro.props;
 
+// Drafts are listed by the dev server and never by a build — the same rule the
+// retired blog index followed, and the reason `npm run dev` is where a voice pass
+// happens. The feed and both sitemaps pass `false` unconditionally instead: a
+// build must not publish unfinished prose, and a feed cannot be unsent.
+const showDrafts = import.meta.env.DEV;
+
 const [posts, docs, projects] = await Promise.all([
-  getCollection("blog", ({ data }) => isPublished(data, false)),
+  getCollection("blog", ({ data }) => isPublished(data, showDrafts)),
   getCollection("eidos"),
   getCollection("projects"),
 ]);
 
 const all = toEntries({ posts, docs, projects });
+const isDraft = new Set(posts.filter((p) => p.data.draft === true).map((p) => `/writing/${p.id}`));
 
 // Counts describe the whole body of writing, not the current view, so a chip
 // always reports how many entries clicking it would show — including the chip
@@ -141,6 +148,7 @@ const noteFor = (e: (typeof entries)[number]) =>
           <div class="essay">
             <div class="body-grid">
               <div class="prose">
+                {isDraft.has(e.href) && <p class="draft-badge">[DRAFT]</p>}
                 <h3>
                   <a href={e.href}>{e.title}</a>
                 </h3>

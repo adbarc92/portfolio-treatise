@@ -1,5 +1,5 @@
 ---
-// The shared shell for every /writing/* page: document head, the fixed nav bar,
+// The shared shell for every /writing/* page: document head, the contents nav,
 // and the essays' stylesheet.
 //
 // The head is the load-bearing part. Every tag here already exists on the live
@@ -9,7 +9,9 @@
 //
 // The gear background is deliberately absent. It is being redesigned rather than
 // ported, and arrives as its own phase.
+import "../styles/foundation.css";
 import "../styles/writing.css";
+import ContentsNav from "../components/ContentsNav.astro";
 import { SITE, absoluteUrl, canonicalPath, pageTitle } from "../lib/site.mjs";
 
 interface Props {
@@ -17,23 +19,12 @@ interface Props {
   description: string;
   /** 'article' for a post, a spec document, or a project; 'website' otherwise. */
   ogType?: "website" | "article";
-  /** The landing page hides the bar, as the React site did at `/`. */
-  showNav?: boolean;
 }
 
-const { title, description, ogType = "website", showNav = true } = Astro.props;
+const { title, description, ogType = "website" } = Astro.props;
 
 const fullTitle = pageTitle(title);
 const canonical = absoluteUrl(canonicalPath(Astro.url.pathname));
-
-const links = [
-  { href: "/writing/blog", label: "Essays" },
-  { href: "/writing/eidos", label: "Eidos" },
-  { href: "/writing/projects", label: "Projects" },
-  { href: "/writing/about", label: "About" },
-];
-
-const path = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -41,6 +32,8 @@ const path = Astro.url.pathname;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preload" href="/fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/newsreader-latin-opsz-italic.woff2" as="font" type="font/woff2" crossorigin />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <meta name="author" content={SITE.author} />
@@ -60,76 +53,11 @@ const path = Astro.url.pathname;
     />
   </head>
   <body>
-    {
-      showNav && (
-        <nav class="writing-nav">
-          <a href="/writing/" class="writing-nav__home">
-            Alex Barclay
-          </a>
-          <div class="writing-nav__links">
-            {links.map(({ href, label }) => (
-              <a
-                href={href}
-                class="writing-nav__link"
-                aria-current={path.startsWith(href) ? "page" : undefined}
-              >
-                {label}
-              </a>
-            ))}
-          </div>
-        </nav>
-      )
-    }
-    <main>
-      <slot />
-    </main>
+    <div class="page">
+      <ContentsNav />
+      <main>
+        <slot />
+      </main>
+    </div>
   </body>
 </html>
-
-<style>
-  .writing-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 2rem;
-    background: rgba(15, 17, 23, 0.8);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--color-gear-stroke);
-  }
-
-  .writing-nav__home {
-    font-size: 1.1rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-  }
-
-  .writing-nav__links {
-    display: flex;
-    gap: 1.5rem;
-  }
-
-  .writing-nav__link {
-    color: var(--color-text-muted);
-    font-size: 0.9rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    transition: color 0.2s;
-  }
-
-  /* The React bar highlighted by pathname prefix; aria-current carries the same
-     state here, so the active style and the accessible one cannot drift apart. */
-  .writing-nav__link[aria-current="page"] {
-    color: var(--color-accent);
-  }
-
-  main {
-    position: relative;
-    z-index: 1;
-  }
-</style>

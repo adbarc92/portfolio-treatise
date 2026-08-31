@@ -1,7 +1,9 @@
 # The Illuminated Treatise — Design System
-**Version 1.0 · July 26, 2026 · Confirmed against `treatise-reference.html`**
+**Version 2.0 · August 30, 2026 · Confirmed against `treatise-reference.html`**
 
-The reference implementation (`treatise-reference.html`) is the visual source of truth. Where this document and the reference disagree, the reference wins; flag the discrepancy rather than silently choosing.
+The reference implementation (`treatise-reference.html`) is the visual source of truth for the treatise. Where this document and the reference disagree, the reference wins; flag the discrepancy rather than silently choosing.
+
+**v2 extends v1 to cover the essays at `/writing/*`**, which joined this repository in the consolidation of 2026-08-30. v1 described a single continuous page and had no vocabulary for a list of entries, a filtered view, a section front page, or a code block. §§2.10–2.16 add those. No token changed; §1.1 is identical to v1.
 
 **Design thesis:** a printed treatise on trustworthy autonomous systems, illustrated with plates engraved from the author's actual machinery. Restraint with gravity. Evidence is the ornament. Nothing is asserted above what the margin can cite.
 
@@ -84,6 +86,27 @@ Same body-grid prose treatment. Game-development systems (e.g., the MoralEvaluat
 
 ### 2.9 Colophon
 Hand-drawn printer's device (placeholder: ✳ in a hairline circle until the real mark is inked and scanned) → small-caps "Colophon" → prose stating typefaces, the plate-derivation method, and the three build gates → mono status line: `LAST VERIFIED: {build date} · SOURCE: {repo} · GATES: CONTENT ✓ CLAIMS ✓ LINKS ✓` (values injected at build; never hardcoded).
+
+### 2.10 Contents nav, site-wide
+Extends 2.1 across pages. One list, identical on every page of the site, in small caps with `--plate-line-faint` separators. From the root, section links are anchors (`#plates`); from any other page they are root-relative (`/#plates`). `III. Essays` links to `/writing/`. No logo, no CTA, no sticky behaviour, no active-page highlight beyond the ordinary link colour.
+
+### 2.11 Section front matter
+What a section's own front page carries: an epigraph (italic serif, ≤34ch, `--bone-muted`), one orienting paragraph in the author's voice, then its sub-sections as a contents list. Structurally the same as 2.2 but without a thesis — a section head, not a title page. The site has exactly one title page and it is the root.
+
+### 2.12 Index entries
+The list form. Essays use `.essay` (2.7); projects use `article.entry` (2.6). Both already exist. An index is a sequence of these separated by hairline top rules — never cards, never a grid, no radii, no shadows, no fills.
+
+### 2.13 Filtered views
+A category or tag view is a real prerendered URL, never a client-side filter. Only categories with at least one published entry are linked: the taxonomy may be declared ahead of the writing, but empty rooms are not advertised. A filtered view states its filter in a margin note and links back to the unfiltered list.
+
+### 2.14 Code blocks
+Set as a small plate. Hairline `--plate-line-faint` frame, the page ground, no fill, mono at plate-label scale, horizontal scroll inside its own box. Syntax uses comments and punctuation in `--bone-muted`, everything else in `--bone`, keywords distinguished by weight. `--oxblood` was rejected here: it measures 2.49:1 against the ground, where §4 requires 4.5:1. `--verify` is not available here: it means "proven claim", and a syntax highlighter has no claims to prove. If this proves insufficient, that is a finding for §1.1 as a documented revision, not a decision made inside a stylesheet.
+
+### 2.15 Document navigation
+For a sequenced specification: the sibling documents listed in the margin column, the current one marked with `--bone` against the others' `--bone-muted`, and previous/next links on a hairline top rule at the foot. No sticky positioning.
+
+### 2.16 Editorial margin notes
+Margin notes on essay and project pages carry editorial matter — dates, categories, series position, asides — and are authored, not generated. **They do not use `.cite-mark` or any `--verify` colour**, which belong to the citation system in 2.4 and mean the claim beside them is proven. An editorial note is distinguished by its hairline left border alone.
 
 ---
 

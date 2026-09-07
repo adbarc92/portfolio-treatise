@@ -15,8 +15,11 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/upload-pages-artifact@v3
-        with: { path: . }
+      - uses: actions/checkout@v7
+      # include-hidden-files defaults to false from v5, which would drop
+      # `.nojekyll`. v3 excluded only .git/.github, so `true` preserves exactly
+      # what has been published to date.
+      - uses: actions/upload-pages-artifact@v5
+        with: { path: ., include-hidden-files: true }
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

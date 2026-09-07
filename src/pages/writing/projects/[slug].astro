@@ -42,6 +42,11 @@ const { links } = project.data;
               Live Demo &rarr;
             </a>
           )}
+          {links.itch && (
+            <a href={links.itch} target="_blank" rel="noopener noreferrer">
+              View on itch.io &rarr;
+            </a>
+          )}
         </div>
       )
     }

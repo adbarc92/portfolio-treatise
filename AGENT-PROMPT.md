@@ -28,18 +28,17 @@ Where inputs conflict, the reference wins; report the conflict rather than resol
   the essays under `/writing/*`, and exactly one of those pages — the blog index — hydrates a
   React island for its category filter. No other page on the site loads React.
 - Self-hosted, subset **woff2** fonts: Newsreader (variable, incl. italic) + JetBrains Mono 400/500. Preload the serif. No font CDNs in production.
-- Deploy: **GitHub Pages**, and **manually — CI has never once succeeded.** `npm run deploy`
-  (`scripts/deploy-local.mjs`) builds, runs the gates in the same order CI would, then
-  replaces the contents of the public `adbarc92/adbarc92.github.io` repo with the gated
-  output, which Pages serves at the domain root. Every real deploy has gone this way; the
-  evidence is that every deploy commit in the target carries the local script's message
-  format and the CI format appears nowhere. **Do not assume a merge deploys anything.**
-  `.github/workflows/deploy.yml` exists but has run 8 times and failed 8 times with zero
-  steps executed. The probable cause was an exhausted Actions quota on a private repo; the
-  repo went public on 2026-08-30, which should remove that, but the workflow's deploy job
-  also guards on a `PAGES_DEPLOY_TOKEN` secret **that does not exist** — the repo has zero
-  Actions secrets — so reviving CI means adding it first. (Cloudflare Pages was the original
-  intent; the pipeline that shipped does not use it.) `main` protected, PRs only.
+- Deploy: **GitHub Pages, from CI, since 2026-09-07. A merge to `main` deploys.**
+  `.github/workflows/deploy.yml` builds, runs the gates, and pushes the gated output to the
+  public `adbarc92/adbarc92.github.io` repo, whose `pages.yml` publishes it at the domain
+  root. `npm run deploy` (`scripts/deploy-local.mjs`) does the same from a workstation, runs
+  the same gates in the same order, and remains the fallback. Every deploy before 2026-09-07
+  went that way. CI's first 9 runs failed on a single cause — the deploy job guards on a
+  `PAGES_DEPLOY_TOKEN` secret that had never been set, so it refused before touching the
+  target; the quota theory was wrong, and the `build` job had been passing every step
+  throughout. The secret now exists as a fine-grained PAT scoped to the target repo alone.
+  (Cloudflare Pages was the original intent; the pipeline that shipped does not use it.)
+  `main` protected, PRs only.
 - No CSS framework. Hand-rolled CSS from the design-system tokens, in one layer-ordered stylesheet. Watch selector-specificity collisions between section-level and element-level rules.
 
 ## Sources of truth: `claims.yaml` for claims, content collections for content

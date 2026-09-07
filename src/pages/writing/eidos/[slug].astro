@@ -67,18 +67,17 @@ const { Content } = await render(doc);
     align-items: flex-start;
   }
 
+  /* Â§2.15: no sticky positioning. */
   .sidebar {
     flex: 1 1 11rem;
     min-width: 11rem;
-    position: sticky;
-    top: 6rem;
   }
 
   .sidebar__version {
     font-size: 0.75rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--color-text-muted);
+    color: var(--bone-muted);
   }
 
   .sidebar ol {
@@ -92,11 +91,11 @@ const { Content } = await render(doc);
   .sidebar__link {
     font-size: 0.85rem;
     line-height: 1.4;
-    color: var(--color-text-muted);
+    color: var(--bone-muted);
   }
 
   .sidebar__link[aria-current="page"] {
-    color: var(--color-accent);
+    color: var(--bone);
   }
 
   .body {
@@ -116,7 +115,7 @@ const { Content } = await render(doc);
     gap: 1rem;
     margin-top: 4rem;
     padding-top: 1.5rem;
-    border-top: 1px solid var(--color-gear-stroke);
+    border-top: 1px solid var(--plate-line-faint);
     font-size: 0.85rem;
   }
 </style>

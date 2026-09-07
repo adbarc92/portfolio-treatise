@@ -25,9 +25,9 @@ const { links } = project.data;
     <h1>{project.data.title}</h1>
     <p class="description">{project.data.description}</p>
 
-    <div class="tags project__tags">
-      {project.data.tags.map((tag) => <span class="tag">{tag}</span>)}
-    </div>
+    {/* Was `.tags`/`.tag`, neither of which had any CSS. The mono meta line of
+        §2.6 is the defined form, and it wraps. */}
+    {project.data.tags.length > 0 && <p class="entry-meta">{project.data.tags.join(" · ")}</p>}
 
     {
       links && (
@@ -70,7 +70,8 @@ const { links } = project.data;
     margin-bottom: 1rem;
   }
 
-  .project__tags {
+  /* `.entry-meta` is styled by foundation.css; it only needs spacing here. */
+  .entry-meta {
     margin-bottom: 1rem;
   }
 

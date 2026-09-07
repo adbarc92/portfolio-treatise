@@ -1,9 +1,14 @@
 ---
+// §2.12: an index is a sequence of `article.entry` separated by hairline top
+// rules — never cards, never a grid. This page was a card grid of `.card`,
+// `.tag` and `.grid`, none of which had a single CSS rule anywhere, so eight
+// tags on one entry overflowed and clipped mid-word. The classes used here are
+// the ones foundation.css actually defines.
 import { getCollection } from "astro:content";
 
 import Writing from "../../../layouts/Writing.astro";
+import { formatDate } from "../../../lib/dates.mjs";
 import { DESCRIPTIONS } from "../../../lib/site.mjs";
-
 
 const projects = (await getCollection("projects")).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
@@ -11,94 +16,57 @@ const projects = (await getCollection("projects")).sort(
 ---
 
 <Writing title="Projects" description={DESCRIPTIONS.projects}>
-  <div class="page" style="--page-width: 64rem">
-    <h1 class="page__title">Projects</h1>
+  <div class="page">
+    <a class="back-link" href="/writing/">&larr; All writing</a>
+
+    <p class="section-label smallcaps">Projects</p>
 
     {
       projects.length === 0 ? (
         <p class="empty">No projects yet.</p>
       ) : (
-        <div class="grid">
-          {projects.map((project) => (
-            <a class="card entry" href={`/writing/projects/${project.id}`}>
-              {project.data.thumbnail && (
-                <div class="entry__thumb">
-                  <img src={project.data.thumbnail} alt={project.data.title} />
-                </div>
+        projects.map((project) => (
+          <article class="entry">
+            <div class="entry-head">
+              <h3>
+                <a href={`/writing/projects/${project.id}`}>{project.data.title}</a>
+              </h3>
+              {/* §2.6's mono meta line. The tech list lives here rather than in
+                  pills: `.entry-head` wraps, so a long list reflows instead of
+                  overflowing the way the old tag row did. */}
+              {project.data.tags.length > 0 && (
+                <p class="entry-meta">{project.data.tags.join(" · ")}</p>
               )}
-              <div class="entry__body">
-                <h3 class="entry__title">{project.data.title}</h3>
-                <p class="entry__description">{project.data.description}</p>
-                {project.data.tags.length > 0 && (
-                  <div class="tags entry__tags">
-                    {project.data.tags.map((tag) => (
-                      <span class="tag tag--sm">{tag}</span>
-                    ))}
-                  </div>
-                )}
+            </div>
+
+            <div class="body-grid">
+              <div class="prose">
+                <p class="abstract">{project.data.description}</p>
               </div>
-            </a>
-          ))}
-        </div>
+              <aside class="margin-note">Project · {formatDate(project.data.date)}</aside>
+            </div>
+          </article>
+        ))
       )
     }
   </div>
 </Writing>
 
 <style>
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.25rem;
+  /* Matches `.writing-index .abstract`, which styles the same paragraph on the
+     hub. The hub reaches it through its own wrapper class, so this page cannot
+     borrow that rule and states it instead. */
+  .abstract {
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--bone-muted);
   }
 
-  .entry {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+  .entry-head h3 a {
+    text-decoration-color: transparent;
   }
 
-  .entry__thumb {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    background: rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-  }
-
-  .entry__thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .entry__body {
-    padding: 1.25rem;
-  }
-
-  .entry__title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--color-text);
-    margin-bottom: 0.4rem;
-  }
-
-  .entry__description {
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-    line-height: 1.5;
-  }
-
-  .entry__tags {
-    margin-top: 0.75rem;
-    gap: 0.4rem;
-  }
-
-  .tag--sm {
-    font-size: 0.7rem;
-    padding: 0.1rem 0.45rem;
-  }
-
-  .empty {
-    color: var(--color-text-muted);
+  .entry-head h3 a:hover {
+    text-decoration-color: var(--oxblood);
   }
 </style>

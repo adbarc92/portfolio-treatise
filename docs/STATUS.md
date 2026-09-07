@@ -16,17 +16,16 @@ Every prior CI failure — 9 of them — was that one absent secret; the guard a
 deploy job did exactly what it was written to do. `npm run deploy` still works and is still the
 fallback. The claim in `CLAUDE.md` that CI "has never once succeeded" is now stale.
 
-**Open**: **#18**, restating the mono meta line on the project detail page.
+**Open**: nothing.
 
 **Next steps**
-1. Merge **#18**; it deploys itself on merge.
-2. `/writing/eidos` still uses `class="card entry"` — the same dead `.card` class and the same
-   §2.12 conflict the projects index had. Nothing visibly breaks there (no tags), but it is the
-   same drift and should follow.
-3. Correct `CLAUDE.md`'s deployment section, and `deploy.yml`'s header comment, which calls this
-   repo private.
-4. The token expires — a fine-grained PAT caps at a year. Expiry will not trip the "not set"
-   guard; it fails later, at the push, as a 403.
+1. `deploy.yml` fails a docs-only merge. `git commit` exits non-zero when `dist/` is unchanged,
+   and `bash -e` fails the job — observed on **#19**, whose content had already shipped with
+   **#20**. Benign but it reds the history; guard the commit on a staged diff.
+2. The token expires — a fine-grained PAT caps at a year. Expiry will not trip the "not set"
+   guard; it fails later, at the clone or push, as a 403.
+3. `/writing/*` still has no background. The gear system was deliberately not ported at
+   consolidation; the redesign starts from a clean slate.
 
 **Where things live**
 
@@ -145,6 +144,32 @@ Implemented and merged in **#14**, deployed and verified live the same day.
 ---
 
 ## Session log
+
+### 2026-09-07 (later) — `/writing/eidos` to spec, stale deploy docs corrected
+
+Merged **#18**, **#20**, **#19** in that order, each deploying on merge.
+
+- **#18** — the mono meta line restated on the project detail page. `foundation.css` styles
+  `.entry-head .entry-meta` as a *descendant* selector; the index supplies that ancestor and the
+  detail page does not, so its tech line had fallen back to body serif.
+- **#20 — `/writing/eidos` had the projects page's disease, worse.** Same `.card`/§2.12 conflict,
+  and underneath it **every custom property the page styled against was undefined**:
+  `--color-accent`, `--color-accent-dim`, `--color-text-muted`, `--font-mono` — React-era names
+  never ported, 12 references across three files resolving to nothing. So the version badge had
+  no fill, ordinals and summaries were not muted, and none of the mono text was mono. Rebuilt on
+  `.essay`, as `WritingIndex.astro` already renders specifications on the hub. The eidos document
+  page also had `position:sticky` on its sibling nav (§2.15 forbids it in as many words) and
+  marked the current sibling with the accent where §2.15 asks for `--bone`. **No undefined custom
+  property remains in `src/`.**
+- **#20 also corrected the docs.** `CLAUDE.md`, `AGENT-PROMPT.md` and `deploy.yml`'s header all
+  described a deployment that no longer exists. `AGENT-PROMPT.md` additionally carried a wrong
+  root cause — an exhausted Actions quota — where the truth was one unset secret.
+- **#19 deployed nothing, as predicted.** Docs-only, so `dist/` came out byte-identical and
+  `git commit` exited 1 with "nothing to commit, working tree clean". Its content was already
+  live via #20. This is next-step 1.
+- Verified against `https://alexanderdbarclay.com` rather than the build: six routes 200, zero
+  dead classes in the served eidos HTML, no `var(--color-*)` in any served stylesheet, the mono
+  meta rule present, and `position:sticky` gone from the eidos document page.
 
 ### 2026-09-07 — Hexy ships; the projects index returns to spec; CI deploys for the first time
 

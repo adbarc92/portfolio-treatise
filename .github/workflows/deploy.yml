@@ -50,5 +50,12 @@ jobs:
           git config user.name "treatise-ci"
           git config user.email "adbarclay92@gmail.com"
           git add -A
-          git commit -m "deploy: treatise ${GITHUB_SHA::7}"
-          git push
+          # A docs-only merge leaves the gated output byte-identical, and `git
+          # commit` exits 1 on an empty diff — which fails the job under `bash -e`
+          # even though there is nothing wrong and nothing to publish.
+          if git diff --staged --quiet; then
+            echo "gated output unchanged — nothing to deploy"
+          else
+            git commit -m "deploy: treatise ${GITHUB_SHA::7}"
+            git push
+          fi

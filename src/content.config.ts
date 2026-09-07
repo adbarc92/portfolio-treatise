@@ -51,6 +51,9 @@ const projects = defineCollection({
       .object({
         github: z.string().url().optional(),
         live: z.string().url().optional(),
+        // A storefront page. Distinct from `live` because it renders its own
+        // label — and because a project can ship without its source being public.
+        itch: z.string().url().optional(),
       })
       .optional(),
   }),

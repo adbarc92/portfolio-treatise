@@ -16,16 +16,25 @@ Every prior CI failure — 9 of them — was that one absent secret; the guard a
 deploy job did exactly what it was written to do. `npm run deploy` still works and is still the
 fallback. The claim in `CLAUDE.md` that CI "has never once succeeded" is now stale.
 
-**Open**: nothing.
+**Open**: nothing. Working tree clean, `main` at `d61df85`, zero open PRs.
+
+**Deployment, current shape.** A merge to `main` deploys. `build-gate-deploy` builds, gates,
+refuses on an empty artifact, and pushes to `adbarc92.github.io`; that repo's `pages.yml`
+publishes. All actions are on current majors (checkout v7, setup-node v7, upload-artifact v7,
+download-artifact v8, upload-pages-artifact v5, deploy-pages v5) as of 2026-09-07 — no Node 20
+deprecation annotations remain. `npm run deploy` is the fallback and still works.
 
 **Next steps**
-1. `deploy.yml` fails a docs-only merge. `git commit` exits non-zero when `dist/` is unchanged,
-   and `bash -e` fails the job — observed on **#19**, whose content had already shipped with
-   **#20**. Benign but it reds the history; guard the commit on a staged diff.
-2. The token expires — a fine-grained PAT caps at a year. Expiry will not trip the "not set"
-   guard; it fails later, at the clone or push, as a 403.
-3. `/writing/*` still has no background. The gear system was deliberately not ported at
+1. **The `PAGES_DEPLOY_TOKEN` expires.** It is a fine-grained PAT, so a year at most from
+   2026-09-07. Expiry does *not* trip the "not set" guard — it fails later, at the clone or push,
+   as a 403. That failure signature is the thing to recognise.
+2. `/writing/*` still has no background. The gear system was deliberately not ported at
    consolidation; the redesign starts from a clean slate.
+3. `scripts/deploy-local.mjs` still fails on an empty diff, the gap `deploy.yml` had until #21.
+   Left alone deliberately: it is interactive, so its failure explains itself at a terminal.
+4. Nothing else is known-broken. The design-system audit that ran through #17 and #20 covered the
+   projects and eidos routes; **the essay and category routes were not audited** for the same
+   dead-class and dead-token drift.
 
 **Where things live**
 
@@ -144,6 +153,38 @@ Implemented and merged in **#14**, deployed and verified live the same day.
 ---
 
 ## Session log
+
+### 2026-09-07 (wrap) — CI deploys; the actions leave Node 20
+
+Closing state for the day. **PRs #16-#22 all merged, no open PRs, tree clean at `d61df85`.**
+Sessions before this one deployed by hand; this one is the first the site published itself.
+
+- **#22 — actions bumped off Node 20.** checkout v4→v7, setup-node v4→v7, upload-artifact v4→v7,
+  download-artifact v4→v8, upload-pages-artifact v3→v5, deploy-pages v4→v5. **The dangerous one
+  was `upload-pages-artifact`:** v5 added `include-hidden-files`, defaulting to `false`, which
+  expands to `--exclude=.[^/]*` and would have dropped `.nojekyll` from the published artifact —
+  v3 excluded only `.git` and `.github`. Set to `true` explicitly, and `.nojekyll` verified still
+  serving 200 after the deploy. A naive bump would have silently changed what is published.
+  `checkout` v5's breaking change concerns `pull_request_target` and both workflows are
+  push-triggered; `upload-artifact` v7 and `download-artifact` v8 both keep zip/unzip by default,
+  so the directory artifact still round-trips.
+- **#22 also guards the deploy on a non-empty `dist/index.html`.** The step deletes the entire
+  target repo before copying the artifact in, and nothing between the download and the delete had
+  checked the artifact arrived intact. Added because bumping the artifact actions is precisely the
+  change that could have made it matter.
+- **#21 — empty deploys no longer fail the job.** `git commit` exits 1 on an empty diff, which
+  `bash -e` turns into a failed job. Guarded on `git diff --staged --quiet`; verified by #21's own
+  merge, which logged `gated output unchanged — nothing to deploy` and went green.
+- **Verified live, not from the build**, after every merge: six routes 200 (`/`, `/writing/`,
+  `/writing/projects`, `/writing/projects/hexy`, `/writing/eidos`, `/writing/eidos/architecture`),
+  `.nojekyll` 200, zero dead classes in served HTML, no `var(--color-*)` in any served stylesheet.
+
+**One thing worth carrying forward.** Three separate defects this session shared a single shape:
+markup referencing a CSS vocabulary that does not exist — `.card`, `.tag`, `.tags`, then
+`--color-accent`, `--color-text-muted`, `--font-mono`. None failed the build, none failed a test,
+and all three were invisible until something rendered wide enough to clip. `grep -rn 'var(--'`
+against the tokens `foundation.css` actually defines is a cheap check; the essay and category
+routes have not had it run against them.
 
 ### 2026-09-07 (later) — `/writing/eidos` to spec, stale deploy docs corrected
 

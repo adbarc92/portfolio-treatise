@@ -70,8 +70,13 @@ const { links } = project.data;
     margin-bottom: 1rem;
   }
 
-  /* `.entry-meta` is styled by foundation.css; it only needs spacing here. */
+  /* foundation.css styles `.entry-head .entry-meta` — a descendant selector.
+     This page has no `.entry-head` (it is a document, not an index row), so the
+     mono meta line of Â§2.6 is restated here rather than inherited. */
   .entry-meta {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--bone-muted);
     margin-bottom: 1rem;
   }
 

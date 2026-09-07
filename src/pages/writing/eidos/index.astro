@@ -1,9 +1,13 @@
 ---
+// §2.12: an index is a sequence of entries separated by hairline top rules —
+// never cards, never a grid. This page was a `.card` list styled against
+// `--color-*` and `--font-mono`, none of which are defined anywhere; the real
+// tokens are `--bone-muted`, `--oxblood` and `--mono`. Specifications render as
+// `.essay`, which is what WritingIndex.astro already does for them on the hub.
 import { getCollection } from "astro:content";
 
 import Writing from "../../../layouts/Writing.astro";
 import { DESCRIPTIONS } from "../../../lib/site.mjs";
-
 
 const docs = (await getCollection("eidos")).sort((a, b) => a.data.order - b.data.order);
 const version = docs[0]?.data.version;
@@ -11,79 +15,49 @@ const version = docs[0]?.data.version;
 
 <Writing title="Eidos" description={DESCRIPTIONS.eidos}>
   <div class="page">
-    <div class="head">
-      <h1>Eidos</h1>
-      {version && <span class="version">v{version}</span>}
-    </div>
+    <a class="back-link" href="/writing/">&larr; All writing</a>
 
-    <p class="intro">
-      An architecture for cheap code: humans design the Forms, agents fill them, and
-      fitness functions verify the fit. The argument is in{" "}
-      <a href="/writing/eidos-an-architecture-for-cheap-code">the essay</a>; the
-      specification is below.
+    <p class="section-label smallcaps">
+      Eidos{version && <span class="version">v{version}</span>}
     </p>
 
-    <div class="list">
-      {
-        docs.map((doc, i) => (
-          <a class="card entry" href={`/writing/eidos/${doc.id}`}>
-            <span class="ordinal">{String(i + 1).padStart(2, "0")}</span>
-            <h2 class="card__title">{doc.data.title}</h2>
-            <p class="summary">{doc.data.summary}</p>
-          </a>
-        ))
-      }
+    <div class="body-grid">
+      <div class="prose">
+        <p>
+          An architecture for cheap code: humans design the Forms, agents fill them, and
+          fitness functions verify the fit. The argument is in{" "}
+          <a href="/writing/eidos-an-architecture-for-cheap-code">the essay</a>; the
+          specification is below.
+        </p>
+      </div>
     </div>
+
+    {
+      docs.map((doc, i) => (
+        <div class="essay">
+          <div class="body-grid">
+            <div class="prose">
+              <h3>
+                <a href={`/writing/eidos/${doc.id}`}>{doc.data.title}</a>
+              </h3>
+              <p class="abstract">{doc.data.summary}</p>
+            </div>
+            <aside class="margin-note">{String(i + 1).padStart(2, "0")} of {docs.length}</aside>
+          </div>
+        </div>
+      ))
+    }
   </div>
 </Writing>
 
 <style>
-  .head {
-    display: flex;
-    align-items: baseline;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-  }
-
-  h1 {
-    font-size: 2rem;
-    font-weight: 700;
-  }
-
+  /* §6 rejects fills and radii, so the version is a mono note beside the label
+     rather than the pill it was. */
   .version {
-    font-size: 0.75rem;
-    font-family: var(--font-mono);
-    color: var(--color-accent);
-    background: var(--color-accent-dim);
-    padding: 0.15rem 0.5rem;
-    border-radius: 3px;
-  }
-
-  .intro {
-    color: var(--color-text-muted);
-    margin: 1rem 0 2.5rem;
-    line-height: 1.7;
-  }
-
-  .list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .entry {
-    padding: 1.5rem;
-  }
-
-  .ordinal {
-    font-size: 0.75rem;
-    font-family: var(--font-mono);
-    color: var(--color-text-muted);
-  }
-
-  .summary {
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
-    line-height: 1.6;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0;
+    color: var(--bone-muted);
+    margin-left: 0.75rem;
   }
 </style>

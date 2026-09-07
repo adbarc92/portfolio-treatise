@@ -110,13 +110,24 @@ site, which is how route, `<head>`, feed, and sitemap parity were established at
 
 ## Deployment
 
-**Manual. CI has never once succeeded** — 8 runs, 8 failures, zero steps executed. Do not
-assume a merge deploys anything.
+**Automatic since 2026-09-07. A merge to `main` deploys.** `build-gate-deploy` builds, runs
+the gates, pushes `dist/` to `adbarc92/adbarc92.github.io`, and that repo's `pages.yml`
+publishes it — typically live under two minutes after the merge.
 
-`npm run deploy` builds, runs the content gate and its canary, then replaces the contents of
-`adbarc92/adbarc92.github.io` with `dist/`. Pages serves that at the domain root.
+CI failed its first 9 runs for one reason: `PAGES_DEPLOY_TOKEN` was not set, and the deploy
+job's own guard refused to run without it. The `build` job was passing every step throughout.
+The secret is a fine-grained PAT scoped to `adbarc92.github.io` alone (Contents: RW,
+Workflows: RW). **It expires** — expiry does not trip the "not set" guard; it fails later, at
+the clone or push, as a 403.
 
-Reviving CI needs a `PAGES_DEPLOY_TOKEN` secret, which the repo does not have.
+`npm run deploy` does the same thing from your machine and remains the fallback. It is not a
+dry run.
+
+Two things about the deploy job that look like bugs and are not: the `if [ -f site/CNAME ]`
+guard is a permanent no-op, because the custom domain lives in the target's Pages settings
+(`build_type: workflow`) and no `CNAME` file exists there; and if `dist/` ever comes out
+byte-identical to what is already live, `git commit` exits non-zero and fails the job under
+`bash -e`.
 
 See [`AGENT-PROMPT.md`](AGENT-PROMPT.md) for the gates: two of the four it specifies are built,
 and it now says which.

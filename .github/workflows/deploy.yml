@@ -1,5 +1,6 @@
 # Build → gates → deploy to adbarc92.github.io (the public Pages repo).
-# Source stays in this private repo; only gated build output ships.
+# Both repos are public; this one holds the source, the target holds only gated
+# build output.
 # Required secrets: PAGES_DEPLOY_TOKEN (classic PAT, repo + workflow scopes on
 # adbarc92.github.io).
 name: build-gate-deploy

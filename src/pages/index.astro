@@ -66,7 +66,7 @@ const previewEssays = (await getCollection("blog", ({ data }) => isPublished(dat
 const sectionList = [
   { id: "thesis", label: "Thesis" },
   { id: "plates", label: "Plates" },
-  ...(previewEssays.length > 0 ? [{ id: "essays", label: "Essays" }] : []),
+  ...(previewEssays.length > 0 ? [{ id: "essays", label: "Writing" }] : []),
   { id: "workshop", label: "The Workshop" },
   { id: "author", label: "The Author" },
 ];

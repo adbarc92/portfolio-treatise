@@ -88,7 +88,7 @@ Same body-grid prose treatment. Game-development systems (e.g., the MoralEvaluat
 Hand-drawn printer's device (placeholder: ✳ in a hairline circle until the real mark is inked and scanned) → small-caps "Colophon" → prose stating typefaces, the plate-derivation method, and the three build gates → mono status line: `LAST VERIFIED: {build date} · SOURCE: {repo} · GATES: CONTENT ✓ CLAIMS ✓ LINKS ✓` (values injected at build; never hardcoded).
 
 ### 2.10 Contents nav, site-wide
-Extends 2.1 across pages. One list, identical on every page of the site, in small caps with `--plate-line-faint` separators. From the root, section links are anchors (`#plates`); from any other page they are root-relative (`/#plates`). `III. Essays` links to `/writing/`. No logo, no CTA, no sticky behaviour, no active-page highlight beyond the ordinary link colour.
+Extends 2.1 across pages. One list, identical on every page of the site, in small caps with `--plate-line-faint` separators. From the root, section links are anchors (`#plates`); from any other page they are root-relative (`/#plates`). `III. Writing` links to `/writing/`, which lists the essays, the specification and the projects; it is named for its destination rather than for the essays alone. The root's own section III is titled `Essays`, because it previews only those. No logo, no CTA, no sticky behaviour, no active-page highlight beyond the ordinary link colour.
 
 ### 2.11 Section front matter
 What a section's own front page carries: an epigraph (italic serif, ≤34ch, `--bone-muted`), one orienting paragraph in the author's voice, then its sub-sections as a contents list. Structurally the same as 2.2 but without a thesis — a section head, not a title page. The site has exactly one title page and it is the root.

@@ -2,13 +2,31 @@
 
 ## State summary
 
-_Last updated: 2026-08-31_
+_Last updated: 2026-09-07_
 
-**TL;DR.** **The consolidation is done and live, and so is the `/writing/` hub.** One repository
-serves the whole domain: the treatise at the root, everything written under `/writing/*`. All eight
-consolidation phases and the hub's Phases A-C are complete and **deployed** (`treatise@e9fa18c`,
-2026-08-31). Essays now live at `/writing/<slug>`; `/blog/` is retired behind soft redirects; the
-site ships no React. This document moved here from `adbarc92/writing`, which is archived.
+**TL;DR.** **The consolidation is done and live, the `/writing/` hub with it, and as of
+2026-09-07 CI deploys on its own.** One repository serves the whole domain: the treatise at the
+root, everything written under `/writing/*`. Essays live at `/writing/<slug>`; `/blog/` is retired
+behind soft redirects; the site ships no React. This document moved here from `adbarc92/writing`,
+which is archived.
+
+**Deployment is no longer manual.** `PAGES_DEPLOY_TOKEN` was created and set on 2026-09-07, and
+the `build-gate-deploy` workflow succeeded end to end for the first time (`treatise@53eb1bd`).
+Every prior CI failure — 9 of them — was that one absent secret; the guard at the top of the
+deploy job did exactly what it was written to do. `npm run deploy` still works and is still the
+fallback. The claim in `CLAUDE.md` that CI "has never once succeeded" is now stale.
+
+**Open**: **#18**, restating the mono meta line on the project detail page.
+
+**Next steps**
+1. Merge **#18**; it deploys itself on merge.
+2. `/writing/eidos` still uses `class="card entry"` — the same dead `.card` class and the same
+   §2.12 conflict the projects index had. Nothing visibly breaks there (no tags), but it is the
+   same drift and should follow.
+3. Correct `CLAUDE.md`'s deployment section, and `deploy.yml`'s header comment, which calls this
+   repo private.
+4. The token expires — a fine-grained PAT caps at a year. Expiry will not trip the "not set"
+   guard; it fails later, at the push, as a 403.
 
 **Where things live**
 
@@ -127,6 +145,49 @@ Implemented and merged in **#14**, deployed and verified live the same day.
 ---
 
 ## Session log
+
+### 2026-09-07 — Hexy ships; the projects index returns to spec; CI deploys for the first time
+
+Three merges (**#16**, **#17**, **#18** open) and one secret. The site now publishes itself.
+
+- **#16 — Hexy added.** New `content/projects/2026-09-07-hexy.md`; sorts first by date. Source
+  repo is private, so the entry carries no GitHub link — `links.itch` was added to the projects
+  schema rather than reusing `links.live`, whose detail-page label ("Live Demo") misdescribes a
+  storefront. Named link kinds keep the set closed, as `CATEGORIES` is.
+- **The request that prompted it was aimed at the wrong repo.** It scoped the work against
+  `adbarc92.github.io` as a React/Vite SPA, including a `404.html` SPA-redirect fix. That repo's
+  local checkout is from 2024-11 and its `origin/main` is build output published from here, with
+  **no merge base** between them. No SPA fix was applicable or made: the site is static Astro and
+  every route is a real HTML file.
+- **#17 — the projects index rebuilt to §2.12.** Adding an entry with eight tags exposed a
+  pre-existing bug: `.card`, `.grid`, `.tag` and `.tags` were referenced by the markup and had
+  **zero CSS rules anywhere**, live included. Unstyled, `.tag` spans were inline text inside
+  `.entry{overflow:hidden}` — measured at 1440px, "playwright" overflowed its card by 5px and
+  "github-actions" by 49px. The styles were missing because §2.12 forbids the structure
+  ("never cards, never a grid") and §6 lists card grids as reject-on-sight; the page had drifted
+  from the spec and the dead classes were the fossil. Rebuilt on what `foundation.css` defines —
+  `article.entry`, `.entry-head`, `.entry-meta`, `.body-grid`, `.margin-note` — the same
+  vocabulary `WritingIndex.astro` already uses for projects on the hub. Net −31 lines. Verified by
+  instrumenting the rendered page against every `overflow:hidden` ancestor: 0 clipped at 1440px
+  and at 375px, `scrollWidth == clientWidth`.
+- **#18 — follow-up, open.** `foundation.css` styles `.entry-head .entry-meta` as a *descendant*
+  selector. The index supplies that ancestor; the detail page does not, so its tech line fell back
+  to body serif rather than the mono meta line #17 claimed for it. Caught by screenshotting the
+  live page after deploying, not by the build.
+- **CI works; it was never broken.** `gh secret list` was empty. The `build` job had been passing
+  every step all along — install, tests, build, gate selftest, gate, artifact — and only `deploy`
+  failed, on its own `test -n "$PAGES_TOKEN"` guard. A fine-grained PAT scoped to
+  `adbarc92.github.io` alone (Contents RW, Workflows RW) was set as `PAGES_DEPLOY_TOKEN`;
+  `build-gate-deploy` then went green, pushed `deploy: treatise 53eb1bd`, and the target's
+  `pages.yml` published it. Verified against `https://alexanderdbarclay.com`, not the build: all
+  three project URLs 200, Hexy's eight tags rendering in full, zero dead classes in the served
+  HTML, the itch.io link present and no `github.com` reference anywhere on its page.
+- **Notes for whoever touches the deploy next.** The target has no `CNAME` file — the custom
+  domain lives in Pages settings (`build_type: workflow`), so `deploy.yml`'s `if [ -f site/CNAME ]`
+  is a permanent no-op. `deploy-target/pages.yml` is byte-identical to what is installed, so the
+  push carries no workflow-file diff today; `workflow` scope is held for the day it does. And if
+  `dist/` ever comes out byte-identical to what is live, `git commit` exits non-zero and fails the
+  job under `bash -e` — that is not a token problem.
 
 ### 2026-08-31 - The `/writing/` hub ships; `/blog/` is retired (PR #14)
 

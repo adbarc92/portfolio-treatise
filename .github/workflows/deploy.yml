@@ -13,8 +13,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with: { node-version: 22, cache: npm }
       - run: npm ci
       - run: npm test
@@ -23,7 +23,7 @@ jobs:
       # the gate must catch its canary before it is trusted with the real scan
       - run: node scripts/content-gate.mjs --selftest
       - run: node scripts/content-gate.mjs
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with: { name: dist, path: dist }
 
   deploy:
@@ -31,14 +31,18 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
         with: { name: dist, path: dist }
       - name: Replace adbarc92.github.io content with gated output
         env:
           PAGES_TOKEN: ${{ secrets.PAGES_DEPLOY_TOKEN }}
         run: |
           test -n "$PAGES_TOKEN" || { echo "PAGES_DEPLOY_TOKEN not set — refusing to deploy"; exit 1; }
+          # The next steps delete the whole target repo before copying dist/ in.
+          # If the artifact ever arrives empty or malformed, that would publish an
+          # empty site, so refuse before anything destructive happens.
+          test -s dist/index.html || { echo "dist/index.html missing or empty — refusing to deploy"; exit 1; }
           git clone --depth 1 "https://x-access-token:${PAGES_TOKEN}@github.com/adbarc92/adbarc92.github.io" site
           if [ -f site/CNAME ]; then cp site/CNAME dist/CNAME; fi
           cd site

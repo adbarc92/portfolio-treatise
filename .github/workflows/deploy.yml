@@ -23,6 +23,10 @@ jobs:
       # the gate must catch its canary before it is trusted with the real scan
       - run: node scripts/content-gate.mjs --selftest
       - run: node scripts/content-gate.mjs
+      # markup that references styling which does not exist is valid HTML and
+      # valid CSS, so nothing else catches it. See scripts/style-gate.mjs.
+      - run: node scripts/style-gate.mjs --selftest
+      - run: node scripts/style-gate.mjs
       - uses: actions/upload-artifact@v7
         with: { name: dist, path: dist }
 

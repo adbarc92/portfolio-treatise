@@ -20,6 +20,8 @@ const gitOut = (args, opts = {}) =>
 run("npm run build");
 run("node scripts/content-gate.mjs --selftest");
 run("node scripts/content-gate.mjs"); // fail-closed on an empty term list
+run("node scripts/style-gate.mjs --selftest");
+run("node scripts/style-gate.mjs");
 
 // ---- provenance for the deploy commit
 const sha = gitOut(["rev-parse", "--short", "HEAD"]);
@@ -49,11 +51,21 @@ try {
   cpSync("deploy-target/pages.yml", path.join(site, ".github", "workflows", "pages.yml"));
 
   git(["-C", site, "add", "-A"]);
-  git(["-C", site, "commit", "-m", `deploy: portfolio v2 — the treatise (treatise@${sha}${dirty})`]);
-  if (!tagExists("v2")) git(["-C", site, "tag", "v2"]);
-  git(["-C", site, "push"]);
-  git(["-C", site, "push", "origin", "--tags"]);
-  console.log(`\ndeployed portfolio v2 (treatise@${sha}${dirty}) to ${TARGET} — Pages will publish it shortly.`);
+  // `git commit` exits non-zero on an empty diff, which execFileSync turns into a
+  // throw. A re-run against unchanged output is not an error, it is a no-op — the
+  // same case deploy.yml guards. Nothing to commit means nothing to push.
+  const staged = gitOut(["-C", site, "diff", "--staged", "--name-only"]);
+  if (staged === "") {
+    console.log(`
+gated output unchanged — ${TARGET} already has this content; nothing to deploy.`);
+  } else {
+    git(["-C", site, "commit", "-m", `deploy: portfolio v2 — the treatise (treatise@${sha}${dirty})`]);
+    if (!tagExists("v2")) git(["-C", site, "tag", "v2"]);
+    git(["-C", site, "push"]);
+    git(["-C", site, "push", "origin", "--tags"]);
+    console.log(`
+deployed portfolio v2 (treatise@${sha}${dirty}) to ${TARGET} — Pages will publish it shortly.`);
+  }
 } finally {
   rmSync(work, { recursive: true, force: true });
 }

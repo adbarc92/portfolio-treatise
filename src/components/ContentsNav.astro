@@ -19,15 +19,22 @@ const { onRoot = false } = Astro.props;
 
 const roman = (n: number) => ["I", "II", "III", "IV", "V", "VI"][n - 1] ?? String(n);
 
-// The Essays entry appears when there is something to read, and the source of
-// that fact is content/blog — the same one the root's section previews. It was
+// This entry is labelled "Writing", not "Essays", because that is where it goes:
+// /writing/ is the hub listing essays, the Eidos specification AND the projects.
+// Labelled "Essays" it advertised a third of its destination, and a reader
+// looking for projects had no reason to click the only link that reaches them.
+// The root's own section III keeps the name "Essays" — it previews essays and
+// nothing else, and its intro prose says so.
+//
+// The entry still appears only when there is something to read, and the source
+// of that fact is content/blog — the same one the root's section previews. It was
 // claims.yaml until the essay list was retired from it; two lists deciding one
 // nav entry is how a link to an empty section survives.
 const publishedEssays = await getCollection("blog", ({ data }) => isPublished(data, false));
 const sectionList = [
   { id: "thesis", label: "Thesis" },
   { id: "plates", label: "Plates" },
-  ...(publishedEssays.length > 0 ? [{ id: "essays", label: "Essays" }] : []),
+  ...(publishedEssays.length > 0 ? [{ id: "essays", label: "Writing" }] : []),
   { id: "workshop", label: "The Workshop" },
   { id: "author", label: "The Author" },
 ];

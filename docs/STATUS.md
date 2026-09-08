@@ -2,7 +2,7 @@
 
 ## State summary
 
-_Last updated: 2026-09-07_
+_Last updated: 2026-09-08_
 
 **TL;DR.** **The consolidation is done and live, the `/writing/` hub with it, and as of
 2026-09-07 CI deploys on its own.** One repository serves the whole domain: the treatise at the
@@ -16,7 +16,7 @@ Every prior CI failure — 9 of them — was that one absent secret; the guard a
 deploy job did exactly what it was written to do. `npm run deploy` still works and is still the
 fallback. The claim in `CLAUDE.md` that CI "has never once succeeded" is now stale.
 
-**Open**: nothing. Working tree clean, `main` at `d61df85`, zero open PRs.
+**Open**: nothing. Working tree clean, `main` at `4c3dfca`, zero open PRs.
 
 **Deployment, current shape.** A merge to `main` deploys. `build-gate-deploy` builds, gates,
 refuses on an empty artifact, and pushes to `adbarc92.github.io`; that repo's `pages.yml`
@@ -25,6 +25,13 @@ download-artifact v8, upload-pages-artifact v5, deploy-pages v5) as of 2026-09-0
 deprecation annotations remain. `npm run deploy` is the fallback and still works.
 
 **Next steps**
+
+0. **START HERE — check whether the three plate repos have settled.** Four of the five declared
+   plates do not exist; `II. Plates` is named for something most of its entries do not yet have.
+   The work is **blocked on Alex, deliberately**: Command-Center, mcp-browser-bridge and Reqdrive
+   were all in flight as of 2026-09-08 and he does not want a plate pinned to a moving tree. Ask
+   before starting; do not begin extractor work on an unsettled repo. The findings that survive
+   are in the session log below — read them before re-deriving anything.
 1. **The `PAGES_DEPLOY_TOKEN` expires.** It is a fine-grained PAT, so a year at most from
    2026-09-07. Expiry does *not* trip the "not set" guard — it fails later, at the clone or push,
    as a 403. That failure signature is the thing to recognise.
@@ -136,23 +143,88 @@ Implemented and merged in **#14**, deployed and verified live the same day.
 - `og:image` is a single site-wide card, still in the pre-v2 palette.
 - This repo has no `README.md`.
 
-**Next steps**
+**Older next steps, reconciled 2026-09-08** — this list predates the 2026-09-07/08 work and had
+gone partly false. Corrected in place rather than left to contradict the list above.
 
-1. **Phase D** - rebuild `/writing/eidos`, its documents, `/writing/projects`, its detail page,
-   and `/writing/about` in the approved v2 vocabulary. Needs its own plan; the hub is now visible,
-   which was the precondition.
-2. **Phase E** - the cutover's remaining tidy-up: drop `/writing/blog` from `/writing/sitemap.xml`
-   once the redirect pages are indexed.
-3. Testing and CI improvements, parked by Alex: add `PAGES_DEPLOY_TOKEN` so a merge can deploy at
-   all, and decide whether to build the two specified-but-missing gates.
-4. Post the Eidos essay - **its URL has now moved**, so post
-   `/writing/eidos-an-architecture-for-cheap-code`, not the `/writing/blog/` form. Run it through
-   LinkedIn's Post Inspector first to prime the cache.
-5. The political essays' voice pass and figure-checking, when Alex wants them.
+1. **Phase D** - *mostly done.* `/writing/projects` and its detail page were rebuilt (#17, #26)
+   and `/writing/eidos`'s index in #20. Still outstanding: the **eidos document pages** and
+   **`/writing/about`**, neither of which has been rebuilt in the v2 vocabulary.
+2. **Phase E** - still open: drop `/writing/blog` from `/writing/sitemap.xml` once the redirect
+   pages are indexed.
+3. ~~Add `PAGES_DEPLOY_TOKEN`~~ - **done 2026-09-07**; CI has deployed on every merge since. Of
+   the two specified-but-missing gates, one now exists (`scripts/style-gate.mjs`, #25).
+4. Post the Eidos essay - still open, and still `/writing/eidos-an-architecture-for-cheap-code`,
+   not the `/writing/blog/` form. Run it through LinkedIn's Post Inspector first.
+5. The political essays' voice pass and figure-checking, when Alex wants them - still open.
 
 ---
 
 ## Session log
+
+### 2026-09-08 — The Catalogue; a style gate; and why the plates are still four short
+
+Merged **#24, #25, #26**, all deployed. `main` at `4c3dfca`.
+
+- **#24 — `III. Essays` → `Writing`.** `/writing/` lists essays, the specification and the
+  projects, and it is the only link on the root reaching any of them; labelled "Essays" it
+  advertised a third of itself. The root's own section keeps the name `Essays` — it previews only
+  those. Also pinned the parity of the two `sectionList` copies (ContentsNav.astro and
+  index.astro), which both feed roman numerals and silently renumber the page if they drift.
+- **#25 — `scripts/style-gate.mjs`.** A site-wide audit found the essay and category routes
+  **clean**, but a clean audit is worth little: three defects shipped on 2026-09-07 with one
+  shape — markup referencing a CSS vocabulary that does not exist — and nothing caught any of
+  them, because a class with no rule and a `var()` with no definition are both valid HTML and
+  valid CSS. The gate walks `dist/` and fails the build on either. `--selftest` plants a canary
+  carrying both. Shiki's `.line` is the sole `NOT_OURS` entry. `deploy-local.mjs`'s empty-diff
+  throw fixed at the same time, so both deploy paths now behave alike.
+- **#26 — the Catalogue (§2.17).** The site held two disjoint answers to "what has he built":
+  four projects on the root from `claims.yaml`, two different ones under `/writing/projects` from
+  an Astro collection, no link between them, and the word "projects" appearing nowhere on the
+  root. `claims.yaml`'s new `catalogue:` is now the only source of both; `content/projects/` is
+  deleted. It is a **separate block, not more `projects:` entries**, on Alex's framing: a project
+  entry argues a system can be trusted and cites tests; a catalogue entry argues a product
+  shipped and found a buyer, and most of that work is closed-source, so it cites the storefront —
+  the one thing a reader can open. `SOURCE CLOSED` / `SOURCE OPEN` says which case each is. No
+  plates, because §2.5 forbids inventing structure and a closed repo can never redeem a
+  `PLATE · planned` promise. An entry citing nothing at all fails the build. `/writing/sitemap.xml`
+  and `/writing/rss.xml` were diffed against a build of `main`: byte-identical. Frozen URLs held.
+- Fixed while there: Portfolio Site's GitHub link pointed at `adbarc92/writing`, archived since
+  the consolidation.
+
+**The plate gap — findings to reuse, not re-derive.** Only **one plate exists** (III, Halyard).
+I, II, IV and V are `planned` with `source: null` and render as a margin note only.
+
+- **The cost is the drawing, not the extractor.** `HalyardPlate.astro` is 184 lines of
+  hand-placed coordinates — every node position and bezier path chosen by hand. The extractor
+  supplies the truth; the component supplies the picture. That is §2.5 working as designed
+  ("derived … then composed by hand"), but it makes each plate a design task.
+- A **plate-drift gate** already lives inside the component and throws when extraction and
+  drawing disagree, so plates cannot rot silently — but an upstream change can break this repo's
+  build until the figure is redrawn.
+- **Per repo** (all three public, all present locally, all in different languages):
+  - `mcp-browser-bridge` (TypeScript) — closest to ready. `src/protocol.ts` holds `ErrorCodes`
+    as a pure-data literal, the shape Halyard's grammar already parses, and its error paths
+    (`TIMEOUT`, `NOT_CONNECTED`, `ELEMENT_NOT_FOUND`) map onto the dashed fail-safe idiom.
+  - `command-center` (Rust) — `crates/fleet-core/src/phase.rs` has `enum Phase` and
+    `TERMINAL_PHASE_STRS` as pure data, but **no transition table**: `is_terminal()` and friends
+    are predicates and the edges live in control flow. States are extractable, edges are not. A
+    plate without edges is a list. Would need a declared transition table in *that* repo first.
+  - `reqdrive` (**Bash**, `lib/*.sh`) — no literal to parse at all. Either add a declarative
+    manifest there, or drop its plate rather than leave a permanent `planned`.
+- **Hazard for whoever writes the next extractor.** `command-center` carries four stale
+  `.claude/worktrees/`, at least one holding a `phase.rs` that **differs from the real one**.
+  Halyard's extractor is safe only because it names one exact path; anything that globs for a
+  filename could engrave an abandoned agent branch, stamp it with the real repo's commit hash,
+  and pass every gate — the drift gate would not catch it, because extraction and drawing would
+  agree with each other and both be wrong. Pin exact paths, and check whether
+  `workingTreeClean` merely records or actually fails.
+- **The cheaper alternative**: renumber so the plates that exist are I and II and let the rest
+  appear when drawn. `claims.yaml` already concedes the numbering is provisional, and Halyard
+  being PLATE III while appearing first is the visible symptom.
+
+**Parked by Alex, 2026-09-08.** All three repos are in flight; he does not want a plate pinned to
+a moving tree. Check their status before proposing any of this again.
+
 
 ### 2026-09-07 (wrap) — CI deploys; the actions leave Node 20
 

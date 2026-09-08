@@ -88,7 +88,7 @@ Same body-grid prose treatment. Game-development systems (e.g., the MoralEvaluat
 Hand-drawn printer's device (placeholder: ✳ in a hairline circle until the real mark is inked and scanned) → small-caps "Colophon" → prose stating typefaces, the plate-derivation method, and the three build gates → mono status line: `LAST VERIFIED: {build date} · SOURCE: {repo} · GATES: CONTENT ✓ CLAIMS ✓ LINKS ✓` (values injected at build; never hardcoded).
 
 ### 2.10 Contents nav, site-wide
-Extends 2.1 across pages. One list, identical on every page of the site, in small caps with `--plate-line-faint` separators. From the root, section links are anchors (`#plates`); from any other page they are root-relative (`/#plates`). `III. Writing` links to `/writing/`, which lists the essays, the specification and the projects; it is named for its destination rather than for the essays alone. The root's own section III is titled `Essays`, because it previews only those. No logo, no CTA, no sticky behaviour, no active-page highlight beyond the ordinary link colour.
+Extends 2.1 across pages. One list, identical on every page of the site, in small caps with `--plate-line-faint` separators. From the root, section links are anchors (`#plates`); from any other page they are root-relative (`/#plates`). `IV. Writing` links to `/writing/`, which lists the essays, the specification and the projects; it is named for its destination rather than for the essays alone. The root's own essays section is titled `Essays`, because it previews only those; `III. Catalogue` (§2.17) sits between Plates and Writing. No logo, no CTA, no sticky behaviour, no active-page highlight beyond the ordinary link colour.
 
 ### 2.11 Section front matter
 What a section's own front page carries: an epigraph (italic serif, ≤34ch, `--bone-muted`), one orienting paragraph in the author's voice, then its sub-sections as a contents list. Structurally the same as 2.2 but without a thesis — a section head, not a title page. The site has exactly one title page and it is the root.
@@ -107,6 +107,17 @@ For a sequenced specification: the sibling documents listed in the margin column
 
 ### 2.16 Editorial margin notes
 Margin notes on essay and project pages carry editorial matter — dates, categories, series position, asides — and are authored, not generated. **They do not use `.cite-mark` or any `--verify` colour**, which belong to the citation system in 2.4 and mean the claim beside them is proven. An editorial note is distinguished by its hairline left border alone.
+
+### 2.17 Catalogue entries
+`article.entry` as §2.6, with one difference that is the whole point: **no plate, and the citation is the product rather than a test.**
+
+A project entry (§2.6) argues that a system can be trusted, and cites the tests that prove it. A catalogue entry argues something narrower — that a product exists, reached a customer, and is still standing — and most of this work is closed-source, so a test citation would be a link no reader could follow. That is worse than no citation in a document whose thesis is that nothing is asserted above what the margin can cite. What is public is the product, and that is what is cited: a storefront, a listing, a public repository.
+
+**No plate.** §2.5 derives figures from repository definitions and forbids inventing structure. A catalogue entry opens no repository to the reader and makes no structural claim, so there is nothing to derive — and nothing is missing when no figure appears. A `PLATE N · planned` line would be a promise a closed repository can never redeem.
+
+The margin carries the citations, then a mono `SOURCE CLOSED` / `SOURCE OPEN` line — the honest label on why the citation takes the form it does. Prose formula: the business need (concession first) → what the product is → that it shipped (cited) → what is not claimed, from `not_yet`.
+
+A catalogue entry with no claims at all **fails the build**. A shipped thing nobody can look at and nobody can check is the exact case this document must not fudge.
 
 ---
 

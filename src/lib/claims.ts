@@ -31,6 +31,24 @@ export interface Project {
   claims: Claim[];
   not_yet: string[];
 }
+export interface CatalogueEntry {
+  id: string;
+  name: string;
+  meta_line: string;
+  /** Whether a reader can inspect the code. Decides nothing visually; it is the
+   *  honest label on why the citation is a storefront and not a test file. */
+  source: "open" | "closed";
+  draft: boolean;
+  href: string;
+  href_label: string;
+  tags: string[];
+  date: Date | string;
+  blurb: string;
+  prose: string;
+  claims: Claim[];
+  not_yet: string[];
+}
+
 export interface Prose {
   draft: boolean;
   prose: string;
@@ -45,6 +63,7 @@ export interface Claims {
   };
   sections: { plates_intro: Prose; essays_intro: Prose };
   projects: Project[];
+  catalogue: CatalogueEntry[];
   workshop: Prose & {
     disciplines: string;
     planned_plates: { number: number; name: string; source: string | null; status: string }[];
@@ -91,6 +110,34 @@ for (const p of data.projects ?? []) {
   for (const id of ids) if (!refs.includes(id)) fail(`project ${p.id}: claim ${id} never cited in prose`);
 }
 
+// Catalogue entries carry no plate by design (see claims.yaml), so the plate
+// rules do not apply — but the citation rules do, and more strictly: a closed
+// source means the storefront link is the only thing a reader can check, and a
+// broken one leaves an assertion with nothing behind it.
+for (const c of data.catalogue ?? []) {
+  if (!c.id || !c.name || !c.meta_line) fail(`catalogue ${c.id ?? "?"} incomplete`);
+  if (!["open", "closed"].includes(c.source)) fail(`catalogue ${c.id}: source must be open or closed`);
+  if (typeof c.draft !== "boolean") fail(`catalogue ${c.id}: draft flag missing`);
+  if (!c.href || !c.href_label) fail(`catalogue ${c.id}: needs a public href and a label for it`);
+  if (!c.blurb) fail(`catalogue ${c.id}: blurb missing (the index renders it)`);
+  if (!Array.isArray(c.tags)) fail(`catalogue ${c.id}: tags missing`);
+  if (!Array.isArray(c.not_yet))
+    fail(`catalogue ${c.id}: not_yet missing (an empty list must be explicit)`);
+  // A shipped thing nobody can look at is exactly the case this document must
+  // not fudge, so an entry that cites nothing at all is refused outright.
+  if (!Array.isArray(c.claims) || c.claims.length === 0)
+    fail(`catalogue ${c.id}: no claims — a catalogue entry must cite something public`);
+  for (const cl of c.claims) {
+    if (!cl.evidence?.url) fail(`catalogue ${c.id}, claim ${cl.id}: no evidence.url`);
+    if (!cl.evidence.label) fail(`catalogue ${c.id}, claim ${cl.id}: no evidence.label`);
+    if (typeof cl.verified !== "boolean") fail(`catalogue ${c.id}, claim ${cl.id}: verified missing`);
+  }
+  const ids = c.claims.map((x) => x.id);
+  const refs = markers(c.prose ?? "");
+  for (const r of refs) if (!ids.includes(r)) fail(`catalogue ${c.id}: prose cites unknown claim ${r}`);
+  for (const id of ids) if (!refs.includes(id)) fail(`catalogue ${c.id}: claim ${id} never cited in prose`);
+}
+
 if (!data.workshop?.prose || typeof data.workshop.draft !== "boolean") fail("workshop incomplete");
 {
   const names = (data.workshop.planned_plates ?? []).map((pp) => pp.name.toLowerCase());
@@ -101,3 +148,20 @@ if (!data.workshop?.prose || typeof data.workshop.draft !== "boolean") fail("wor
 if (!data.author?.prose || typeof data.author.draft !== "boolean") fail("author incomplete");
 
 export const claims: Claims = data;
+
+/**
+ * Catalogue entries in the shape the /writing index helpers expect.
+ *
+ * `toEntries` and the sitemap were written against Astro collection entries.
+ * Adapting here rather than rewriting them keeps `writing-index.mjs` — and the
+ * tests pinning it — untouched by where the data now comes from.
+ */
+export const catalogueAsEntries = data.catalogue.map((c) => ({
+  id: c.id,
+  data: {
+    title: c.name,
+    description: c.blurb,
+    date: c.date instanceof Date ? c.date : new Date(String(c.date)),
+    tags: c.tags,
+  },
+}));

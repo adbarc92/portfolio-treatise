@@ -1,59 +1,73 @@
 ---
-import { getCollection, render } from "astro:content";
+// A catalogue entry's own page. Rendered from claims.yaml, like the root's
+// III. Catalogue and the index beside it — content/projects/ is gone, and with
+// it the second, disagreeing list of projects.
+//
+// The URLs these emit are frozen: /writing/projects/hexy and
+// /writing/projects/portfolio-site carry canonical tags and are linked from
+// outside. The ids in claims.yaml are chosen to reproduce them exactly.
 import type { GetStaticPaths } from "astro";
 
 import Writing from "../../../layouts/Writing.astro";
+import { claims } from "../../../lib/claims";
+import { formatDate } from "../../../lib/dates.mjs";
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const projects = await getCollection("projects");
+export const getStaticPaths: GetStaticPaths = () =>
+  claims.catalogue.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
 
-  return projects.map((project) => ({
-    params: { slug: project.id },
-    props: { project },
-  }));
-};
-
-const { project } = Astro.props;
-const { Content } = await render(project);
-const { links } = project.data;
+const { entry } = Astro.props;
 ---
 
-<Writing title={project.data.title} description={project.data.description} ogType="article">
+<Writing title={entry.name} description={entry.blurb} ogType="article">
   <div class="page">
     <a class="back-link" href="/writing/projects">&larr; Back to Projects</a>
 
-    <h1>{project.data.title}</h1>
-    <p class="description">{project.data.description}</p>
+    <h1>{entry.name}</h1>
+    <p class="description">{entry.blurb}</p>
 
-    {/* Was `.tags`/`.tag`, neither of which had any CSS. The mono meta line of
-        §2.6 is the defined form, and it wraps. */}
-    {project.data.tags.length > 0 && <p class="entry-meta">{project.data.tags.join(" · ")}</p>}
+    <p class="entry-meta">{entry.meta_line}</p>
 
-    {
-      links && (
-        <div class="links">
-          {links.github && (
-            <a href={links.github} target="_blank" rel="noopener noreferrer">
-              GitHub &rarr;
-            </a>
-          )}
-          {links.live && (
-            <a href={links.live} target="_blank" rel="noopener noreferrer">
-              Live Demo &rarr;
-            </a>
-          )}
-          {links.itch && (
-            <a href={links.itch} target="_blank" rel="noopener noreferrer">
-              View on itch.io &rarr;
-            </a>
-          )}
-        </div>
-      )
-    }
+    <div class="body-grid">
+      <div class="prose">
+        <p>{entry.prose.trimEnd()}</p>
 
-    <article class="prose">
-      <Content />
-    </article>
+        {
+          entry.not_yet.length > 0 && (
+            <p class="not-yet">{entry.not_yet.join(" ")}</p>
+          )
+        }
+
+        <p class="links">
+          <a href={entry.href} target="_blank" rel="noopener noreferrer">
+            {entry.href_label} &rarr;
+          </a>
+        </p>
+      </div>
+
+      <aside class="margin-note">
+        {
+          entry.claims.map((c) => (
+            <>
+              <span class="cite-mark">&#8627;</span> {c.text} &mdash;<br />
+              {c.verified && (
+                <>
+                  <span class="verified">&#10003; verified</span> &mdash;<br />
+                </>
+              )}
+              <a href={c.evidence.url}>{c.evidence.label}</a>
+              <br />
+              <br />
+            </>
+          ))
+        }
+        <span class="faint">{entry.source === "closed" ? "SOURCE CLOSED" : "SOURCE OPEN"}</span>
+        <br />
+        {formatDate(new Date(String(entry.date)))}
+        <br />
+        <br />
+        {entry.tags.join(" · ")}
+      </aside>
+    </div>
   </div>
 </Writing>
 
@@ -71,19 +85,22 @@ const { links } = project.data;
   }
 
   /* foundation.css styles `.entry-head .entry-meta` — a descendant selector.
-     This page has no `.entry-head` (it is a document, not an index row), so the
-     mono meta line of Â§2.6 is restated here rather than inherited. */
+     This page has no `.entry-head`, so the mono meta line of §2.6 is restated
+     here rather than inherited. */
   .entry-meta {
     font-family: var(--mono);
     font-size: 0.7rem;
     color: var(--bone-muted);
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .not-yet {
+    margin-top: 1rem;
+    color: var(--bone-muted);
   }
 
   .links {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
+    margin-top: 2rem;
     font-size: 0.85rem;
   }
 </style>

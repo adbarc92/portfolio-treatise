@@ -1,6 +1,7 @@
 import { getCollection } from "astro:content";
 import type { APIRoute } from "astro";
 
+import { catalogueAsEntries } from "../../lib/claims";
 import { isPublished } from "../../lib/drafts.mjs";
 import { absoluteUrl } from "../../lib/site.mjs";
 import { countByCategory, toEntries } from "../../lib/writing-index.mjs";
@@ -16,7 +17,7 @@ import { countByCategory, toEntries } from "../../lib/writing-index.mjs";
 export const GET: APIRoute = async () => {
   const [posts, projects, eidos] = await Promise.all([
     getCollection("blog", ({ data }) => isPublished(data, false)),
-    getCollection("projects"),
+    Promise.resolve(catalogueAsEntries),
     getCollection("eidos"),
   ]);
 

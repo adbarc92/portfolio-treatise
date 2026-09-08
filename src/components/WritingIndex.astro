@@ -7,6 +7,7 @@
 // JavaScript reaches this page, which is why the React island could be retired.
 import { getCollection } from "astro:content";
 
+import { catalogueAsEntries } from "../lib/claims";
 import { formatDate } from "../lib/dates.mjs";
 import { isPublished } from "../lib/drafts.mjs";
 import {
@@ -35,7 +36,7 @@ const showDrafts = import.meta.env.DEV;
 const [posts, docs, projects] = await Promise.all([
   getCollection("blog", ({ data }) => isPublished(data, showDrafts)),
   getCollection("eidos"),
-  getCollection("projects"),
+  Promise.resolve(catalogueAsEntries),
 ]);
 
 const all = toEntries({ posts, docs, projects });

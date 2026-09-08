@@ -34,30 +34,10 @@ const blog = defineCollection({
   }),
 });
 
-const projects = defineCollection({
-  loader: glob({
-    pattern: "**/*.md",
-    base: "./content/projects",
-    generateId: ({ entry }) => stripDate(entry),
-  }),
-  schema: z.object({
-    title: z.string().min(1),
-    description: z.string().min(1),
-    // Authored as "" when there is no image, so this cannot be .url().
-    thumbnail: z.string().optional(),
-    tags: z.array(z.string()),
-    date: z.coerce.date(),
-    links: z
-      .object({
-        github: z.string().url().optional(),
-        live: z.string().url().optional(),
-        // A storefront page. Distinct from `live` because it renders its own
-        // label — and because a project can ship without its source being public.
-        itch: z.string().url().optional(),
-      })
-      .optional(),
-  }),
-});
+// The projects collection is gone. claims.yaml's `catalogue:` is now the only
+// source of what has been built, because two stores meant two disagreeing
+// answers: four projects on the root and two different ones under /writing.
+
 
 const eidos = defineCollection({
   loader: glob({
@@ -78,4 +58,4 @@ const about = defineCollection({
   schema: z.object({ title: z.string().min(1) }),
 });
 
-export const collections = { blog, projects, eidos, about };
+export const collections = { blog, eidos, about };

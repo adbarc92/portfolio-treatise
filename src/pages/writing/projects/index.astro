@@ -1,17 +1,20 @@
 ---
-// §2.12: an index is a sequence of `article.entry` separated by hairline top
-// rules — never cards, never a grid. This page was a card grid of `.card`,
-// `.tag` and `.grid`, none of which had a single CSS rule anywhere, so eight
-// tags on one entry overflowed and clipped mid-word. The classes used here are
-// the ones foundation.css actually defines.
-import { getCollection } from "astro:content";
-
+// The projects index, rendered from claims.yaml's `catalogue:` — the same source
+// the root's III. Catalogue renders. It was a separate Astro content collection
+// under content/projects/, which meant the site held two disjoint answers to
+// "what has he built": four projects on the root, two different ones here, and
+// no link between them. One source, one answer.
+//
+// §2.12: a sequence of `article.entry` separated by hairline top rules, never a
+// grid. It was a card grid of `.card`, `.tag` and `.grid`, none of which had a
+// CSS rule anywhere; the classes used here are ones foundation.css defines.
 import Writing from "../../../layouts/Writing.astro";
+import { claims } from "../../../lib/claims";
 import { formatDate } from "../../../lib/dates.mjs";
 import { DESCRIPTIONS } from "../../../lib/site.mjs";
 
-const projects = (await getCollection("projects")).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+const entries = [...claims.catalogue].sort(
+  (a, b) => new Date(String(b.date)).valueOf() - new Date(String(a.date)).valueOf(),
 );
 ---
 
@@ -22,28 +25,27 @@ const projects = (await getCollection("projects")).sort(
     <p class="section-label smallcaps">Projects</p>
 
     {
-      projects.length === 0 ? (
+      entries.length === 0 ? (
         <p class="empty">No projects yet.</p>
       ) : (
-        projects.map((project) => (
+        entries.map((c) => (
           <article class="entry">
             <div class="entry-head">
               <h3>
-                <a href={`/writing/projects/${project.id}`}>{project.data.title}</a>
+                <a href={`/writing/projects/${c.id}`}>{c.name}</a>
               </h3>
-              {/* §2.6's mono meta line. The tech list lives here rather than in
-                  pills: `.entry-head` wraps, so a long list reflows instead of
-                  overflowing the way the old tag row did. */}
-              {project.data.tags.length > 0 && (
-                <p class="entry-meta">{project.data.tags.join(" · ")}</p>
-              )}
+              {c.tags.length > 0 && <p class="entry-meta">{c.tags.join(" · ")}</p>}
             </div>
 
             <div class="body-grid">
               <div class="prose">
-                <p class="abstract">{project.data.description}</p>
+                <p class="abstract">{c.blurb}</p>
               </div>
-              <aside class="margin-note">Project · {formatDate(project.data.date)}</aside>
+              <aside class="margin-note">
+                {formatDate(new Date(String(c.date)))}
+                <br />
+                {c.source === "closed" ? "source closed" : "source open"}
+              </aside>
             </div>
           </article>
         ))

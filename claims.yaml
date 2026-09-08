@@ -210,6 +210,80 @@ projects:
         verified: false
     not_yet: [] # TODO(alex): author (no E2E browser tests yet, per scan — a candidate)
 
+
+# Catalogue — work that shipped.
+#
+# These entries answer a different question from `projects:` above, and are kept
+# apart because conflating them would weaken both. A project entry argues that a
+# system can be trusted, and cites the tests that prove it. A catalogue entry
+# argues something narrower and more ordinary: that a product exists, reached a
+# customer, and is still standing. The evidence for that is the storefront, not
+# a test file.
+#
+# Most of this work is closed-source. A test citation would therefore be a link
+# no reader could follow — worse than no citation at all in a document whose
+# thesis is that nothing is asserted above what the margin can cite. What IS
+# public is the product, and that is what these entries cite.
+#
+# No plates. A plate is derived from repository definitions (DESIGN-SYSTEM §2.5)
+# and may never be invented; a catalogue entry makes no structural claim, so
+# there is nothing to derive and nothing missing when no figure appears.
+catalogue:
+  - id: hexy
+    name: Hexy
+    meta_line: "HEX MAP MAKER FOR TABLETOP RPGS · WINDOWS · MACOS · LINUX"
+    source: closed
+    draft: false
+    href: "https://redgalt.itch.io/hexy"
+    href_label: "View on itch.io"
+    tags: ["tauri", "rust", "sveltekit", "typescript", "pixijs", "vitest", "playwright", "github-actions"]
+    date: 2026-09-07
+    blurb: "A hex map maker for tabletop RPGs, with a live player-facing second screen."
+    prose: |
+      Hex-crawl campaigns have a staging problem that is not really a software
+      problem: the map the referee needs and the map the players may see are not
+      the same map, and at a physical table the difference is managed with paper
+      cutouts and a good memory. Virtual tabletops solve it by moving everyone
+      online, which is a different evening. Hexy takes the third position — the
+      players are in the room — and mirrors the revealed map to a second screen
+      as the referee draws, with fog of war covering everything not yet found.
+      It is a finished product with a price on it rather than a demonstration,
+      built and shipped alone.[^shipped]
+    claims:
+      - id: shipped
+        text: "shipped, priced, three platforms"
+        evidence:
+          url: "https://redgalt.itch.io/hexy"
+          label: "itch.io — Hexy, $15, Windows/macOS/Linux"
+        verified: false # flip on Alex's confirmation; the evidence is a public page
+    not_yet:
+      - "The source is closed. The storefront is the whole of the public evidence, and nothing here invites inspection of the code."
+
+  - id: portfolio-site
+    name: Portfolio Site
+    meta_line: "THIS SITE · ASTRO · STATIC · NEAR-ZERO CLIENT JS"
+    source: open
+    draft: false
+    href: "https://github.com/adbarc92/portfolio-treatise"
+    href_label: "View the source"
+    tags: ["astro", "typescript", "yaml", "svg"]
+    date: 2026-01-15
+    blurb: "This site: one repository serving the treatise and everything written under /writing."
+    prose: |
+      A portfolio is a weak argument by construction — the one document whose
+      author controls every word written about him. This one at least declines
+      the easy version: the claims it makes about other systems carry citations
+      that fail the build when they go missing, and the whole of it is open, so
+      the argument can be checked against the machinery that makes it.[^open]
+    claims:
+      - id: open
+        text: "the source of this page"
+        evidence:
+          url: "https://github.com/adbarc92/portfolio-treatise"
+          label: "github — portfolio-treatise"
+        verified: false # flip on Alex's confirmation
+    not_yet: []
+
 workshop:
   draft: false # approved by Alex 2026-07-29
   prose: |

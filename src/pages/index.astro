@@ -10,7 +10,7 @@ import { formatDate } from "../lib/dates.mjs";
 import { isPublished } from "../lib/drafts.mjs";
 import "../styles/treatise.css";
 
-const { meta, sections, projects, workshop, author } = claims;
+const { meta, sections, projects, catalogue, workshop, author } = claims;
 
 // typographic dressing on the confirmed thesis text (words stay claims.yaml's)
 const thesisHtml = meta.thesis
@@ -21,6 +21,7 @@ const thesisHtml = meta.thesis
 const refNums = new Map<string, number>();
 let refCount = 0;
 for (const p of projects) for (const c of p.claims) refNums.set(`${p.id}:${c.id}`, ++refCount);
+for (const c of catalogue) for (const cl of c.claims) refNums.set(`${c.id}:${cl.id}`, ++refCount);
 const workshopRefs = new Map<string, number>();
 for (const m of workshop.prose.matchAll(/\[\^([\w-]+)\]/g)) workshopRefs.set(m[1]!, ++refCount);
 
@@ -47,6 +48,12 @@ const entrySegs = (p: (typeof projects)[number]) => {
       : "");
   return segments(prose, (id) => refNums.get(`${p.id}:${id}`));
 };
+const catalogueSegs = (c: (typeof catalogue)[number]) => {
+  const prose =
+    c.prose.trimEnd() +
+    (c.not_yet.length > 0 ? ` ${c.not_yet.join(" ")}` : "");
+  return segments(prose, (id) => refNums.get(`${c.id}:${id}`));
+};
 const workshopSegs = segments(workshop.prose.trimEnd(), (id) => workshopRefs.get(id));
 
 const roman = (n: number) => ["", "I", "II", "III", "IV", "V", "VI", "VII"][n] ?? String(n);
@@ -66,6 +73,7 @@ const previewEssays = (await getCollection("blog", ({ data }) => isPublished(dat
 const sectionList = [
   { id: "thesis", label: "Thesis" },
   { id: "plates", label: "Plates" },
+  ...(catalogue.length > 0 ? [{ id: "catalogue", label: "Catalogue" }] : []),
   ...(previewEssays.length > 0 ? [{ id: "essays", label: "Writing" }] : []),
   { id: "workshop", label: "The Workshop" },
   { id: "author", label: "The Author" },
@@ -160,6 +168,63 @@ const secNum: Record<string, string> = Object.fromEntries(
           </article>
         ))}
       </section>
+
+      {catalogue.length > 0 && (
+        <section id="catalogue">
+          <p class="section-label smallcaps"><span class="num">{secNum.catalogue}</span>Catalogue</p>
+
+          <div class="body-grid">
+            <div class="prose">
+              <p>
+                Work that shipped. These make a smaller claim than the plates above and a
+                different one: not that a system can be trusted, but that a product exists,
+                found a buyer, and is still standing. Most of it is closed, so the citation
+                is the storefront rather than a test — the one thing a reader can open.
+              </p>
+            </div>
+            <aside class="margin-note">
+              <span class="cite-mark">↳</span> no plates here: a plate is<br />derived from a repository,<br />and these do not open one
+            </aside>
+          </div>
+
+          {catalogue.map((c) => (
+            <article class="entry" id={c.id}>
+              <div class="entry-head">
+                <h3>{c.name}</h3>
+                <span class="entry-meta">{c.meta_line}</span>
+              </div>
+              <div class="body-grid">
+                <div class="prose">
+                  {c.draft && <p class="draft-badge">{DRAFT_BADGE}</p>}
+                  <p>
+                    {catalogueSegs(c).map((s) =>
+                      "ref" in s ? <sup class="noteref">{s.ref}</sup> : <Fragment>{s.text}</Fragment>
+                    )}
+                  </p>
+                </div>
+                <aside class="margin-note">
+                  {c.claims.map((cl) => (
+                    <Fragment>
+                      <span class="cite-mark">↳ {refNums.get(`${c.id}:${cl.id}`)}</span> {cl.text} —<br />
+                      {cl.verified && (
+                        <Fragment>
+                          <span class="verified">✓ verified</span> —<br />
+                        </Fragment>
+                      )}
+                      <a href={cl.evidence.url}>{cl.evidence.label}</a>
+                      <br />
+                      <br />
+                    </Fragment>
+                  ))}
+                  <span class="faint">{c.source === "closed" ? "SOURCE CLOSED" : "SOURCE OPEN"}</span>
+                  <br />
+                  <a href={`/writing/projects/${c.id}`}>full entry</a>
+                </aside>
+              </div>
+            </article>
+          ))}
+        </section>
+      )}
 
       {previewEssays.length > 0 && (
         <section id="essays">

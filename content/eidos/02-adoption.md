@@ -7,7 +7,7 @@ summary: "The playbook for existing projects: assessment, a first gate, forming 
 
 ## The order of operations
 
-Adoption is incremental and always in the same order: **find the seams — write the Forms — build the fitness functions — then, and only then, delegate the implementations.** Teams fail by inverting this — delegating heavily to agents first, then discovering their architecture was prose all along.
+Adoption is incremental and always in the same order: **find the seams, write the Forms, build the fitness functions, and then, and only then, delegate the implementations.** Teams fail by inverting this — delegating heavily to agents first, then discovering their architecture was prose all along.
 
 ## Phase 0 — Assessment (one session per repo)
 

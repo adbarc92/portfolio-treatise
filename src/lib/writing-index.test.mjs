@@ -51,6 +51,25 @@ test("entries are newest first across all kinds", () => {
   assert.deepEqual(dates, [...dates].sort((a, b) => b - a));
 });
 
+test("the specification reads in its own order, beneath everything dated", () => {
+  // The documents carry no date, so their place in a newest-first list is decided
+  // by `order` alone. Given shuffled, they must still come out 01 to 04.
+  const spec = [3, 1, 4, 2].map((order) => ({
+    id: `doc-${order}`,
+    data: { title: `Doc ${order}`, summary: "sum", order, version: "0.1" },
+  }));
+  const entries = toEntries({ posts, docs: spec, projects });
+
+  const specTitles = entries.filter((e) => e.kind === "specification").map((e) => e.title);
+  assert.deepEqual(specTitles, ["Doc 1", "Doc 2", "Doc 3", "Doc 4"]);
+
+  const firstSpec = entries.findIndex((e) => e.kind === "specification");
+  assert.ok(
+    entries.slice(firstSpec).every((e) => e.kind === "specification"),
+    "a dated entry sorted beneath the specification",
+  );
+});
+
 test("kind counts describe what is present", () => {
   assert.deepEqual(countByKind(toEntries({ posts, docs, projects })), {
     essay: 2,

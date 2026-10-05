@@ -8,6 +8,7 @@ import HalyardPlate from "../components/HalyardPlate.astro";
 import ContentsNav from "../components/ContentsNav.astro";
 import { formatDate } from "../lib/dates.mjs";
 import { isPublished } from "../lib/drafts.mjs";
+import { SITE, absoluteUrl } from "../lib/site.mjs";
 import "../styles/treatise.css";
 
 const { meta, sections, projects, catalogue, workshop, author } = claims;
@@ -44,7 +45,7 @@ const entrySegs = (p: (typeof projects)[number]) => {
   const prose =
     p.prose.trimEnd() +
     (p.not_yet.length > 0
-      ? ` What it does not yet do is also worth saying: ${p.not_yet.join("; ")}.`
+      ? ` What it does not yet do: ${p.not_yet.join("; ")}.`
       : "");
   return segments(prose, (id) => refNums.get(`${p.id}:${id}`));
 };
@@ -58,7 +59,7 @@ const workshopSegs = segments(workshop.prose.trimEnd(), (id) => workshopRefs.get
 
 const roman = (n: number) => ["", "I", "II", "III", "IV", "V", "VI", "VII"][n] ?? String(n);
 const buildDate = new Date().toISOString().slice(0, 10);
-const DRAFT_BADGE = "[DRAFT — AWAITING ALEX'S VOICE]";
+const DRAFT_BADGE = "[DRAFT]";
 
 // The treatise previews the essays; it does not hold a list of them. content/blog
 // is the only source, so a draft cannot be advertised here while its own file
@@ -89,7 +90,17 @@ const secNum: Record<string, string> = Object.fromEntries(
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Alex Barclay — A Treatise on Trustworthy Autonomous Systems</title>
-    <meta name="description" content="Alex Barclay — a treatise on trustworthy autonomous systems." />
+    <meta name="description" content={meta.thesis} />
+    <meta name="author" content={SITE.author} />
+    <link rel="canonical" href={SITE.origin + "/"} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.title} />
+    <meta property="og:title" content="Alex Barclay — A Treatise on Trustworthy Autonomous Systems" />
+    <meta property="og:description" content={meta.thesis} />
+    <meta property="og:url" content={SITE.origin + "/"} />
+    <meta property="og:image" content={absoluteUrl(SITE.image)} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" type="application/rss+xml" title={SITE.title} href={absoluteUrl(SITE.feed)} />
     <link rel="preload" href="/fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/newsreader-latin-opsz-italic.woff2" as="font" type="font/woff2" crossorigin />
   </head>
@@ -155,7 +166,13 @@ const secNum: Record<string, string> = Object.fromEntries(
                 ))}
                 {p.plate.status !== "derived" && (
                   <Fragment>
-                    <span class="faint">PLATE {roman(p.plate.number)} · {p.plate.status}</span>
+                    {/* A number is promised to a figure that exists. Until one is drawn,
+                        the entry says so plainly rather than reserving a numeral. */}
+                    <span class="faint">
+                      {p.plate.status === "planned"
+                        ? "figure not yet drawn"
+                        : `PLATE ${roman(p.plate.number)} · ${p.plate.status}`}
+                    </span>
                     <br />
                     <br />
                   </Fragment>
@@ -275,7 +292,7 @@ const secNum: Record<string, string> = Object.fromEntries(
             {workshop.planned_plates.map((pp) => (
               <Fragment>
                 <span class="cite-mark">↳ {workshopRefs.get(pp.name.toLowerCase())}</span> {pp.name} —<br />
-                PLATE {roman(pp.number)} · {pp.status}
+                {pp.status}
                 <br />
                 <br />
               </Fragment>
@@ -313,10 +330,12 @@ const secNum: Record<string, string> = Object.fromEntries(
           they describe, extracted by script and laid out by hand; a figure that stops matching its
           repository stops the build. A claim without evidence does the same — the margin notes are
           generated from one claims file, and the build refuses what it cannot cite. Nothing ships without
-          a scan of the built output. Links are not yet checked.
+          a scan of the built output. The implementations behind the systems described here are largely
+          agent-written, under gates of this kind; the boundaries they fill, the claims, and the prose
+          are mine.
         </p>
         <p class="mono" style="font-size:0.7rem">
-          LAST VERIFIED: {buildDate} · GATES: CLAIMS ✓ · CONTENT ✓ · LINKS: PENDING
+          LAST VERIFIED: {buildDate} · GATES: CLAIMS ✓ · CONTENT ✓
         </p>
       </footer>
     </div>

@@ -1,18 +1,18 @@
-# Single source of truth for all rendered content (see AGENT-PROMPT.md).
+# Single source of truth for all rendered content.
 # Rules enforced at build (src/lib/claims.ts, fail-closed):
 #   - a claim without evidence.url fails the build
 #   - verified: true is the only source of --verify marks
 #   - not_yet must be present (empty only deliberately)
 #   - [^id] markers in prose must resolve to claims / planned plates
-# Evidence URLs are CANDIDATES extracted from the real repos at pinned commits.
-# verified stays false until Alex confirms each link. Prose approved by Alex
-# 2026-07-29; new prose starts as draft: true (renders a visible DRAFT badge).
+# Evidence URLs are extracted from the real repos at pinned commits, and
+# verified stays false until the link has been checked by hand. Unfinished
+# prose carries draft: true, which renders a visible DRAFT badge.
 
 meta:
   thesis: "Autonomous systems are easy to build and hard to trust. I work on the second problem."
   epigraph:
     text: "Rungs are earned by evidence, not asserted."
-    cite: "WORKFLOW.md, on the Readiness Ladder"
+    cite: "my working notes, on the readiness ladder"
   byline: { name: Alex Barclay, place: Denver, role: "Senior Software Engineer, Garmin" }
   correspondence:
     email: "adbarclay92@gmail.com" # TODO(alex): confirm this is the address you want public
@@ -21,7 +21,7 @@ meta:
 
 sections:
   plates_intro:
-    draft: false # approved by Alex 2026-07-29
+    draft: false # approved 2026-07-29
     prose: |
       The interesting problem was never getting agents to work; it was knowing
       when they had. The systems below are attempts at that problem — control
@@ -30,11 +30,11 @@ sections:
       drawn from the repository itself, its proven claims cited in the margin,
       and its unproven ones labeled as such.
   essays_intro:
-    draft: false # software clause approved by Alex 2026-08-30
+    draft: false # software clause approved 2026-08-30
     prose: |
       The same conviction, at greater length. First in software: what fifty
-      years of falling code costs does to the question of where a system's
-      boundaries belong. Then in political economy, on the premise that
+      years of falling code costs have done to the question of where a
+      system's boundaries belong. Then in political economy, on the premise that
       institutions, like software, should not be trusted on their
       self-report — a series on insider–outsider dynamics and the design of
       rules that cannot quietly favor the people who wrote them.
@@ -45,10 +45,10 @@ projects:
     name: Halyard
     meta_line: "EVENT-DRIVEN RELEASE PIPELINE · MULTI-PLATFORM LAUNCHES"
     plate:
-      number: 3
+      number: 1
       source: extractors/halyard.mjs
       status: derived
-    draft: false # approved by Alex 2026-07-29
+    draft: false # approved 2026-07-29
     prose: |
       Release day is the highest-stakes hour in software — the moment when a
       system is least supervised and most consequential — and most teams still
@@ -66,7 +66,7 @@ projects:
           # TODO(alex): confirm; alternative: tests/record-store.test.ts (dedup-key idempotence)
           url: "https://github.com/adbarc92/halyard/blob/e3f2b5bcaca70fd238a88507b41d94af76f41cb0/tests/reconcile.test.ts"
           label: "test suite § idempotence"
-        verified: false # flip only on Alex's confirmation
+        verified: false # flip only once the link has been checked by hand
       - id: failsafe
         text: "transitions, fail-safe paths, recovery"
         evidence:
@@ -84,7 +84,7 @@ projects:
       number: 4 # TODO(alex): plate numbering beyond III and V is provisional
       source: null
       status: planned
-    draft: false # approved by Alex 2026-07-29
+    draft: false # approved 2026-07-29
     prose: |
       Anyone can wire an agent to open pull requests; the demos are
       everywhere. Reqdrive is built for the part the demos skip — the handoff,
@@ -104,7 +104,7 @@ projects:
           # tests: "draft gate: no testCommand forces draft" etc. incl. a positive control
           url: "https://github.com/adbarc92/reqdrive/blob/6ea2c4d3df05165cc39863963b54bf91dfef881d/tests/simple-test.sh"
           label: "test suite § draft gate"
-        verified: false # flip only on Alex's confirmation
+        verified: false # flip only once the link has been checked by hand
       - id: frozen_oracle
         text: "frozen test oracle, self-proving gate"
         evidence:
@@ -128,7 +128,7 @@ projects:
       number: 1 # TODO(alex): plate numbering beyond III and V is provisional
       source: null
       status: planned
-    draft: false # approved by Alex 2026-07-29
+    draft: false # approved 2026-07-29
     prose: |
       One coding agent is a demo. A fleet is an operations problem — crashes
       mid-run, leaking budgets, state scattered across processes that die
@@ -150,7 +150,7 @@ projects:
           # tampered_oracle_routes_to_needs_human, rehydrate_reloads_oracle_hash_so_tamper_gate_rearms
           url: "https://github.com/adbarc92/command-center/blob/705acb519338336cebdca862e2c6d70d5163932a/crates/fleetd/src/driver.rs"
           label: "test suite · oracle tamper gate"
-        verified: false # flip only on Alex's confirmation
+        verified: false # flip only once the link has been checked by hand
       - id: reconcile
         text: "reconciler spares live work"
         evidence:
@@ -174,7 +174,7 @@ projects:
       number: 2 # TODO(alex): plate numbering beyond III and V is provisional
       source: null
       status: planned
-    draft: false # approved by Alex 2026-07-29
+    draft: false # approved 2026-07-29
     prose: |
       Handing an AI assistant the keys to a real browser is real power, and
       real power wants a narrow doorway. Mcp-browser-bridge is that doorway:
@@ -193,7 +193,7 @@ projects:
           # "registers all 11 browser tools" + "registers no extra tools"
           url: "https://github.com/adbarc92/mcp-browser-bridge/blob/1f5aed7b809a38d79d3d0a4748195b58a0340cb5/src/mcp-server.test.ts"
           label: "test suite · tool roster"
-        verified: false # flip only on Alex's confirmation
+        verified: false # flip only once the link has been checked by hand
       - id: lifecycle
         text: "leak-proof request lifecycle"
         evidence:
@@ -255,7 +255,7 @@ catalogue:
         evidence:
           url: "https://redgalt.itch.io/hexy"
           label: "itch.io — Hexy, $15, Windows/macOS/Linux"
-        verified: false # flip on Alex's confirmation; the evidence is a public page
+        verified: false # flip once the link has been checked by hand; the evidence is a public page
     not_yet:
       - "The source is closed. The storefront is the whole of the public evidence, and nothing here invites inspection of the code."
 
@@ -281,11 +281,11 @@ catalogue:
         evidence:
           url: "https://github.com/adbarc92/portfolio-treatise"
           label: "github — portfolio-treatise"
-        verified: false # flip on Alex's confirmation
+        verified: false # flip once the link has been checked by hand
     not_yet: []
 
 workshop:
-  draft: false # approved by Alex 2026-07-29
+  draft: false # approved 2026-07-29
   prose: |
     Not everything here is infrastructure. In the workshop: a story-driven JRPG
     and a tactical RPG, both in Godot 4, built toward a hand-drawn standard
@@ -298,7 +298,7 @@ workshop:
     - { number: 5, name: MoralEvaluator, source: null, status: planned }
 
 author:
-  draft: false # approved by Alex 2026-07-29
+  draft: false # approved 2026-07-29
   prose: |
     I came to software from philosophy, by way of Hack Reactor, and grew up as
     an engineer at Garmin — SE to SE II to Senior — building mobile platform

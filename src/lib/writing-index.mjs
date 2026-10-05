@@ -35,8 +35,11 @@ export const KINDS = ["essay", "specification", "project"];
  * specification rather than dated pieces, so they sort among themselves by that
  * order and land beneath everything dated. The epoch is the mechanism; the intent
  * is "the specification is a fixture, not a recent event."
+ *
+ * The sign is negative because the surrounding sort is newest-first, which would
+ * otherwise read the specification backwards and put 04 above 01.
  */
-const specDate = (order) => new Date(order * 1000);
+const specDate = (order) => new Date(-order * 1000);
 
 /**
  * @param {{ posts: object[], docs: object[], projects: object[] }} collections

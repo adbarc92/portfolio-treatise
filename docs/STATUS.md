@@ -2,7 +2,7 @@
 
 ## State summary
 
-_Last updated: 2026-09-08_
+_Last updated: 2026-10-05_
 
 **TL;DR.** **The consolidation is done and live, the `/writing/` hub with it, and as of
 2026-09-07 CI deploys on its own.** One repository serves the whole domain: the treatise at the
@@ -14,9 +14,14 @@ which is archived.
 the `build-gate-deploy` workflow succeeded end to end for the first time (`treatise@53eb1bd`).
 Every prior CI failure — 9 of them — was that one absent secret; the guard at the top of the
 deploy job did exactly what it was written to do. `npm run deploy` still works and is still the
-fallback. The claim in `CLAUDE.md` that CI "has never once succeeded" is now stale.
+fallback.
 
-**Open**: nothing. Working tree clean, `main` at `4c3dfca`, zero open PRs.
+**Open**: nothing. `main` at `a957c66` (#28), deployed and verified live 2026-10-05.
+
+**The Eidos funnel** — post → essay → specification → a way to reach the author — **has a top
+and a middle and no bottom.** #28 landed the pre-launch polish: the root has a shareable head,
+the essay names its sources, `/writing/about` is real copy. What it does not have is an exit;
+see next steps 0–2.
 
 **Deployment, current shape.** A merge to `main` deploys. `build-gate-deploy` builds, gates,
 refuses on an empty artifact, and pushes to `adbarc92.github.io`; that repo's `pages.yml`
@@ -26,22 +31,32 @@ deprecation annotations remain. `npm run deploy` is the fallback and still works
 
 **Next steps**
 
-0. **START HERE — check whether the three plate repos have settled.** Four of the five declared
-   plates do not exist; `II. Plates` is named for something most of its entries do not yet have.
-   The work is **blocked on Alex, deliberately**: Command-Center, mcp-browser-bridge and Reqdrive
-   were all in flight as of 2026-09-08 and he does not want a plate pinned to a moving tree. Ask
-   before starting; do not begin extractor work on an unsettled repo. The findings that survive
-   are in the session log below — read them before re-deriving anything.
-1. **The `PAGES_DEPLOY_TOKEN` expires.** It is a fine-grained PAT, so a year at most from
-   2026-09-07. Expiry does *not* trip the "not set" guard — it fails later, at the clone or push,
-   as a 403. That failure signature is the thing to recognise.
-2. `/writing/*` still has no background. The gear system was deliberately not ported at
+0. **START HERE — give the funnel a bottom.** The last specification document ends on a back-link
+   and nothing else. No page links to `/writing/about` (it is in the sitemap only), and no page
+   carries a visible link to the feed. A reader who finishes the argument has nowhere to go.
+1. **Fix what the share card says.** `SITE.description` in `src/lib/site.mjs` still reads
+   "Software engineering, machine learning, and robotics", which the rewritten about page drops;
+   it is also the feed's description. `public/writing/images/og.png` shows the retired gear
+   motif under the same line.
+2. **Post the Eidos essay**, at `/writing/eidos-an-architecture-for-cheap-code`. Run it through
+   LinkedIn's Post Inspector first.
+3. **Look at the rendered pages.** #28 was verified from built and served HTML, not by eye — no
+   browser was available. `/writing/about` lost its only heading in the rewrite; start there.
+4. **The plates.** Only Halyard is drawn, now as Plate I; the rest read "figure not yet drawn".
+   The work was parked on 2026-09-08 because the source repos were in flight. By push date on
+   2026-10-05: `mcp-browser-bridge` last pushed 2026-08-29 and `reqdrive` 2026-08-11, while
+   `halyard` and `command-center` were both pushed 2026-10-02. Two may have settled; ask Alex
+   before starting. The findings that survive are in the 2026-09-08 session log.
+5. **The `PAGES_DEPLOY_TOKEN` expires.** It is a fine-grained PAT, so a year at most from
+   2026-09-07; it was still good on 2026-10-05. Expiry does *not* trip the "not set" guard — it
+   fails later, at the clone or push, as a 403.
+6. **A link gate.** The colophon no longer says links are unchecked, and the essay now carries
+   its first three external ones. They were checked by hand on 2026-10-05; nothing checks them
+   after that.
+7. **A README.** The Catalogue cites this repository as evidence, and with `CLAUDE.md` untracked
+   it has no top-level explanation at all.
+8. `/writing/*` still has no background. The gear system was deliberately not ported at
    consolidation; the redesign starts from a clean slate.
-3. `scripts/deploy-local.mjs` still fails on an empty diff, the gap `deploy.yml` had until #21.
-   Left alone deliberately: it is interactive, so its failure explains itself at a terminal.
-4. Nothing else is known-broken. The design-system audit that ran through #17 and #20 covered the
-   projects and eidos routes; **the essay and category routes were not audited** for the same
-   dead-class and dead-token drift.
 
 **Where things live**
 
@@ -124,19 +139,25 @@ Implemented and merged in **#14**, deployed and verified live the same day.
 
 **Known gaps**
 
-- **CI has still never succeeded** - 8 runs, 8 failures, zero steps executed. The deploy job guards
-  on a `PAGES_DEPLOY_TOKEN` secret **that does not exist**, so CI cannot deploy. Every deploy is
-  manual via `npm run deploy`. **A merge deploys nothing.**
+_Reconciled 2026-10-05. Three entries here had gone false and are removed: CI deploys (since
+2026-09-07), no page references a dead class or custom property (the style gate, #25, proves it
+on every build), and the specification lists 01 to 04 on the hub (#28, now pinned by a test)._
+
 - **Rollback is three steps, not one** - unarchive `adbarc92/writing`, re-enable Pages, re-run its
   `deploy.yml`. Note this now also predates the URL move.
-- Two of the four gates `AGENT-PROMPT.md` specifies were never built - the link gate and the
-  rendered-page claims gate.
-- **Six `/writing/*` pages still render wrong** - `/writing/eidos`, its four documents,
-  `/writing/projects`, its detail page, and `/writing/about` carry `class="page"` and reference
-  dead `--color-*` variables. Expected: **Phase D rebuilds them.**
-- **The Eidos documents list in reverse on the hub** (Infrastructure 04 above Architecture 01).
-  `specDate = order * 1000` plus a newest-first sort does it. Alex reviewed and accepted it;
-  `new Date(-order * 1000)` would restore 01 to 04 and still pass every test.
+- Of the four gates originally specified, the link gate and the rendered-page claims gate were
+  never built.
+- **The eidos document pages and `/writing/about` are not in the v2 vocabulary.** They render and
+  pass the style gate, but on a sidebar layout and a bare `.page > .prose` respectively, not the
+  body grid the essay pages use.
+- **`CLAUDE.md`, `AGENT-PROMPT.md` and `docs/handoffs/` are local-only since #28** - gitignored,
+  present on disk, absent from a fresh clone, still in history. The local `CLAUDE.md` is also
+  stale: it describes a React island, `post-filter.mjs` and `content/projects/`, all deleted in
+  #14 and #26.
+- **13 of the 14 claims in `claims.yaml` are `verified: false`**, and eleven `TODO(alex)`
+  comments remain in it, one asking whether the published email address should be public.
+- `claims.yaml` gives Halyard and Command-Center the same `plate.number: 1`. Harmless while
+  planned numerals do not render; wrong the day a second plate is drawn.
 - The two political essays are `draft: true`, pending Alex's voice pass; every figure in *The
   Price of the Ticket* needs a source. They are listed with `[DRAFT]` badges in `npm run dev`
   and never in a build.
@@ -160,6 +181,37 @@ gone partly false. Corrected in place rather than left to contradict the list ab
 ---
 
 ## Session log
+
+### 2026-10-05 — The pre-launch polish lands; the funnel is found to have no bottom
+
+Merged **#28**, deployed, verified live. `main` at `a957c66`.
+
+- **The work had sat uncommitted since 2026-09-22** on `feat/pre-launch-polish` — no commit, no
+  push, no PR, and no entry here. An audit found it, ran it green, and landed it as five commits.
+- **The root can be shared.** It had a title and a one-line description and nothing else; it now
+  carries canonical, the Open Graph set, a card and the feed link, with the thesis as description.
+- **The essay names its sources.** "One practitioner", "another team" and "a third" became Matt
+  Pocock, the Nx team and Mathias Biilmann, linked, with Pocock quoted. All three URLs returned
+  200 and the quotation was checked against its page verbatim. These are the site's first
+  external links in prose, and no gate checks them.
+- **Plates are numbered by what exists.** Halyard is Plate I. A planned entry reads "figure not
+  yet drawn" — the "cheaper alternative" from the 2026-09-08 entry, taken.
+- **The colophon** dropped `LINKS: PENDING` and now states that the implementations are largely
+  agent-written while the boundaries, claims and prose are not.
+- **The specification lists 01 to 04 on the hub.** The one-character fix shipped with a test, at
+  the insistence of a pre-PR hook: nothing had failed while the order was wrong.
+- **Hello World is deleted**, on Alex's instruction. `/writing/hello-world`, its `/writing/blog/`
+  redirect page and `/writing/category/meta` now 404, deliberately, and the feed carries one item.
+  The surviving guid is unchanged. This is the first time a frozen `/writing/*` URL has been
+  retired rather than moved.
+- **`CLAUDE.md`, `AGENT-PROMPT.md` and `docs/handoffs/` left the published repo.** The links to
+  the two handoff briefs further down this log are dead as of #28 and are now marked so.
+- **Verified against `https://alexanderdbarclay.com`**: thirteen routes 200, the three retired
+  ones 404, six `og:` tags and a canonical on the root, the hub ordering, the about copy, the
+  feed. **Not verified by eye** — the browser extension was not connected.
+
+**State delta.** The funnel's entry points are sound and its exit is missing; that, the share
+card's stale wording, and the post itself are what stand between here and launch. Tests 101 → 102.
 
 ### 2026-09-08 — The Catalogue; a style gate; and why the plates are still four short
 
@@ -330,7 +382,7 @@ Three merges (**#16**, **#17**, **#18** open) and one secret. The site now publi
 ### 2026-08-31 - The `/writing/` hub ships; `/blog/` is retired (PR #14)
 
 Implemented all seven tasks of the [hub plan](plans/2026-08-30-writing-hub-plan.md), Phases A-C,
-from the [handoff brief](handoffs/c4c01ade-e5b0-44ea-9dec-3afff5ebdc5e.md). Merged as **#14** and
+from the handoff brief (`handoffs/c4c01ade-…`, local-only since #28). Merged as **#14** and
 **deployed** (`treatise@e9fa18c`); Pages published in 23s and every check was re-run against the
 live site afterwards.
 
@@ -377,8 +429,8 @@ Phases D and E remain unplanned by design.
   link** with no override, so with essay URLs moving it cannot be used without republishing every
   post into every subscriber's reader; the feed is hand-built with the guid pinned to the
   historical URL.
-- **Handed off before implementation**, at Alex's request:
-  [`handoffs/c4c01ade-…`](handoffs/c4c01ade-e5b0-44ea-9dec-3afff5ebdc5e.md).
+- **Handed off before implementation**, at Alex's request: `handoffs/c4c01ade-…` (local-only
+  since #28).
 
 ### 2026-08-30 (phases 1–3) — Design system v2, built
 
@@ -504,8 +556,8 @@ Built the essay routes and the category filter in `portfolio-treatise`. Opened a
 
 ### 2026-08-29 — Embargo lift, funnel closed, consolidation begun
 
-Long session across three repositories. Full detail in
-[`handoffs/fd313ec2-4ab1-4de7-806e-bd92f74a42b1.md`](handoffs/fd313ec2-4ab1-4de7-806e-bd92f74a42b1.md).
+Long session across three repositories. Full detail in `handoffs/fd313ec2-…` (local-only since
+#28).
 
 - **Lifted the embargo** in the treatise. The gate was doing three jobs and only one was the
   embargo — it also holds the retracted-claims list and the banned vocabulary, neither of which

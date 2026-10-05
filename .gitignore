@@ -3,3 +3,8 @@ dist
 .astro
 *.log
 .superpowers
+
+# Local operating notes, kept out of the published repo
+CLAUDE.md
+AGENT-PROMPT.md
+docs/handoffs/

@@ -2,12 +2,21 @@
 title: "About"
 ---
 
-# About Me
+I came to software from philosophy, by way of Hack Reactor, and grew up as an
+engineer at Garmin, from SE to SE II to Senior, building mobile platform software.
+What formed along the way is a conviction about evidence: that a system which
+acts on its own should be trusted the way engineers trust anything else, on what
+it can demonstrate rather than on what its authors believe about it.
 
-I'm Alex Barclay, a software engineer navigating the intersection of software,
-machine learning, robotics, and game design.
+That conviction is what the work here is for. The systems on the front page are
+control planes, release machinery and verification gates, which is to say they
+are all attempts at the same problem from different sides. The difficulty was
+never getting autonomous systems to act, which is by now the easy half, but
+knowing when they have acted correctly. The Eidos specification is the architectural form of the
+argument, and the essays carry it into political economy, where institutions,
+like software, are rarely worth trusting on their self-report.
 
-## Get in Touch
-
-- [GitHub](https://github.com/adbarc92)
-- [LinkedIn](https://www.linkedin.com/in/alex-barclay/)
+Correspondence is welcome, and the fastest way to reach me is by
+[email](mailto:adbarclay92@gmail.com). The code is on
+[GitHub](https://github.com/adbarc92), and the professional record is on
+[LinkedIn](https://www.linkedin.com/in/alex-barclay/).

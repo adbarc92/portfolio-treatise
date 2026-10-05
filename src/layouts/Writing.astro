@@ -1,6 +1,6 @@
 ---
 // The shared shell for every /writing/* page: document head, the contents nav,
-// and the essays' stylesheet.
+// the page foot, and the essays' stylesheet.
 //
 // The head is the load-bearing part. Every tag here already exists on the live
 // pages and has been indexed, unfurled, or subscribed to, so this is a
@@ -58,6 +58,11 @@ const canonical = absoluteUrl(canonicalPath(Astro.url.pathname));
       <main>
         <slot />
       </main>
+      {/* Where a reader goes on finishing a page. Set as the contents nav is
+          (§2.10): a line of links, not a call to action. */}
+      <footer class="page-foot smallcaps">
+        <a href="/writing/about">About the author</a><span class="sep">·</span><a href="/#author">Correspondence</a><span class="sep">·</span><a href={SITE.feed}>Feed</a>
+      </footer>
     </div>
   </body>
 </html>

@@ -165,6 +165,32 @@
   margin-bottom: 2.5rem;
 }
 
+/* ============ PAGE FOOT ============ */
+/* The contents nav's counterpart at the other end of the page, and set the
+   same way: small caps, muted, separators in the faint line. */
+
+.page-foot {
+  padding: 1.5rem 0 3.5rem;
+  border-top: 1px solid var(--plate-line-faint);
+  font-size: 0.82rem;
+  color: var(--bone-muted);
+}
+
+.page-foot a {
+  color: var(--bone-muted);
+  text-decoration-color: transparent;
+}
+
+.page-foot a:hover {
+  color: var(--bone);
+  text-decoration-color: var(--oxblood);
+}
+
+.page-foot .sep {
+  margin: 0 0.5em;
+  color: var(--plate-line-faint);
+}
+
 /* ============ THE HUB ============ */
 /* /writing/ and its filtered views. Index entries reuse `.essay` and
    `article.entry` from foundation.css — the forms DESIGN-SYSTEM §2.12 and §2.6

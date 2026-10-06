@@ -16,12 +16,13 @@ Every prior CI failure — 9 of them — was that one absent secret; the guard a
 deploy job did exactly what it was written to do. `npm run deploy` still works and is still the
 fallback.
 
-**Open**: nothing. `main` at `a957c66` (#28), deployed and verified live 2026-10-05.
+**Open**: nothing. `main` at `fca6993` (#30), deployed and verified live 2026-10-05.
 
-**The Eidos funnel** — post → essay → specification → a way to reach the author — **has a top
-and a middle and no bottom.** #28 landed the pre-launch polish: the root has a shareable head,
-the essay names its sources, `/writing/about` is real copy. What it does not have is an exit;
-see next steps 0–2.
+**The Eidos funnel** — post → essay → specification → a way to reach the author — **is complete
+end to end and has not been looked at.** #28 landed the pre-launch polish: the root has a
+shareable head, the essay names its sources, `/writing/about` is real copy. #30 gave every
+writing page a foot, which is the exit the funnel lacked. What remains before the essay is
+posted is the share card's wording and one pass by eye; see next steps 0–2.
 
 **Deployment, current shape.** A merge to `main` deploys. `build-gate-deploy` builds, gates,
 refuses on an empty artifact, and pushes to `adbarc92.github.io`; that repo's `pages.yml`
@@ -31,17 +32,18 @@ deprecation annotations remain. `npm run deploy` is the fallback and still works
 
 **Next steps**
 
-0. **START HERE — give the funnel a bottom.** The last specification document ends on a back-link
-   and nothing else. No page links to `/writing/about` (it is in the sitemap only), and no page
-   carries a visible link to the feed. A reader who finishes the argument has nowhere to go.
+0. **START HERE — look at the rendered pages.** #28 and #30 were verified from built and served
+   HTML, not by eye — no browser was available. Two things want a look first: the spacing above
+   the new page foot, and `/writing/about`, which lost its only heading in the rewrite.
 1. **Fix what the share card says.** `SITE.description` in `src/lib/site.mjs` still reads
    "Software engineering, machine learning, and robotics", which the rewritten about page drops;
    it is also the feed's description. `public/writing/images/og.png` shows the retired gear
-   motif under the same line.
+   motif under the same line. The wording is Alex's to choose.
 2. **Post the Eidos essay**, at `/writing/eidos-an-architecture-for-cheap-code`. Run it through
    LinkedIn's Post Inspector first.
-3. **Look at the rendered pages.** #28 was verified from built and served HTML, not by eye — no
-   browser was available. `/writing/about` lost its only heading in the rewrite; start there.
+3. **Decide whether the site needs two author pages.** `/writing/about` and the root's
+   `VI. The Author` now say much the same thing, and the page foot links to both — "About the
+   author" to the first, "Correspondence" to the second.
 4. **The plates.** Only Halyard is drawn, now as Plate I; the rest read "figure not yet drawn".
    The work was parked on 2026-09-08 because the source repos were in flight. By push date on
    2026-10-05: `mcp-browser-bridge` last pushed 2026-08-29 and `reqdrive` 2026-08-11, while
@@ -182,9 +184,9 @@ gone partly false. Corrected in place rather than left to contradict the list ab
 
 ## Session log
 
-### 2026-10-05 — The pre-launch polish lands; the funnel is found to have no bottom
+### 2026-10-05 — The pre-launch polish lands; the funnel is found to have no bottom, and gets one
 
-Merged **#28**, deployed, verified live. `main` at `a957c66`.
+Merged **#28** and **#30**, both deployed and verified live. `main` at `fca6993`.
 
 - **The work had sat uncommitted since 2026-09-22** on `feat/pre-launch-polish` — no commit, no
   push, no PR, and no entry here. An audit found it, ran it green, and landed it as five commits.
@@ -209,9 +211,17 @@ Merged **#28**, deployed, verified live. `main` at `a957c66`.
 - **Verified against `https://alexanderdbarclay.com`**: thirteen routes 200, the three retired
   ones 404, six `og:` tags and a canonical on the root, the hub ordering, the about copy, the
   feed. **Not verified by eye** — the browser extension was not connected.
+- **#30 — the page foot.** The audit's reading of the funnel was that it stopped: the last
+  specification document ended on a back-link, `/writing/about` was linked from no page, and the
+  feed was advertised only in `<head>`. The writing layout now closes with one line — `About the
+  author · Correspondence · Feed` — set as the contents nav is, because §2.10 forbids a CTA and
+  a row of links is not one. It also supplies the `footer` landmark §4 asks for. Present on all
+  thirteen writing pages, absent from the root and the two redirect pages; the root built
+  byte-identical, and the feed and `/writing/sitemap.xml` matched the live ones before merging.
 
-**State delta.** The funnel's entry points are sound and its exit is missing; that, the share
-card's stale wording, and the post itself are what stand between here and launch. Tests 101 → 102.
+**State delta.** The funnel runs from the post to a way of writing to its author. The share
+card's stale wording, a pass by eye, and the post itself are what stand between here and launch.
+Tests 101 → 102.
 
 ### 2026-09-08 — The Catalogue; a style gate; and why the plates are still four short
 

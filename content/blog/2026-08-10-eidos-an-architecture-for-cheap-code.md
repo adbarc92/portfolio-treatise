@@ -2,6 +2,7 @@
 title: "Eidos: An Architecture for Cheap Code"
 date: 2026-08-10
 excerpt: "For fifty years, software architecture has argued about where the boundaries should go, on the shared premise that a human's attention is the scarce resource. That premise no longer holds."
+tagline: "Humans design the Forms, agents fill them, fitness functions verify the fit."
 category: software
 tags: ["architecture", "ai", "philosophy"]
 ---

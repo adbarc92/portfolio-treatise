@@ -2,7 +2,7 @@
 
 ## State summary
 
-_Last updated: 2026-10-05_
+_Last updated: 2026-10-08_
 
 **TL;DR.** **The consolidation is done and live, the `/writing/` hub with it, and as of
 2026-09-07 CI deploys on its own.** One repository serves the whole domain: the treatise at the
@@ -16,13 +16,22 @@ Every prior CI failure — 9 of them — was that one absent secret; the guard a
 deploy job did exactly what it was written to do. `npm run deploy` still works and is still the
 fallback.
 
-**Open**: nothing. `main` at `fca6993` (#30), deployed and verified live 2026-10-05.
+**Open**: two PRs, neither reviewed. `main` at `153e991` (#29). **#31, a draft:** a share card
+per published essay (`scripts/share-cards.mjs`, `npm run cards`), a rewritten `SITE.description`
+and a redrawn site card. Tests and build pass and both cards were looked at; the wording is not
+approved. **#32:** the draft of a second essay, *Poiesis: A Workflow for Cheap Makers*, held with
+`draft: true`, so merging it publishes nothing.
+
+**The essays are to be reviewed before any more funnel is built on them.** On 2026-10-08 Alex
+settled how Eidos's Forms relate to the feature documents where requirements live; see the
+[design note](plans/2026-10-08-forms-and-feature-docs-design.md). Neither essay says it yet. The
+review agenda is in `docs/handoffs/d8e910cd-f46a-4a58-967c-486c40e68adf.md`, which is local-only.
 
 **The Eidos funnel** — post → essay → specification → a way to reach the author — **is complete
 end to end and has not been looked at.** #28 landed the pre-launch polish: the root has a
 shareable head, the essay names its sources, `/writing/about` is real copy. #30 gave every
 writing page a foot, which is the exit the funnel lacked. What remains before the essay is
-posted is the share card's wording and one pass by eye; see next steps 0–2.
+posted is the essay review, the share card's wording and one pass by eye; see next steps 0–4.
 
 **Deployment, current shape.** A merge to `main` deploys. `build-gate-deploy` builds, gates,
 refuses on an empty artifact, and pushes to `adbarc92.github.io`; that repo's `pages.yml`
@@ -32,32 +41,40 @@ deprecation annotations remain. `npm run deploy` is the fallback and still works
 
 **Next steps**
 
-0. **START HERE — look at the rendered pages.** #28 and #30 were verified from built and served
+0. **START HERE — review the two essays with Alex.** Eidos and the Poiesis draft, against the
+   agenda in the local handoff brief and the
+   [design note](plans/2026-10-08-forms-and-feature-docs-design.md). This comes before the share
+   cards land and before anything is posted. The prose is Alex's; review and propose.
+1. **Look at the rendered pages.** #28 and #30 were verified from built and served
    HTML, not by eye — no browser was available. Two things want a look first: the spacing above
    the new page foot, and `/writing/about`, which lost its only heading in the rewrite.
-1. **Fix what the share card says.** `SITE.description` in `src/lib/site.mjs` still reads
+2. **Land the share cards.** On `main`, `SITE.description` in `src/lib/site.mjs` still reads
    "Software engineering, machine learning, and robotics", which the rewritten about page drops;
-   it is also the feed's description. `public/writing/images/og.png` shows the retired gear
-   motif under the same line. The wording is Alex's to choose.
-2. **Post the Eidos essay**, at `/writing/eidos-an-architecture-for-cheap-code`. Run it through
-   LinkedIn's Post Inspector first.
-3. **Decide whether the site needs two author pages.** `/writing/about` and the root's
+   it is also the feed's description, and `public/writing/images/og.png` shows the retired gear
+   motif under the same line. #31 holds a rewrite of both and a card per published essay, as a
+   draft. The wording is Alex's to choose.
+3. **Announce the site.** `alexanderdbarclay.com` has never been formally announced, and Alex
+   wants to. Undecided: where, and whether it goes out before, with, or after the Eidos post.
+   Nothing is drafted.
+4. **Post the Eidos essay**, at `/writing/eidos-an-architecture-for-cheap-code`, after the
+   review. Run it through LinkedIn's Post Inspector first.
+5. **Decide whether the site needs two author pages.** `/writing/about` and the root's
    `VI. The Author` now say much the same thing, and the page foot links to both — "About the
    author" to the first, "Correspondence" to the second.
-4. **The plates.** Only Halyard is drawn, now as Plate I; the rest read "figure not yet drawn".
+6. **The plates.** Only Halyard is drawn, now as Plate I; the rest read "figure not yet drawn".
    The work was parked on 2026-09-08 because the source repos were in flight. By push date on
    2026-10-05: `mcp-browser-bridge` last pushed 2026-08-29 and `reqdrive` 2026-08-11, while
    `halyard` and `command-center` were both pushed 2026-10-02. Two may have settled; ask Alex
    before starting. The findings that survive are in the 2026-09-08 session log.
-5. **The `PAGES_DEPLOY_TOKEN` expires.** It is a fine-grained PAT, so a year at most from
+7. **The `PAGES_DEPLOY_TOKEN` expires.** It is a fine-grained PAT, so a year at most from
    2026-09-07; it was still good on 2026-10-05. Expiry does *not* trip the "not set" guard — it
    fails later, at the clone or push, as a 403.
-6. **A link gate.** The colophon no longer says links are unchecked, and the essay now carries
+8. **A link gate.** The colophon no longer says links are unchecked, and the essay now carries
    its first three external ones. They were checked by hand on 2026-10-05; nothing checks them
    after that.
-7. **A README.** The Catalogue cites this repository as evidence, and with `CLAUDE.md` untracked
+9. **A README.** The Catalogue cites this repository as evidence, and with `CLAUDE.md` untracked
    it has no top-level explanation at all.
-8. `/writing/*` still has no background. The gear system was deliberately not ported at
+10. `/writing/*` still has no background. The gear system was deliberately not ported at
    consolidation; the redesign starts from a clean slate.
 
 **Where things live**
@@ -183,6 +200,29 @@ gone partly false. Corrected in place rather than left to contradict the list ab
 ---
 
 ## Session log
+
+### 2026-10-08 — The essays are talked over; Forms and feature documents are reconciled
+
+No code was written. The uncommitted work found on `feat/share-cards` was sorted into branches
+and opened as PRs at the end of the day.
+
+- **A position is settled and written down.** Eidos names the Form as the human surface; Alex's
+  aim is to shrink what needs human attention to the feature document, where requirements live.
+  The two coexist as two decompositions of one system, each reflecting the other, with the
+  cross-reference machine-checked. See the
+  [design note](plans/2026-10-08-forms-and-feature-docs-design.md), which also records where the
+  industry stands and what is still open.
+- **Both essays were read and a review agenda written.** Nine points on the Poiesis draft, four
+  on Eidos, three on the pair. It is in `docs/handoffs/d8e910cd-f46a-4a58-967c-486c40e68adf.md`,
+  local-only, for the session that does the review.
+- **The site's announcement is on the list.** It has never been formally announced. Next step 3.
+- **Found, then filed:** the share-card work and the Poiesis draft were uncommitted on
+  `feat/share-cards`. They are now #31 (a draft) and #32, each passing `npm test` and a build,
+  and neither reviewed.
+
+**State delta.** The essay review now stands ahead of the share cards and the post. Next steps
+renumbered: the review is 0, the announcement is 3, posting Eidos is 4. Two PRs are open where
+there were none.
 
 ### 2026-10-05 — The pre-launch polish lands; the funnel is found to have no bottom, and gets one
 

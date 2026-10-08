@@ -11,7 +11,7 @@ export const SITE = {
   title: "Alex Barclay",
   author: "Alex Barclay",
   description:
-    "Software engineering, machine learning, and robotics — essays, projects, and the Eidos architecture.",
+    "On trusting systems by what they can demonstrate rather than what their authors believe: essays, and the Eidos architecture.",
   /** Published from public/writing/images/, so the live URL keeps resolving. */
   image: "/writing/images/og.png",
   feed: "/writing/rss.xml",
@@ -56,6 +56,17 @@ export function canonicalPath(pathname) {
 }
 
 const ROOTS = new Set(["/", "/writing/"]);
+
+/**
+ * An essay's own share card, beside the site's. Rendered and committed by
+ * scripts/share-cards.mjs; every other page unfurls to `SITE.image`.
+ *
+ * @param {string} slug
+ * @returns {string} root-relative
+ */
+export function essayCard(slug) {
+  return `/writing/images/og/${slug}.png`;
+}
 
 /**
  * @param {string} path root-relative

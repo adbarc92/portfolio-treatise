@@ -2,6 +2,7 @@
 title: "The Limits of a Gate"
 date: 2026-10-10
 excerpt: "An architecture that rests on mechanical enforcement owes an account of where enforcement stops: which rules deserve a gate, who guards the gates, and what a passing gate proves."
+tagline: "Which rules deserve a gate, who guards the gates, and what a passing gate proves."
 category: software
 tags: ["architecture", "ai"]
 ---

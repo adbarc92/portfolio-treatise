@@ -2,6 +2,7 @@
 title: "On the Name Eidos"
 date: 2026-10-10
 excerpt: "Eidos is Plato's word for Form, though the architecture it names owes nearly as much to Aristotle, who used the same word, and its craftsman is the one the Gnostics described."
+tagline: "Plato's word for Form, though the architecture owes nearly as much to Aristotle."
 category: software
 tags: ["philosophy", "architecture", "ai"]
 ---

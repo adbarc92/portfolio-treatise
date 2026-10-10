@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { SITE, absoluteUrl, canonicalPath, pageTitle } from "./site.mjs";
+import { SITE, absoluteUrl, canonicalPath, essayCard, pageTitle } from "./site.mjs";
 
 // ---------------------------------------------------------------------------
 // pageTitle
@@ -79,6 +79,13 @@ test("the OG image resolves under the writing prefix, where it is published", ()
   assert.equal(
     absoluteUrl(SITE.image),
     "https://alexanderdbarclay.com/writing/images/og.png",
+  );
+});
+
+test("an essay's card sits beside the site's, named for its slug", () => {
+  assert.equal(
+    essayCard("eidos-an-architecture-for-cheap-code"),
+    "/writing/images/og/eidos-an-architecture-for-cheap-code.png",
   );
 });
 

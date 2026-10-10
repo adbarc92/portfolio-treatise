@@ -27,6 +27,8 @@ const blog = defineCollection({
     title: z.string().min(1),
     date: z.coerce.date(),
     excerpt: z.string().min(1),
+    // One line for the essay's share card, where the excerpt is too long to set.
+    tagline: z.string().min(1).optional(),
     category: z.enum(CATEGORIES),
     tags: z.array(z.string()),
     // Absent means published. Only an explicit `true` withholds a post.

@@ -9,6 +9,7 @@
     "preview": "astro preview",
     "test": "node --test \"{scripts,src}/**/*.test.mjs\"",
     "extract": "node extractors/halyard.mjs",
+    "cards": "node scripts/share-cards.mjs",
     "deploy": "node scripts/deploy-local.mjs"
   },
   "dependencies": {

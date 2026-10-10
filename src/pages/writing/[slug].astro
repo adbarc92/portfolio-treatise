@@ -7,6 +7,7 @@ import { formatDate } from "../../lib/dates.mjs";
 import { isPublished } from "../../lib/drafts.mjs";
 import { CATEGORY_LABELS } from "../../lib/writing-index.mjs";
 import { assertNoReservedSlugs } from "../../lib/reserved-slugs.mjs";
+import { essayCard } from "../../lib/site.mjs";
 
 export const getStaticPaths: GetStaticPaths = async () => {
   // Drafts are emitted by the dev server and never by a build, so a build cannot
@@ -28,7 +29,7 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 ---
 
-<Writing title={post.data.title} description={post.data.excerpt} ogType="article">
+<Writing title={post.data.title} description={post.data.excerpt} ogType="article" image={essayCard(post.id)}>
   <article class="essay-page">
     <a class="back-link" href="/writing/">&larr; Writing</a>
 

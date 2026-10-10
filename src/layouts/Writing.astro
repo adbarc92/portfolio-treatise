@@ -19,9 +19,11 @@ interface Props {
   description: string;
   /** 'article' for a post, a spec document, or a project; 'website' otherwise. */
   ogType?: "website" | "article";
+  /** Root-relative. An essay passes its own card; every other page shares the site's. */
+  image?: string;
 }
 
-const { title, description, ogType = "website" } = Astro.props;
+const { title, description, ogType = "website", image = SITE.image } = Astro.props;
 
 const fullTitle = pageTitle(title);
 const canonical = absoluteUrl(canonicalPath(Astro.url.pathname));
@@ -43,7 +45,7 @@ const canonical = absoluteUrl(canonicalPath(Astro.url.pathname));
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={absoluteUrl(SITE.image)} />
+    <meta property="og:image" content={absoluteUrl(image)} />
     <meta name="twitter:card" content="summary_large_image" />
     <link
       rel="alternate"

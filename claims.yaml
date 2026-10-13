@@ -75,7 +75,10 @@ projects:
           url: "https://github.com/adbarc92/halyard/blob/e3f2b5bcaca70fd238a88507b41d94af76f41cb0/tests/state-machine.test.ts"
           label: "test suite · state machine & recovery"
         verified: false
-    not_yet: [] # TODO(alex): author the honest-gaps list (empty must be deliberate)
+    not_yet:
+      - "stop a whole launch when one platform's release fails a gate: the failed release ends and the others carry on"
+      - "keep a failed release's record when the failure happens in its CI release workflow, so a re-run there starts fresh"
+      - "ship with more than one example app"
 
   - id: reqdrive
     name: Reqdrive

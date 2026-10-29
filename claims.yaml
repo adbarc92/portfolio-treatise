@@ -257,7 +257,7 @@ catalogue:
         text: "shipped, priced, three platforms"
         evidence:
           url: "https://redgalt.itch.io/hexy"
-          label: "itch.io — Hexy, $15, Windows/macOS/Linux"
+          label: "itch.io — Hexy, Windows/macOS/Linux"
         verified: false # flip once the link has been checked by hand; the evidence is a public page
     not_yet:
       - "The source is closed. The storefront is the whole of the public evidence, and nothing here invites inspection of the code."

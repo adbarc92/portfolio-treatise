@@ -2,7 +2,33 @@
 
 ## State summary
 
-_Last updated: 2026-10-08_
+_Last updated: 2026-10-28. The 2026-10-08 summary below it still stands except where this block
+says otherwise._
+
+**Now: review every essay and draft, then promote them to posted.** Alex's rule (2026-10-28):
+every shipped item has a site entry and at least one blog post. #36 merged the drafts for the
+shipped items, and **nothing new is published yet: every post below has `draft: true`.**
+
+| Post | Ready to promote? |
+|---|---|
+| Tenzy, Hexy, Halyard, Command-Center, AppForge, Seven Deaths of the Meadow, reqdrive (all dated 2026-10-28) | Yes, after Alex's read. Every open question was answered on 10-28 |
+| mcp-browser-bridge | After mcp-browser-bridge#20 ships 1.2.3 (Alex smoke-tests it in a real browser first). Then rewrite the origin-check and "no gated release yet" sentences |
+| Fathomline (dated 2026-11-09) | **On 2026-11-09 only.** Its numbers predate the fixture change: the clean rate is now 47/50 (94%), and the first published result is a deliberate FAIL at 0.9 (fathomline D1a, D14a). Rewrite against what actually ships that day |
+| The price of the ticket, The ladder problem (August), Poiesis (10-07) | Older essay drafts; review with the rest |
+| Eidos (live) | The main checkout has uncommitted edits on `docs/eidos-essay-gaps`; the review agenda is the local-only `docs/handoffs/d8e910cd-…md` |
+
+**New catalogue entries** for Tenzy, AppForge and Seven Deaths are drafted in
+`docs/drafts/catalogue-additions.yaml` (fathomline's too, for 11-09). That file is never built;
+to publish an entry, move it into `claims.yaml`, set `draft: false` and verify each link by hand.
+
+**Live since #36:** reqdrive's entry no longer claims a fail-closed gate (an audit found four
+fail-open paths; listed under `not_yet`); Hexy's stale "$15" is gone; "Tenzy" left the content
+gate's retracted list; the contact address is `adbarclay92@proton.me`. The post about the site
+itself was cut.
+
+---
+
+_Summary of 2026-10-08:_
 
 **TL;DR.** **The consolidation is done and live, the `/writing/` hub with it, and as of
 2026-09-07 CI deploys on its own.** One repository serves the whole domain: the treatise at the
@@ -200,6 +226,18 @@ gone partly false. Corrected in place rather than left to contradict the list ab
 ---
 
 ## Session log
+
+### 2026-10-28 — A post for every shipped item, held as drafts (#36)
+
+- An agent audited shipped work against the site and drafted ten posts and four catalogue
+  entries. A reviewer fixed about 15 factual errors (reqdrive's gate, mcp-browser-bridge's origin
+  check, fathomline's spike results, tenzy details).
+- Alex answered every open item in four multiple-choice rounds; the answers are in the posts.
+  Editor's notes and `[CONFIRM]` markers were removed because the repo is public.
+- Side effects shipped elsewhere: reqdrive#5 fixed its placeholder install URL (main's ShellCheck
+  job will now flag SC2329 in the frozen `tests/simple-test.sh`, from a newer ShellCheck on the
+  runners); seven-deaths-of-the-meadow#11 added the MIT licence.
+- Next: the essay review and promotion (State summary).
 
 ### 2026-10-08 — The essays are talked over; Forms and feature documents are reconciled
 

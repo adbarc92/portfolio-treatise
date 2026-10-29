@@ -29,4 +29,4 @@ The hardest part of the idea turned out to be teaching it. The most common mista
 
 The stack is React Native with Expo, Convex for the backend, Clerk for sign-in and RevenueCat for subscriptions.
 
-Tenzy launched on iOS on 2026-09-27. You can [try it on the web](https://tenzy.app) without installing anything.
+Tenzy is on the [App Store](https://apps.apple.com/us/app/tenzy/id6761376913) and [Google Play](https://play.google.com/store/apps/details?id=com.tenzy.app), and you can [use it in a browser](https://tenzy.app) without installing anything.

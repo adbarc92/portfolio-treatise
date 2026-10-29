@@ -32,3 +32,5 @@ AppForge was rewritten in July 2026. The first version used a single supervisor 
 After the rewrite, an end-to-end job in CI turned red, and it turned out to have two independent causes. One was a real "database is locked" bug in the web app's shared database, which failed every run. The other was older: browser tests still exercised the retired flow. Fixing either one alone would have left the job red. A failing job can have more than one cause, and I fixed both in the same change.
 
 To try it, run `uv sync`, then `uv run appforge run "Build a todo app" --workers 4`. The [release](https://github.com/adbarc92/appforge/releases/tag/v1.0.0) and a documented sample run are in the repository.
+
+AppForge stops at 1.0 on purpose. I took what I learned building it and am using it on another system now.

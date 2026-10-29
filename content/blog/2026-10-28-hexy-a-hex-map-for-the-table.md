@@ -17,9 +17,13 @@ The feature the rest of the app is built around is Display mode. It shows the ma
 
 ## Why I built it
 
+A friend asked me for a tool to run a Bastionland one-shot. I also wanted to test what this way of building software could do. It was a hit at the table, and it grew from there.
+
 In a hex-crawl campaign, the map the referee needs and the map the players may see are two different maps. Online tabletops handle this by putting everyone on a computer, which makes for a different kind of game night. At a physical table, people handle it with paper cutouts and a good memory. Hexy is for the table: the players are in the room, and a second screen does the hiding.
 
 It was inspired by Hex Kit, and it is not the only tool with a player view; Hex Kit and others have one. What Hexy aims at is running a map during a session, not only drawing one beforehand.
+
+I like software that doesn't bloat. The old advice about a function holds for an app too: it should do one thing, and do it well. Hexy's one thing is the map at the table.
 
 ## What I learned shipping it
 

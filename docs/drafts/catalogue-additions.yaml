@@ -103,7 +103,7 @@ catalogue:
       - id: no_collision
         text: "independent workers, no collisions"
         evidence:
-          url: "https://github.com/adbarc92/appforge/blob/main/tests/engine/test_concurrency_no_collision.py"
+          url: "https://github.com/adbarc92/appforge/blob/f24498996804/tests/engine/test_concurrency_no_collision.py"
           label: "test suite · concurrency"
         verified: false
     not_yet:
@@ -130,5 +130,4 @@ catalogue:
           url: "https://js13kgames.com/2026/games/seven-deaths-of-the-meadow"
           label: "js13kGames 2026 — entry page"
         verified: false
-    not_yet:
-      - "The repository has no licence file."
+    not_yet: [] # licence added 2026-10-28

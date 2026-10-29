@@ -17,6 +17,6 @@ argument, and the essays carry it into political economy, where institutions,
 like software, are rarely worth trusting on their self-report.
 
 Correspondence is welcome, and the fastest way to reach me is by
-[email](mailto:adbarclay92@gmail.com). The code is on
+[email](mailto:adbarclay92@proton.me). The code is on
 [GitHub](https://github.com/adbarc92), and the professional record is on
 [LinkedIn](https://www.linkedin.com/in/alex-barclay/).

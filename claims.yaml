@@ -15,7 +15,7 @@ meta:
     cite: "my working notes, on the readiness ladder"
   byline: { name: Alex Barclay, place: Denver, role: "Senior Software Engineer, Garmin" }
   correspondence:
-    email: "adbarclay92@gmail.com" # TODO(alex): confirm this is the address you want public
+    email: "adbarclay92@proton.me"
     github: "https://github.com/adbarc92"
     calendar: "" # TODO(alex): supply booking link, or leave empty to omit
 

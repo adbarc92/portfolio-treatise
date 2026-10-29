@@ -37,4 +37,4 @@ The demo runs offline and needs no accounts:
 npm install && npm test && npm run demo
 ```
 
-It is not published to npm. The code is at [github.com/adbarc92/halyard](https://github.com/adbarc92/halyard).
+It is not published to npm yet. I want to launch several of my own projects with it first: field testing is what counts, and I'm not yet satisfied enough to recommend it to anyone else. The code is at [github.com/adbarc92/halyard](https://github.com/adbarc92/halyard).

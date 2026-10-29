@@ -31,4 +31,4 @@ A few decisions shaped it:
 
 ## Install
 
-The server installs with `npx`, and you load the extension unpacked from the repository. The [README](https://github.com/adbarc92/mcp-browser-bridge) has both steps.
+The server installs with `npx`, and you load the extension unpacked from the repository. The [README](https://github.com/adbarc92/mcp-browser-bridge) has both steps, and the [project page](/mcp-browser-bridge/) has an overview.

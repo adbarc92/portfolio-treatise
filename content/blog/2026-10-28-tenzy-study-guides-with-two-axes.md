@@ -1,0 +1,34 @@
+---
+title: "Tenzy: Study Guides with Two Axes"
+date: 2026-10-28
+excerpt: "Tenzy is a study app built on one idea: a set of facts is easier to learn as a grid than as a stack of cards. It is live on iOS, Android and the web."
+category: software
+tags: ["tenzy", "mobile", "react-native", "shipped"]
+draft: true
+---
+
+> **Editor's note. Delete this note before publishing.** The site's content gate (`scripts/content-gate.mjs`) still lists "Tenzy" as a retracted term, from before the app launched. While it does, any build that publishes this post will fail. Removing `"Tenzy"` from `RETRACTED` is a one-line change, and it is Alex's call. Resolve every `[CONFIRM]` below as well.
+
+Tenzy is a study app. It is live on the [App Store](https://apps.apple.com/us/app/tenzy/id6761376913), on [Google Play](https://play.google.com/store/apps/details?id=com.tenzy.app) and on the web at [tenzy.app](https://tenzy.app). The current version is 1.4.2. It is published by OpenBarclay, the name I ship products under.
+
+## What it is
+
+Most study apps are flashcard apps. Each card holds one fact, and you flip through them one at a time. Tenzy is built around a different unit, which it calls a 2D study guide. A guide is a grid: terms run down the side and categories run across the top, and each cell holds one fact about one term. A guide to the planets might have the planets as rows and mass, moons and distance from the sun as columns. When you learn from the grid you learn how the facts relate to each other, not just each fact on its own.
+
+There are five ways to study a guide: Flashcard, Matching, Written, Random and Review. Review schedules cards by spaced repetition. Goals, streaks and progress tracking sit around those modes, and a guide syncs between phone and browser. The free tier gives you one guide of your own plus the public guides. A subscription removes that limit.
+
+## Why I built it
+
+Flashcards hide the structure of a subject. If you are learning which drug belongs to which class, what each class does and what each one interacts with, the facts make a table. Cutting that table into cards throws away the part that helps you remember it. Tenzy keeps the table. [CONFIRM: Alex, add the personal reason here: what you were studying, or who you built it for.]
+
+The hardest part of the idea turned out to be teaching it. The most common mistake when building a guide is to use categories as groups ("Inner planets", "Outer planets") rather than as attributes ("Mass", "Moons"). Much of the product's design work has gone into steering people towards attributes.
+
+## What I learned shipping it
+
+- **Read the store, not your notes.** At one point Android went public on an older build than I thought, and that build's release notes said in-app purchases were not active yet. The fix was to promote a build that already existed. The lesson was to check what a store is actually serving by asking the store, not by reading my own release notes.
+- **Check the assets, not just the code.** Three of the five fonts bundled with the app turned out to be saved GitHub "404 Not Found" pages, not font files. Every native build up to that point had quietly fallen back to the system font. No test caught it, because nothing tested whether a font was actually a font.
+- **One commit, both stores.** Each release candidate builds iOS and Android from the same commit, gets a tracking issue and goes through a tester checklist before it is promoted. The web app redeploys on every merge, so a shared guide opens in a browser with nothing to install.
+
+The stack is React Native with Expo, Convex for the backend, Clerk for sign-in and RevenueCat for subscriptions. The app started on a separate Spring Boot API, which was retired once Convex covered everything it did.
+
+Tenzy launched on iOS on 2026-09-27 [CONFIRM date, and the Android and web launch dates]. You can [try it on the web](https://tenzy.app) without installing anything.

@@ -1,0 +1,127 @@
+# DRAFT catalogue entries. NOT PUBLISHED: nothing in the build reads this file.
+#
+# Why this is a separate file: in claims.yaml, `draft: true` on a catalogue entry
+# does not withhold it. The entry still renders, on the root's III. Catalogue and
+# under /writing/projects, with a [DRAFT] badge. Merging these into claims.yaml
+# would therefore publish them. Blog posts are different: their `draft: true`
+# keeps them out of every build.
+#
+# To publish an entry: resolve its [CONFIRM] comments, move it into claims.yaml
+# under `catalogue:`, set `draft: false`, and flip `verified` once each link has
+# been checked by hand. The claims gate in src/lib/claims.ts then validates it on
+# the next build.
+#
+# Already on the site: halyard, reqdrive, command-center and mcp-browser-bridge
+# (claims.yaml `projects:`), and hexy and portfolio-site (claims.yaml
+# `catalogue:`). Their blog posts are drafted in content/blog/.
+
+catalogue:
+  # BLOCKED: scripts/content-gate.mjs lists "Tenzy" in RETRACTED, a list written
+  # before the app launched. The build fails on any page that names it until that
+  # line is removed. The 2026-08-29 decision D1 made a shipped Tenzy citable, but
+  # the gate was never updated. Removing the line is Alex's call.
+  - id: tenzy
+    name: Tenzy
+    meta_line: "STUDY APP · 2D STUDY GUIDES · IOS · ANDROID · WEB"
+    source: closed
+    draft: true
+    href: "https://tenzy.app"
+    href_label: "Open Tenzy on the web"
+    tags: ["react-native", "expo", "typescript", "convex", "clerk", "revenuecat"]
+    date: 2026-09-27 # [CONFIRM] iOS launch date per the launch schedule; Android and web dates unknown
+    blurb: "A study app that teaches a subject as a grid of terms and attributes, not a stack of cards."
+    prose: |
+      Flashcards cut a subject into single facts and throw away the table the
+      facts came from. Tenzy keeps the table: a study guide is a grid, terms down
+      the side and attributes across the top, studied in five modes with spaced
+      repetition behind the review. It is live on both mobile stores and on the
+      web, at version 1.4.2.[^stores]
+    claims:
+      - id: stores
+        text: "live on iOS and Android"
+        evidence:
+          url: "https://apps.apple.com/us/app/tenzy/id6761376913"
+          label: "App Store — Tenzy"
+        verified: false
+    not_yet:
+      - "The source is closed. The store listings are the public evidence."
+
+  # PUBLISH ON 2026-11-09 (launch day), not before. Re-check every sentence
+  # against what actually shipped that day.
+  - id: fathomline
+    name: Fathomline
+    meta_line: "ROBOT-POLICY EVALUATION HARNESS · CLOPPER–PEARSON GATE · PYTHON"
+    source: open
+    draft: true
+    href: "https://github.com/adbarc92/fathomline"
+    href_label: "View the source"
+    tags: ["python", "lerobot", "statistics", "docker", "github-actions"]
+    date: 2026-11-09
+    blurb: "An evaluation harness that passes a robot policy only when the lower confidence bound on its success rate clears a declared threshold."
+    prose: |
+      Ten successes in ten trials shows only that a policy's true success rate is
+      probably above about 69%. Fathomline is a CI gate built on that arithmetic:
+      a policy passes only when the Clopper–Pearson lower bound clears a declared
+      threshold, the run meets a declared minimum episode count, and no monitor
+      flagged it.[^gate]
+    claims:
+      - id: gate
+        text: "fail-closed statistical gate"
+        evidence:
+          url: "https://github.com/adbarc92/fathomline" # [CONFIRM] pin to a commit and point at the gate's test file at launch
+          label: "github — fathomline"
+        verified: false
+    not_yet:
+      - "Simulation only; no claim about hardware."
+      - "No claim that results reproduce across machines."
+      # [CONFIRM at launch] add "the sweep command" and/or "the reproduce command" if either is still unbuilt
+
+  - id: appforge
+    name: AppForge
+    meta_line: "MULTI-AGENT ORCHESTRATION · MCP STATE SERVER · PYTHON"
+    source: open
+    draft: true
+    href: "https://github.com/adbarc92/appforge/releases/tag/v1.0.0"
+    href_label: "View the 1.0 release"
+    tags: ["python", "mcp", "sqlite", "fastapi", "react"]
+    date: 2026-07-25
+    blurb: "A multi-agent engine: one MCP state server, independent worker processes, approval gates, and a budget that downgrades models as it runs low."
+    prose: |
+      Most demonstrations of an AI development team are one process running agents
+      in a loop. AppForge is a state server and a pool of independent worker
+      processes that claim tasks atomically, so eight workers against twelve
+      contested tasks run each task exactly once.[^no_collision] It is complete at
+      1.0 and frozen; its agents run in a mock mode by default.
+    claims:
+      - id: no_collision
+        text: "independent workers, no collisions"
+        evidence:
+          url: "https://github.com/adbarc92/appforge/blob/main/tests/engine/test_concurrency_no_collision.py" # [CONFIRM] pin to the v1.0.0 commit
+          label: "test suite · concurrency"
+        verified: false
+    not_yet:
+      - "Token cost is simulated, and the real-model mode is not exercised by the tests."
+
+  - id: seven-deaths-of-the-meadow
+    name: Seven Deaths of the Meadow
+    meta_line: "JS13KGAMES 2026 ENTRY · CANVAS · UNDER 13 KB"
+    source: open
+    draft: true
+    href: "https://play.js13kgames.com/seven-deaths-of-the-meadow"
+    href_label: "Play in the browser"
+    tags: ["javascript", "canvas", "roadroller", "js13k"]
+    date: 2026-09-10 # [CONFIRM] submission date (tag submit-2026-09-10)
+    blurb: "A js13kGames 2026 entry: ninety-second runs in a pastel meadow, where only what you worked out carries over."
+    prose: |
+      A game jam entry under a 13-kilobyte limit, on the theme Unicorns and
+      Rainbows. There are no assets; everything is drawn in code, and the build
+      fails if the zip goes over budget.[^entry]
+    claims:
+      - id: entry
+        text: "submitted and playable"
+        evidence:
+          url: "https://js13kgames.com/2026/games/seven-deaths-of-the-meadow"
+          label: "js13kGames 2026 — entry page"
+        verified: false
+    not_yet:
+      - "The repository has no licence file." # [CONFIRM] keep, or add a licence and drop this line

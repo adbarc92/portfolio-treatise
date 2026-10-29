@@ -21,10 +21,10 @@ The README states it in one line: running autonomous coding agents well is a sys
 
 ## How it holds together
 
-- **One source of truth.** Every fact about the fleet is an event in SQLite, written by the daemon. If the daemon crashes, a restart replays the log and nothing is lost.
+- **One source of truth.** Every unit's phase and its full event log live in SQLite, written by the daemon. If the daemon crashes, a restart replays the log and nothing is lost.
 - **A reconcile loop.** Every 30 seconds, and at startup, the daemon compares its records with what Docker reports. It removes stray containers and halts stranded runs, and it leaves alone any unit with a live driver.
 - **Budgets with teeth.** There is a spending cap per unit and a rolling 24-hour cap for the whole fleet. When an agent keeps hitting rate limits, it is parked for a person to look at instead of retrying forever.
-- **A frozen oracle.** The acceptance tests are hashed when the task is set. An agent that changes its own tests is sent to a person, and the check comes back armed after every restart.
+- **A frozen oracle.** The acceptance tests are hashed when they are frozen, during the spec phase. An agent that changes its own tests is sent to a person, and the check comes back armed after every restart.
 - **A free demo.** A fake runner lets the whole system run with no Docker and no API key, at no cost.
 
 ## What I learned

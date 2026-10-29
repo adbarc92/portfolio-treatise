@@ -9,7 +9,7 @@ draft: true
 
 > **Editor's note. Delete this note before publishing.** Resolve every `[CONFIRM]` below. The price was cut from $15 to a $7 minimum on 2026-10-25; check the itch page before publishing.
 
-[Hexy](https://redgalt.itch.io/hexy) is a hex map maker for tabletop roleplaying games. Version 1.0 has been on itch.io since 2026-09-07, for Windows, macOS and Linux. A free browser demo runs the full editor.
+[Hexy](https://redgalt.itch.io/hexy) is a hex map maker for tabletop roleplaying games. Version 1.0 has been on itch.io since 2026-09-07, for Windows, macOS and Linux. A free browser demo lets you try the editor. Display mode, plugins and custom icons need the desktop app.
 
 ## What it is
 
@@ -25,7 +25,7 @@ It was inspired by Hex Kit, and it is not the only tool with a player view; Hex 
 
 ## What I learned shipping it
 
-- **An unset secret is not always an absent one.** In CI, a signing secret that had never been set reached the build as an empty string, not as a missing variable. The packaging tool read an empty string as "configured" and ran the signing step with an empty identity. The fix was to check for empty values explicitly. Getting the Mac build signed and notarized cost more time than any feature did.
+- **An unset secret is not always an absent one.** In CI, a signing secret that had never been set reached the build as an empty string, not as a missing variable. The packaging tool read an empty string as "configured" and ran the signing step with an empty identity. The fix was to set the signing variables only in the steps that actually sign, and only when the secrets exist.
 - **Check the store page logged out.** The page you see as the creator on itch.io is not the page a buyer sees, and an automated request misses the parts that render in the browser. Only a logged-out browser window shows the real page.
 - **macOS runners are billed at a multiple of Linux ones.** On a private repository that adds up fast. The spending limit ran out twice, and the symptom was jobs that died without ever being assigned a runner.
 - **Price against what already exists.** Hexy launched at $15. A competitor with many ratings sells the same core feature at that price, so I lowered Hexy to a pay-what-you-want minimum of $7.

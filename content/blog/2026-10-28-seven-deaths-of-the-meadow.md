@@ -21,12 +21,12 @@ The theme invites one of two easy readings, sincerely cute or cute turned to gor
 
 - **No assets.** Everything is drawn on a canvas in code. There are no images and no audio files.
 - **Two builds, ship the smaller.** The build makes one plainly minified version and one compressed with roadroller, zips both, and keeps whichever is smaller. Going over the 13,312-byte limit fails the build. The submitted zip is about 5.3 KB [CONFIRM final size].
-- **Tests that cost nothing.** Test hooks sit inside a marked block that the build strips out, so they add no bytes to the shipped game. The test suite drives the real game state under Node, with no browser.
+- **Tests that cost nothing.** Test hooks sit inside a marked block that the build strips out, so they add no bytes to the shipped game. The main test suite drives the real game state under Node, with no browser. A separate screenshot run drives real browsers.
 - **Test the entry, not the source.** The final smoke test unzips the submitted file and plays that, with real key presses. In a jam, the file you submit is the game; the file you develop is not.
 
 ## What I learned
 
-The first playtest found a dominant strategy: holding everything, which means giving everything away, beat the game without any thought. It also showed that a win didn't read as a win. Players reached the ending and didn't realize they had succeeded. Both problems were in the design, not the code, and only someone playing it could have found them. [CONFIRM: whether the submitted build fixed these, or whether the fix is in the post-jam update.]
+My own playtesting found three problems. One was a plain bug: the game could be won without completing what it asked. I fixed that before submitting. The other two were design problems, and they are still in the submitted build. Holding everything, which means giving everything away, is a dominant strategy that beats the game without any thought. And a win doesn't read as a win. The fixes for both are in a post-jam update that hasn't been played yet. Nobody but me played the game before it was submitted. [CONFIRM: whether the post-jam update has shipped.]
 
 Writing the design down before building helped more than I expected. The repository includes a list of things that look like oversights but are deliberate, so a later change, mine or an agent's, does not "fix" them.
 

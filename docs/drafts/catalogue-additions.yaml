@@ -34,14 +34,20 @@ catalogue:
       Flashcards cut a subject into single facts and throw away the table the
       facts came from. Tenzy keeps the table: a study guide is a grid, terms down
       the side and attributes across the top, studied in five modes with spaced
-      repetition behind the review. It is live on both mobile stores and on the
-      web, at version 1.4.2.[^stores]
+      repetition behind the review. It is live on the App Store[^stores] and on
+      Google Play,[^play] and on the web, at version 1.4.2.
     claims:
       - id: stores
-        text: "live on iOS and Android"
+        text: "live on iOS"
         evidence:
           url: "https://apps.apple.com/us/app/tenzy/id6761376913"
           label: "App Store — Tenzy"
+        verified: false
+      - id: play
+        text: "live on Android"
+        evidence:
+          url: "https://play.google.com/store/apps/details?id=com.tenzy.app"
+          label: "Google Play — Tenzy"
         verified: false
     not_yet:
       - "The source is closed. The store listings are the public evidence."
@@ -64,6 +70,7 @@ catalogue:
       a policy passes only when the Clopper–Pearson lower bound clears a declared
       threshold, the run meets a declared minimum episode count, and no monitor
       flagged it.[^gate]
+    # [CONFIRM at launch] which monitors exist; the framework is built, and the conditions are open
     claims:
       - id: gate
         text: "fail-closed statistical gate"

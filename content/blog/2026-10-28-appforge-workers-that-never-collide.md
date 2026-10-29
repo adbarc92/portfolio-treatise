@@ -22,8 +22,8 @@ The point of the project is the orchestration, not the app it produces. By defau
 Most demos of an "AI dev team" are one process running agents in a loop. AppForge is built the other way round, to make three properties true and testable:
 
 - **Parallel by default.** Any task whose dependencies are met can be claimed at once by any free worker.
-- **Coordinated, not chaotic.** One MCP state server owns the task graph and is the only process that writes to the database. Workers are separate operating-system processes. A worker claims a task with an atomic compare-and-swap, so two workers can never take the same one. Leases, heartbeats and a reaper mean a task may be attempted more than once, but it takes effect exactly once.
-- **Safe to run unattended.** People approve the work at gates after Clarify and after Design. At 85% of the budget, later agents are switched to cheaper models. At 95% the run pauses for a person to acknowledge it, and at 100% it stops.
+- **Coordinated, not chaotic.** One MCP state server owns the task graph and is the only process that writes to the database. Workers are separate operating-system processes. A worker claims a task with a single guarded database update, so two workers can never take the same one, and results are recorded with a versioned compare-and-swap. Leases, heartbeats and a reaper mean a task may be attempted more than once, but it takes effect exactly once.
+- **Safe to run unattended.** People approve the work at gates after Clarify and after Design. At 85% of the budget, later agents are switched to cheaper models, except the ones whose quality matters most. At 95% the run pauses for a person to acknowledge it, and at 100% it stops. The costs the budget counts are placeholders for now, not real token prices.
 
 Each claim has a test behind it. The headline one starts eight real worker processes against twelve contested tasks, then checks the database to prove each task ran exactly once.
 
@@ -31,6 +31,6 @@ Each claim has a test behind it. The headline one starts eight real worker proce
 
 AppForge was rewritten in July 2026. The first version used a single supervisor process built on LangGraph, which is the one-loop design described above. Replacing it with a state server and independent workers is what made the concurrency claims testable at all.
 
-After the rewrite, an end-to-end job in CI turned red. I first blamed a "database is locked" error, which fitted the new design's riskiest part. The real cause was older: browser tests still exercised the retired flow. The error message pointed at the part I was most nervous about, not at what had actually changed.
+After the rewrite, an end-to-end job in CI turned red, and it turned out to have two independent causes. One was a real "database is locked" bug in the web app's shared database, which failed every run. The other was older: browser tests still exercised the retired flow. Fixing either one alone would have left the job red. A failing job can have more than one cause, and I fixed both in the same change.
 
 To try it, run `uv sync`, then `uv run appforge run "Build a todo app" --workers 4`. The [release](https://github.com/adbarc92/appforge/releases/tag/v1.0.0) and a documented sample run are in the repository. [CONFIRM: anything to add about why you stopped at 1.0.]

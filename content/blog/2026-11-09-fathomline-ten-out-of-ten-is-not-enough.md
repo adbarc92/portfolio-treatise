@@ -13,13 +13,13 @@ draft: true
 
 ## The problem
 
-Robot-learning results are often reported as a success rate over a few episodes, commonly around ten. A policy that succeeds ten times out of ten looks perfect. But with ten trials, the most you can say with 97.5% confidence is that its true success rate is above about 69.2%. That is the lower end of the exact (Clopper–Pearson) confidence interval for ten successes in ten trials. A perfect score on a small sample proves much less than it seems to.
+Robot-learning results are often reported as a success rate over a few episodes, commonly around ten. A policy that succeeds ten times out of ten looks perfect. But with ten trials, the most you can say is that its true success rate is probably above about 69.2%. That is the lower end of the two-sided 95% exact (Clopper–Pearson) confidence interval for ten successes in ten trials. A perfect score on a small sample proves much less than it seems to.
 
 ## What Fathomline does
 
-Fathomline passes a policy only when three things hold. First, the lower bound of the success-rate interval clears a threshold declared in advance. Second, the run reaches a declared minimum number of episodes. Third, no monitor flagged the run as falling outside its declared conditions. A sample that is too small fails automatically. So does a flagged run, however well it scored.
+Fathomline passes a policy only when three things hold. First, the lower bound of the success-rate interval clears a threshold declared in advance. Second, the run reaches a declared minimum number of episodes. Third, no monitor flagged the run as falling outside its declared conditions. A sample that is too small fails automatically. So does a flagged run, however well it scored. The monitor framework is built and the gate honours its flags, but which conditions are monitored is still open. [CONFIRM at launch: name the monitors that shipped, or keep this sentence.]
 
-The harness, not the policy, is the product. The test policy is a fixture: SmolVLA on one LIBERO task, run in simulation, on CPU, inside a container. Fathomline owns the step loop, behind small `Env`, `Policy` and `Monitor` interfaces, and LeRobot sits behind a single adapter. Every dependency and model artifact is pinned to an exact version. Each claim in the README is paired with the command that proves it. A command that is not built yet says so and exits with a distinct code; it does not pretend to work.
+The harness, not the policy, is the product. The test policy is a fixture: SmolVLA on one LIBERO task, run in simulation, on CPU, inside a container. Fathomline owns the step loop, behind small `Env`, `Policy` and `Monitor` interfaces, and LeRobot sits behind a single adapter. LeRobot and every model artifact are pinned to an exact version. Each claim in the README is paired with the command that proves it. A command that is not built yet says so and exits with a distinct code; it does not pretend to work.
 
 ## What I learned building it
 
@@ -27,7 +27,7 @@ The early experiments are in the repository, and they changed the design more th
 
 - **Results depend on the library version.** The same checkpoint with the same seed gave different outcomes under different LeRobot versions, which is why every version is pinned exactly.
 - **Identical containers are not identical machines.** The hash of the actions differed between CI runners using the same image. So Fathomline makes no claim of cross-machine determinism, and the README says so.
-- **The fixture is a mediocre policy, and that is useful.** It succeeded on 27 of 50 baseline episodes, which is 54%, with an interval of roughly 39% to 68%. Small perturbations to the scene cut its success to between 0% and 10%. [CONFIRM: the spike ran 30 episodes per perturbed condition and 50 for the baseline; check the wording against `docs/SPIKE-envelope.md`.]
+- **The fixture is a mediocre policy, and that is useful.** It succeeded on 27 of 50 baseline episodes, which is 54%, with an interval of roughly 39% to 68%. I then ran eight perturbed conditions, 30 episodes each. Dimming the lights, adding camera noise or nudging the objects a few centimetres cut success to between 7% and 10%. Swapping the two cameras, losing the action statistics or giving it another task's instruction took it to zero. Brighter light hurt less, and paraphrasing the instruction made no detectable difference.
 - **Obvious safety bounds are often wrong.** A bound that looks sensible on the gripper action would have flagged healthy runs: the gripper value goes past ±1 on 68% of clean steps.
 
 ## What is there today

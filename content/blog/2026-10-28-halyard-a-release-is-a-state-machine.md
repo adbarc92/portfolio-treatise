@@ -13,7 +13,7 @@ draft: true
 
 ## Why a state machine
 
-A release pipeline is usually drawn as a line: build, test, upload, ship. That model breaks as soon as a mobile store review is involved, because no CI job can stay open for the hours or days a review takes. So Halyard does not run a release as one long job. It records each platform's release as a state that lives in git and moves through `tagged → built → tested → uploaded → in_review → shipped_dark → live`. Each transition is a short, separate step that can run whenever the outside world is ready for it.
+A release pipeline is usually drawn as a line: build, test, upload, ship. That model breaks as soon as a mobile store review is involved, because no CI job can stay open for the hours or days a review takes. So Halyard does not run a release as one long job. It records each platform's release as a state that lives in git. For a mobile app, the happy path is `tagged → built → tested → uploaded → in_review → shipped_dark → live`. Web and desktop releases skip the review states, and there are states for releases that are rejected, rolled back or dead. Each transition is a short, separate step that can run whenever the outside world is ready for it.
 
 The last step is a deliberate one. "Shipped dark" means the build is in users' hands behind a feature flag. Going live means a person flipping that flag on purpose.
 
@@ -39,4 +39,4 @@ The demo runs offline and needs no accounts:
 npm install && npm test && npm run demo
 ```
 
-It is not on npm, because the package name was already taken. [CONFIRM: whether anyone runs Halyard on a real app besides the bundled example.] The code is at [github.com/adbarc92/halyard](https://github.com/adbarc92/halyard).
+It is not published to npm. [CONFIRM: say why, if you want to; and whether anyone runs Halyard on a real app besides the bundled example.] The code is at [github.com/adbarc92/halyard](https://github.com/adbarc92/halyard).

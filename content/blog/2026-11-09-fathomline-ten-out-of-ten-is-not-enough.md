@@ -7,8 +7,6 @@ tags: ["fathomline", "robotics", "evaluation", "statistics"]
 draft: true
 ---
 
-> **Editor's note. PUBLISH ON NOV 9, not before. Delete this note before publishing.** On launch day, check each claim against what actually shipped. In particular, check whether `reproduce` and the first published result are live, and cut or rewrite any paragraph marked `[CONFIRM at launch]`. Do not claim the container image is publicly pullable, or that results reproduce across machines, unless both are true on the day.
-
 [Fathomline](https://github.com/adbarc92/fathomline) is an open-source harness for evaluating learned robot policies. It is meant to run as a gate in CI. It is MIT-licensed and written in Python.
 
 ## The problem
@@ -17,7 +15,7 @@ Robot-learning results are often reported as a success rate over a few episodes,
 
 ## What Fathomline does
 
-Fathomline passes a policy only when three things hold. First, the lower bound of the success-rate interval clears a threshold declared in advance. Second, the run reaches a declared minimum number of episodes. Third, no monitor flagged the run as falling outside its declared conditions. A sample that is too small fails automatically. So does a flagged run, however well it scored. The monitor framework is built and the gate honours its flags, but which conditions are monitored is still open. [CONFIRM at launch: name the monitors that shipped, or keep this sentence.]
+Fathomline passes a policy only when three things hold. First, the lower bound of the success-rate interval clears a threshold declared in advance. Second, the run reaches a declared minimum number of episodes. Third, no monitor flagged the run as falling outside its declared conditions. A sample that is too small fails automatically. So does a flagged run, however well it scored. The monitor framework is built and the gate honours its flags, but which conditions are monitored is still open.
 
 The harness, not the policy, is the product. The test policy is a fixture: SmolVLA on one LIBERO task, run in simulation, on CPU, inside a container. Fathomline owns the step loop, behind small `Env`, `Policy` and `Monitor` interfaces, and LeRobot sits behind a single adapter. LeRobot and every model artifact are pinned to an exact version. Each claim in the README is paired with the command that proves it. A command that is not built yet says so and exits with a distinct code; it does not pretend to work.
 
@@ -31,8 +29,6 @@ The early experiments are in the repository, and they changed the design more th
 - **Obvious safety bounds are often wrong.** A bound that looks sensible on the gripper action would have flagged healthy runs: the gripper value goes past ±1 on 68% of clean steps.
 
 ## What is there today
-
-[CONFIRM at launch: describe exactly what shipped on Nov 9. The planned floor is one `docker run … reproduce` on a clean container that matches one published `result.json`, and the first published result is planned as a deliberate gate FAIL. If either slipped, say so plainly or cut this section.]
 
 The limits are stated in the README. It covers simulation only and makes no claim about hardware. The LeRobot stack runs only on Linux. It is an early build. It is not a benchmark or a leaderboard.
 

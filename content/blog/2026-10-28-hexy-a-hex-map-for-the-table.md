@@ -7,8 +7,6 @@ tags: ["hexy", "tauri", "games", "shipped"]
 draft: true
 ---
 
-> **Editor's note. Delete this note before publishing.** Resolve every `[CONFIRM]` below. The price was cut from $15 to a $7 minimum on 2026-10-25; check the itch page before publishing.
-
 [Hexy](https://redgalt.itch.io/hexy) is a hex map maker for tabletop roleplaying games. Version 1.0 has been on itch.io since 2026-09-07, for Windows, macOS and Linux. A free browser demo lets you try the editor. Display mode, plugins and custom icons need the desktop app.
 
 ## What it is
@@ -21,7 +19,7 @@ The feature the rest of the app is built around is Display mode. It shows the ma
 
 In a hex-crawl campaign, the map the referee needs and the map the players may see are two different maps. Online tabletops handle this by putting everyone on a computer, which makes for a different kind of game night. At a physical table, people handle it with paper cutouts and a good memory. Hexy is for the table: the players are in the room, and a second screen does the hiding.
 
-It was inspired by Hex Kit, and it is not the only tool with a player view; Hex Kit and others have one. What Hexy aims at is running a map during a session, not only drawing one beforehand. [CONFIRM: anything personal to add, such as the campaign that prompted it.]
+It was inspired by Hex Kit, and it is not the only tool with a player view; Hex Kit and others have one. What Hexy aims at is running a map during a session, not only drawing one beforehand.
 
 ## What I learned shipping it
 

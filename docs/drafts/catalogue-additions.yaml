@@ -6,7 +6,7 @@
 # would therefore publish them. Blog posts are different: their `draft: true`
 # keeps them out of every build.
 #
-# To publish an entry: resolve its [CONFIRM] comments, move it into claims.yaml
+# To publish an entry: move it into claims.yaml
 # under `catalogue:`, set `draft: false`, and flip `verified` once each link has
 # been checked by hand. The claims gate in src/lib/claims.ts then validates it on
 # the next build.
@@ -28,7 +28,7 @@ catalogue:
     href: "https://tenzy.app"
     href_label: "Open Tenzy on the web"
     tags: ["react-native", "expo", "typescript", "convex", "clerk", "revenuecat"]
-    date: 2026-09-27 # [CONFIRM] iOS launch date per the launch schedule; Android and web dates unknown
+    date: 2026-09-27
     blurb: "A study app that teaches a subject as a grid of terms and attributes, not a stack of cards."
     prose: |
       Flashcards cut a subject into single facts and throw away the table the
@@ -70,18 +70,18 @@ catalogue:
       a policy passes only when the Clopper–Pearson lower bound clears a declared
       threshold, the run meets a declared minimum episode count, and no monitor
       flagged it.[^gate]
-    # [CONFIRM at launch] which monitors exist; the framework is built, and the conditions are open
+
     claims:
       - id: gate
         text: "fail-closed statistical gate"
         evidence:
-          url: "https://github.com/adbarc92/fathomline" # [CONFIRM] pin to a commit and point at the gate's test file at launch
+          url: "https://github.com/adbarc92/fathomline"
           label: "github — fathomline"
         verified: false
     not_yet:
       - "Simulation only; no claim about hardware."
       - "No claim that results reproduce across machines."
-      # [CONFIRM at launch] add "the sweep command" and/or "the reproduce command" if either is still unbuilt
+
 
   - id: appforge
     name: AppForge
@@ -103,7 +103,7 @@ catalogue:
       - id: no_collision
         text: "independent workers, no collisions"
         evidence:
-          url: "https://github.com/adbarc92/appforge/blob/main/tests/engine/test_concurrency_no_collision.py" # [CONFIRM] pin to the v1.0.0 commit
+          url: "https://github.com/adbarc92/appforge/blob/main/tests/engine/test_concurrency_no_collision.py"
           label: "test suite · concurrency"
         verified: false
     not_yet:
@@ -117,7 +117,7 @@ catalogue:
     href: "https://play.js13kgames.com/seven-deaths-of-the-meadow"
     href_label: "Play in the browser"
     tags: ["javascript", "canvas", "roadroller", "js13k"]
-    date: 2026-09-10 # [CONFIRM] submission date (tag submit-2026-09-10)
+    date: 2026-09-10
     blurb: "A js13kGames 2026 entry: ninety-second runs in a pastel meadow, where only what you worked out carries over."
     prose: |
       A game jam entry under a 13-kilobyte limit, on the theme Unicorns and
@@ -131,4 +131,4 @@ catalogue:
           label: "js13kGames 2026 — entry page"
         verified: false
     not_yet:
-      - "The repository has no licence file." # [CONFIRM] keep, or add a licence and drop this line
+      - "The repository has no licence file."

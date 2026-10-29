@@ -7,8 +7,6 @@ tags: ["games", "js13k", "javascript"]
 draft: true
 ---
 
-> **Editor's note. Delete this note before publishing.** Resolve every `[CONFIRM]` below. Do not list the browsers the screenshot tests use. One of their names is on the content gate's retracted list, and the build will fail.
-
 [Seven Deaths of the Meadow](https://js13kgames.com/2026/games/seven-deaths-of-the-meadow) is my entry for js13kGames 2026, a game jam in which the whole game must fit in a 13-kilobyte zip file. The theme was "Unicorns and Rainbows". You can [play it in the browser](https://play.js13kgames.com/seven-deaths-of-the-meadow).
 
 ## What it is
@@ -20,14 +18,14 @@ The theme invites one of two easy readings, sincerely cute or cute turned to gor
 ## How it fits in 13 kilobytes
 
 - **No assets.** Everything is drawn on a canvas in code. There are no images and no audio files.
-- **Two builds, ship the smaller.** The build makes one plainly minified version and one compressed with roadroller, zips both, and keeps whichever is smaller. Going over the 13,312-byte limit fails the build. The submitted zip is about 5.3 KB [CONFIRM final size].
+- **Two builds, ship the smaller.** The build makes one plainly minified version and one compressed with roadroller, zips both, and keeps whichever is smaller. Going over the 13,312-byte limit fails the build. The submitted zip is about 5.3 KB.
 - **Tests that cost nothing.** Test hooks sit inside a marked block that the build strips out, so they add no bytes to the shipped game. The main test suite drives the real game state under Node, with no browser. A separate screenshot run drives real browsers.
 - **Test the entry, not the source.** The final smoke test unzips the submitted file and plays that, with real key presses. In a jam, the file you submit is the game; the file you develop is not.
 
 ## What I learned
 
-My own playtesting found three problems. One was a plain bug: the game could be won without completing what it asked. I fixed that before submitting. The other two were design problems, and they are still in the submitted build. Holding everything, which means giving everything away, is a dominant strategy that beats the game without any thought. And a win doesn't read as a win. The fixes for both are in a post-jam update that hasn't been played yet. Nobody but me played the game before it was submitted. [CONFIRM: whether the post-jam update has shipped.]
+My own playtesting found three problems. One was a plain bug: the game could be won without completing what it asked. I fixed that before submitting. The other two were design problems, and they are still in the submitted build. Holding everything, which means giving everything away, is a dominant strategy that beats the game without any thought. And a win doesn't read as a win. The fixes for both are in a post-jam update that hasn't been played yet. Nobody but me played the game before it was submitted.
 
 Writing the design down before building helped more than I expected. The repository includes a list of things that look like oversights but are deliberate, so a later change, mine or an agent's, does not "fix" them.
 
-The source is on [GitHub](https://github.com/adbarc92/seven-deaths-of-the-meadow). [CONFIRM: jam results, if you want to mention them.]
+The source is on [GitHub](https://github.com/adbarc92/seven-deaths-of-the-meadow).

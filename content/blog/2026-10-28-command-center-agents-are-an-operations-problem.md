@@ -7,8 +7,6 @@ tags: ["command-center", "agents", "rust", "open-source"]
 draft: true
 ---
 
-> **Editor's note. Delete this note before publishing.** Command-Center has no binary release yet; `release.yml` is waiting on code-signing certificates. Decide whether this post waits for the first tagged release. Resolve every `[CONFIRM]` below.
-
 [Command-Center](https://github.com/adbarc92/command-center) runs coding agents in disposable Docker containers and supervises them. It is open source under the MIT licence, and the repository has been public since 2026-07-25.
 
 ## What it is
@@ -34,4 +32,4 @@ The README states it in one line: running autonomous coding agents well is a sys
 - **Package the thing, then use it.** The packaged desktop build shipped without the folder its plugins load from, so no packaged build could load a plugin. Only a manual run of the packaged app found it.
 - **Localhost is not private.** Any website you visit can send requests to a server on your own machine. So the daemon's allowed-origins list is never "allow everything".
 
-You can try the demo mode from source today. [CONFIRM: link a release once one exists.] The code is at [github.com/adbarc92/command-center](https://github.com/adbarc92/command-center).
+You can try the demo mode from source today. The code is at [github.com/adbarc92/command-center](https://github.com/adbarc92/command-center).

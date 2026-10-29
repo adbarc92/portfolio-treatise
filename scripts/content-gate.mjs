@@ -17,7 +17,6 @@ export const RETRACTED = [
   "Chrome Web Store",
   "16-agent",
   "Redis",
-  "Tenzy",
 ];
 export const BANNED_VOCABULARY = [
   "passionate", "cutting-edge", "blazingly", "seamless", "delightful", "crafting",

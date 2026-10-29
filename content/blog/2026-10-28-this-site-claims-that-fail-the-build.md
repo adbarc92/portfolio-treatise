@@ -7,8 +7,6 @@ tags: ["astro", "static-site", "open-source"]
 draft: true
 ---
 
-> **Editor's note. Delete this note before publishing.** This post exists because the catalogue lists the site as a shipped item. Cut it if you don't want a post about the site itself. Do not quote the terms on the content gate's lists in this post: the gate scans this page too.
-
 This site is a static [Astro](https://astro.build) build. One repository holds the source for the whole domain: the treatise at the root, and everything written under `/writing/`. The [source is public](https://github.com/adbarc92/portfolio-treatise).
 
 ## Why it is built this way
@@ -31,4 +29,3 @@ On every merge to the main branch, CI builds the site, runs the gates and pushes
 - **GitHub Pages cannot send a real redirect.** It serves static files only, so the old URLs are pages with a meta refresh and a canonical link. I describe them as soft redirects, because that is what they are.
 - **A word filter needs word boundaries.** The first time the content gate scanned essay prose, it failed on ordinary English: one banned term had matched inside a longer, harmless word. Terms now match only as whole words, and the gate still catches the deliberately mangled versions.
 
-[CONFIRM: anything about the design system or the treatise you want to add.]

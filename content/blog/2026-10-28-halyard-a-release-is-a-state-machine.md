@@ -7,8 +7,6 @@ tags: ["halyard", "release-engineering", "typescript", "open-source"]
 draft: true
 ---
 
-> **Editor's note. Delete this note before publishing.** Resolve every `[CONFIRM]` below.
-
 [Halyard](https://github.com/adbarc92/halyard) is an open-source tool for releasing one app to several platforms at once: iOS, Android, web and desktop. It is made of a TypeScript command-line tool, a library and a set of GitHub Actions workflows. Version 0.1.0 was released on 2026-09-02 under the MIT licence.
 
 ## Why a state machine
@@ -39,4 +37,4 @@ The demo runs offline and needs no accounts:
 npm install && npm test && npm run demo
 ```
 
-It is not published to npm. [CONFIRM: say why, if you want to; and whether anyone runs Halyard on a real app besides the bundled example.] The code is at [github.com/adbarc92/halyard](https://github.com/adbarc92/halyard).
+It is not published to npm. The code is at [github.com/adbarc92/halyard](https://github.com/adbarc92/halyard).

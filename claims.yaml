@@ -82,7 +82,7 @@ projects:
 
   - id: reqdrive
     name: Reqdrive
-    meta_line: "REQUIREMENTS-TO-PR PIPELINE · FAIL-CLOSED DRAFT GATE"
+    meta_line: "REQUIREMENTS-TO-PR PIPELINE · DRAFT-BY-DEFAULT GATE"
     plate:
       number: 4 # TODO(alex): plate numbering beyond III and V is provisional
       source: null
@@ -92,17 +92,19 @@ projects:
       Anyone can wire an agent to open pull requests; the demos are
       everywhere. Reqdrive is built for the part the demos skip — the handoff,
       where a machine's confidence becomes a reviewer's problem — and it
-      refuses to bluff. A requirements document runs through planning,
+      is designed not to bluff. A requirements document runs through planning,
       story-by-story implementation, and verification, and the pull request at
-      the end fails closed: it arrives as a draft unless every piece of
-      positive evidence is in hand.[^draft_gate] Guarding the guards, a frozen
+      the end is meant to arrive as a draft unless every piece of positive
+      evidence is in hand.[^draft_gate] That gate is not airtight yet: an audit
+      of the code found four ways it can still let a pull request through as
+      ready. Guarding the guards, a frozen
       test oracle catches any attempt to weaken or drop a test — and proves in
       CI, against a planted violation, that it still fires.[^frozen_oracle]
       Even the requirements file is treated as hostile until screened, escaped
       and checked before it ever touches a prompt or a shell.[^sanitize]
     claims:
       - id: draft_gate
-        text: "fail-closed draft gate"
+        text: "draft-by-default gate"
         evidence:
           # tests: "draft gate: no testCommand forces draft" etc. incl. a positive control
           url: "https://github.com/adbarc92/reqdrive/blob/6ea2c4d3df05165cc39863963b54bf91dfef881d/tests/simple-test.sh"
@@ -122,7 +124,8 @@ projects:
           url: "https://github.com/adbarc92/reqdrive/blob/6ea2c4d3df05165cc39863963b54bf91dfef881d/tests/simple-test.sh"
           label: "test suite § sanitization"
         verified: false
-    not_yet: [] # TODO(alex): author (candidates from repo's own drift-report.md / claims-audit.md)
+    not_yet:
+      - "close the draft gate's four fail-open paths"
 
   - id: command-center
     name: Command-Center

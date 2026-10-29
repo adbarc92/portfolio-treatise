@@ -7,8 +7,6 @@ tags: ["reqdrive", "agents", "bash", "open-source"]
 draft: true
 ---
 
-> **Editor's note. Delete this note before publishing.** Reqdrive has no tagged release. Its README and `install.sh` clone a placeholder URL (`github.com/user/reqdrive.git`), so the install command fails as written. The repo's own drift report (`docs/canon/requirements/drift-report.md`, DES-002, critical) says the draft gate fails open four ways, and no code has changed since. This post says so. Decide whether to fix the gate before publishing, and update the post if you do. Resolve every `[CONFIRM]` below.
-
 [Reqdrive](https://github.com/adbarc92/reqdrive) is an open-source command-line tool that turns a requirement written in markdown into a GitHub pull request. It is written in Bash and MIT-licensed.
 
 ## What it does
@@ -30,7 +28,7 @@ Two other choices come from the same idea:
 
 **My tests could not fail.** The old test suite ran with `set -e`, which stops a script at the first error. As a result, the suite could not report a failure: it either passed or stopped before it reported anything. Every green run I had trusted was green by construction.
 
-**The gate does not hold yet.** I later audited the code against its own requirements. The worst finding was about the feature the tool exists for: the draft gate fails open in four ways, and a pull request could open as ready for review with real work left incomplete. The audit found other defects as well. A Claude timeout or crash exits with success. The documentation promised path-traversal checks that don't exist. A refactor I had described as a simplification left the code larger than the version it replaced. None of these is fixed yet. [CONFIRM: update this paragraph if you fix the gate before publishing.]
+**The gate does not hold yet.** I later audited the code against its own requirements. The worst finding was about the feature the tool exists for: the draft gate fails open in four ways, and a pull request could open as ready for review with real work left incomplete. The audit found other defects as well. A Claude timeout or crash exits with success. The documentation promised path-traversal checks that don't exist. A refactor I had described as a simplification left the code larger than the version it replaced. None of these is fixed yet.
 
 **I wrote my own claims ahead of the code.** None of these defects was subtle. Each sat in a gap between what a document said and what the code did, and I had been reading the document. That is the reason for the audit, and for publishing the result here.
 

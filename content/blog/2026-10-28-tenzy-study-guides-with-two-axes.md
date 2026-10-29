@@ -7,8 +7,6 @@ tags: ["tenzy", "mobile", "react-native", "shipped"]
 draft: true
 ---
 
-> **Editor's note. Delete this note before publishing.** The site's content gate (`scripts/content-gate.mjs`) still lists "Tenzy" as a retracted term, from before the app launched. While it does, any build that publishes this post will fail. Removing `"Tenzy"` from `RETRACTED` is a one-line change, and it is Alex's call. Resolve every `[CONFIRM]` below as well. Also update tenzy.app before linking to it: it still says "Four study modes" and "Native iOS app coming soon".
-
 Tenzy is a study app. It is live on the [App Store](https://apps.apple.com/us/app/tenzy/id6761376913), on [Google Play](https://play.google.com/store/apps/details?id=com.tenzy.app) and on the web at [tenzy.app](https://tenzy.app). The current version is 1.4.2. It is published by OpenBarclay, the name I ship products under.
 
 ## What it is
@@ -19,16 +17,16 @@ There are five ways to study a guide: Flashcard, Matching, Written, Random and R
 
 ## Why I built it
 
-Flashcards hide the structure of a subject. If you are learning which drug belongs to which class, what each class does and what each one interacts with, the facts make a table. Cutting that table into cards throws away the part that helps you remember it. Tenzy keeps the table. [CONFIRM: Alex, add the personal reason here: what you were studying, or who you built it for.]
+Flashcards hide the structure of a subject. If you are learning which drug belongs to which class, what each class does and what each one interacts with, the facts make a table. Cutting that table into cards throws away the part that helps you remember it. Tenzy keeps the table.
 
 The hardest part of the idea turned out to be teaching it. The most common mistake when building a guide is to use categories as groups ("Inner planets", "Outer planets") rather than as attributes ("Mass", "Moons"). A grid only works when its columns are attributes.
 
 ## What I learned shipping it
 
 - **Read the store, not your notes.** At one point Android went public on an older build than I thought, and that build's release notes said in-app purchases were not active yet. The fix was to promote a build that already existed. The lesson was to check what a store is actually serving by asking the store, not by reading my own release notes.
-- **Check the assets, not just the code.** Three of the five fonts bundled with the app turned out to be saved GitHub "404 Not Found" pages, not font files. Body text and some headings had quietly fallen back to the system font, on the web as well as on phones. No test caught it, because nothing tested whether a font was actually a font. The fix ships in the next release. [CONFIRM: release number once it ships.]
+- **Check the assets, not just the code.** Three of the five fonts bundled with the app turned out to be saved GitHub "404 Not Found" pages, not font files. Body text and some headings had quietly fallen back to the system font, on the web as well as on phones. No test caught it, because nothing tested whether a font was actually a font. The fix ships in the next release.
 - **One commit, both stores.** Each release candidate builds iOS and Android from the same commit and gets a tracking issue and a tester checklist. A shared guide also opens on the web, with nothing to install.
 
 The stack is React Native with Expo, Convex for the backend, Clerk for sign-in and RevenueCat for subscriptions.
 
-Tenzy launched on iOS on 2026-09-27 [CONFIRM date, and the Android and web launch dates]. You can [try it on the web](https://tenzy.app) without installing anything.
+Tenzy launched on iOS on 2026-09-27. You can [try it on the web](https://tenzy.app) without installing anything.

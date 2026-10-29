@@ -7,8 +7,6 @@ tags: ["appforge", "agents", "mcp", "python", "open-source"]
 draft: true
 ---
 
-> **Editor's note. Delete this note before publishing.** Resolve every `[CONFIRM]` below.
-
 [AppForge](https://github.com/adbarc92/appforge) is an engine for coordinating many AI agents on one project. Version 1.0.0 was released on 2026-07-25 under the MIT licence, and the project is now finished and frozen.
 
 ## What it is
@@ -33,4 +31,4 @@ AppForge was rewritten in July 2026. The first version used a single supervisor 
 
 After the rewrite, an end-to-end job in CI turned red, and it turned out to have two independent causes. One was a real "database is locked" bug in the web app's shared database, which failed every run. The other was older: browser tests still exercised the retired flow. Fixing either one alone would have left the job red. A failing job can have more than one cause, and I fixed both in the same change.
 
-To try it, run `uv sync`, then `uv run appforge run "Build a todo app" --workers 4`. The [release](https://github.com/adbarc92/appforge/releases/tag/v1.0.0) and a documented sample run are in the repository. [CONFIRM: anything to add about why you stopped at 1.0.]
+To try it, run `uv sync`, then `uv run appforge run "Build a todo app" --workers 4`. The [release](https://github.com/adbarc92/appforge/releases/tag/v1.0.0) and a documented sample run are in the repository.

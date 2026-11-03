@@ -2,8 +2,11 @@
 
 ## State summary
 
-_Last updated: 2026-10-28. The 2026-10-08 summary below it still stands except where this block
+_Last updated: 2026-10-31. The 2026-10-08 summary below it still stands except where this block
 says otherwise._
+
+**Open PRs: none.** `main` is at `3d0d2a6` (#37), and `build-gate-deploy` passed on that merge.
+The 10-08 summary's "two PRs open" is stale: #31 and #32 both merged in October.
 
 **Now: review every essay and draft, then promote them to posted.** Alex's rule (2026-10-28):
 every shipped item has a site entry and at least one blog post. #36 merged the drafts for the
@@ -226,6 +229,12 @@ gone partly false. Corrected in place rather than left to contradict the list ab
 ---
 
 ## Session log
+
+### 2026-10-31 — The 10-28 wrap merges (#37)
+
+- #37 merged the 2026-10-28 State summary block and session-log entry. It changed only this
+  file; nothing in the built site changed. CI deployed it cleanly.
+- State delta: no open PRs. Next is still the essay review and promotion (State summary).
 
 ### 2026-10-28 — A post for every shipped item, held as drafts (#36)
 
